@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Big Ideas Math - Algebra 2 Honors Interactive Quiz</title>
+  <title>Big Ideas Math - Algebra 2 Honors Multi-Section Quiz</title>
   <style>
     :root {
       --primary: #1e3a8a;
@@ -58,10 +58,12 @@
       margin-bottom: 16px;
     }
 
-    label {
-      display: block;
+    label.group-label {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
       font-weight: 600;
-      margin-bottom: 6px;
+      margin-bottom: 8px;
       font-size: 0.95rem;
     }
 
@@ -72,6 +74,53 @@
       border: 1px solid var(--border);
       font-size: 1rem;
       box-sizing: border-box;
+    }
+
+    /* Multi-select checkbox area */
+    .checkbox-container {
+      max-height: 220px;
+      overflow-y: auto;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 12px;
+      background-color: #f1f5f9;
+    }
+
+    .chapter-group {
+      margin-bottom: 12px;
+    }
+
+    .chapter-title {
+      font-weight: 700;
+      font-size: 0.85rem;
+      color: var(--primary);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 6px;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 2px;
+    }
+
+    .section-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 6px;
+    }
+
+    .checkbox-label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.9rem;
+      cursor: pointer;
+      background: #fff;
+      padding: 6px 10px;
+      border-radius: 4px;
+      border: 1px solid #e2e8f0;
+    }
+
+    .checkbox-label:hover {
+      background-color: #f8fafc;
     }
 
     .btn-group {
@@ -105,6 +154,14 @@
 
     button.secondary:hover {
       background-color: #334155;
+    }
+
+    button.small-btn {
+      padding: 2px 8px;
+      font-size: 0.75rem;
+      background-color: #64748b;
+      min-width: auto;
+      flex: none;
     }
 
     button.check-btn {
@@ -172,6 +229,15 @@
       margin-bottom: 12px;
     }
 
+    .section-tag {
+      font-size: 0.75rem;
+      background-color: #e2e8f0;
+      color: #334155;
+      padding: 2px 6px;
+      border-radius: 4px;
+      margin-left: 8px;
+    }
+
     .options-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -214,7 +280,7 @@
 
     @media print {
       body { background-color: #fff; padding: 0; }
-      .control-panel, header p, .check-btn, .btn-group { display: none; }
+      .control-panel, header p, .check-btn, .btn-group, .small-btn { display: none; }
       .quiz-output { border: none; padding: 0; }
     }
   </style>
@@ -224,30 +290,98 @@
 <div class="container">
   <header>
     <h1>Big Ideas Math: Algebra 2 Honors Quiz Generator</h1>
-    <p>Generate interactive practice quizzes with instant answer checking and feedback.</p>
+    <p>Select single or multiple sections to generate personalized, auto-graded practice quizzes.</p>
   </header>
 
   <div class="control-panel">
     <div class="form-group">
-      <label for="chapterSelect">Select Chapter & Section:</label>
-      <select id="chapterSelect">
-        <optgroup label="Ch 1: Linear Functions & Systems">
-          <option value="1.1">1.1 Parent Functions & Transformations</option>
-          <option value="2.1">2.1 Transformations of Quadratic Functions</option>
-          <option value="3.2">3.2 Complex Numbers</option>
-          <option value="4.3">4.3 Dividing Polynomials (Synthetic/Long)</option>
-          <option value="5.1">5.1 nth Roots and Rational Exponents</option>
-          <option value="6.3">6.3 Logarithms & Logarithmic Functions</option>
-          <option value="7.5">7.5 Solving Rational Equations</option>
-          <option value="8.2">8.2 Arithmetic Sequences & Series</option>
-        </optgroup>
-      </select>
+      <label class="group-label">
+        <span>Select Sections (Check all that apply):</span>
+        <span>
+          <button class="small-btn" onclick="toggleAllSections(true)">Select All</button>
+          <button class="small-btn" onclick="toggleAllSections(false)">Clear All</button>
+        </span>
+      </label>
+
+      <div class="checkbox-container">
+        <div class="chapter-group">
+          <div class="chapter-title">Ch 1: Linear Functions & Systems</div>
+          <div class="section-grid">
+            <label class="checkbox-label">
+              <input type="checkbox" class="section-cb" value="1.1" checked> 1.1 Transformations of Parent Functions
+            </label>
+          </div>
+        </div>
+
+        <div class="chapter-group">
+          <div class="chapter-title">Ch 2: Quadratic Functions</div>
+          <div class="section-grid">
+            <label class="checkbox-label">
+              <input type="checkbox" class="section-cb" value="2.1" checked> 2.1 Transformations of Quadratic Functions
+            </label>
+          </div>
+        </div>
+
+        <div class="chapter-group">
+          <div class="chapter-title">Ch 3: Complex Numbers</div>
+          <div class="section-grid">
+            <label class="checkbox-label">
+              <input type="checkbox" class="section-cb" value="3.2"> 3.2 Complex Numbers Operations
+            </label>
+          </div>
+        </div>
+
+        <div class="chapter-group">
+          <div class="chapter-title">Ch 4: Polynomial Functions</div>
+          <div class="section-grid">
+            <label class="checkbox-label">
+              <input type="checkbox" class="section-cb" value="4.3"> 4.3 Dividing Polynomials
+            </label>
+          </div>
+        </div>
+
+        <div class="chapter-group">
+          <div class="chapter-title">Ch 5: Radical Functions</div>
+          <div class="section-grid">
+            <label class="checkbox-label">
+              <input type="checkbox" class="section-cb" value="5.1"> 5.1 nth Roots & Rational Exponents
+            </label>
+          </div>
+        </div>
+
+        <div class="chapter-group">
+          <div class="chapter-title">Ch 6: Exponential & Logarithmic Functions</div>
+          <div class="section-grid">
+            <label class="checkbox-label">
+              <input type="checkbox" class="section-cb" value="6.3"> 6.3 Logarithms & Logarithmic Functions
+            </label>
+          </div>
+        </div>
+
+        <div class="chapter-group">
+          <div class="chapter-title">Ch 7: Rational Functions</div>
+          <div class="section-grid">
+            <label class="checkbox-label">
+              <input type="checkbox" class="section-cb" value="7.5"> 7.5 Solving Rational Equations
+            </label>
+          </div>
+        </div>
+
+        <div class="chapter-group">
+          <div class="chapter-title">Ch 8: Sequences & Series</div>
+          <div class="section-grid">
+            <label class="checkbox-label">
+              <input type="checkbox" class="section-cb" value="8.2"> 8.2 Arithmetic Sequences & Series
+            </label>
+          </div>
+        </div>
+      </div>
     </div>
 
     <div style="display: flex; gap: 16px;">
       <div class="form-group" style="flex: 1;">
-        <label for="numQuestions">Number of Questions:</label>
-        <input type="number" id="numQuestions" min="1" max="15" value="5">
+        <label for="numQuestions">Total Questions:</label>
+        <input type="number" id="numQuestions" min="1" max="20" value="6">
       </div>
       <div class="form-group" style="flex: 1;">
         <label for="formatSelect">Format:</label>
@@ -267,7 +401,7 @@
 
   <div class="quiz-output" id="quizContainer">
     <div style="text-align: center; color: #64748b; margin-top: 40px;">
-      Click "Generate Quiz" to create an interactive test.
+      Select sections and click "Generate Quiz" to begin.
     </div>
   </div>
 </div>
@@ -285,6 +419,10 @@
 
   function normalizeStr(str) {
     return str.toString().toLowerCase().replace(/\s+/g, '').replace(/,/g, '');
+  }
+
+  function toggleAllSections(checked) {
+    document.querySelectorAll('.section-cb').forEach(cb => cb.checked = checked);
   }
 
   const generators = {
@@ -326,7 +464,7 @@
       return {
         prompt: `Multiply (${a} + ${b}i)(${c} + ${d}i). Write in a + bi form.`,
         ans: ansText,
-        acceptAnswers: [`${real}+${imag}i`, `${real}+${imag}i`, `${real} + ${imag}i`],
+        acceptAnswers: [`${real}+${imag}i`, `${real} + ${imag}i`],
         distractors: [
           `${a * c + b * d} + ${imag}i`,
           `${real} - ${imag}i`,
@@ -397,40 +535,52 @@
   let quizQuestions = [];
 
   function generateQuiz() {
-    const sec = document.getElementById("chapterSelect").value;
+    const selectedBoxes = Array.from(document.querySelectorAll('.section-cb:checked'));
+    if (selectedBoxes.length === 0) {
+      alert("Please select at least one section before generating the quiz.");
+      return;
+    }
+
+    const selectedSections = selectedBoxes.map(cb => cb.value);
     const count = parseInt(document.getElementById("numQuestions").value);
     const format = document.getElementById("formatSelect").value;
     const container = document.getElementById("quizContainer");
 
-    const gen = generators[sec] || generators["1.1"];
     quizQuestions = [];
 
     let html = `
       <div class="quiz-header">
         <div>
-          <h2>Algebra 2 Honors Interactive Practice</h2>
-          <div>Section ${sec} Quiz</div>
+          <h2>Algebra 2 Honors Practice Quiz</h2>
+          <div>Sections: <strong>${selectedSections.join(', ')}</strong></div>
         </div>
         <div>
           <div>Name: ______________________</div>
         </div>
       </div>
-      <div id="scoreBanner" class="scoreBanner hidden"></div>
+      <div id="scoreBanner" class="score-banner hidden"></div>
     `;
 
     for (let i = 0; i < count; i++) {
+      // Pick a random section from the selected ones
+      const sec = selectedSections[Math.floor(Math.random() * selectedSections.length)];
+      const gen = generators[sec] || generators["1.1"];
       const q = gen();
-      quizQuestions.push({ ...q, format, checked: false });
+
+      quizQuestions.push({ ...q, section: sec, format, checked: false });
 
       html += `
         <div class="question-item" id="qItem_${i}">
-          <div class="question-title">${i + 1}. ${q.prompt}</div>
+          <div class="question-title">
+            ${i + 1}. ${q.prompt}
+            <span class="section-tag">Sec ${sec}</span>
+          </div>
       `;
 
       if (format === "mc") {
         const options = [q.ans, ...q.distractors].sort(() => Math.random() - 0.5);
         html += `<div class="options-grid">`;
-        options.forEach((opt, optIdx) => {
+        options.forEach((opt) => {
           html += `
             <label class="mc-option">
               <input type="radio" name="q_${i}" value="${opt}">
@@ -473,7 +623,7 @@
 
     if (!userAns) {
       fbEl.className = "feedback incorrect";
-      fbEl.innerText = "Please provide an answer before checking.";
+      fbEl.innerText = "Please enter or select an answer first.";
       fbEl.classList.remove("hidden");
       return false;
     }
@@ -512,8 +662,8 @@
 
     const banner = document.getElementById("scoreBanner");
     const pct = Math.round((score / quizQuestions.length) * 100);
-    banner.className = "score-banner";
-    banner.innerText = `Quiz Completed! Score: ${score} / ${quizQuestions.length} (${pct}%)`;
+    banner.classList.remove("hidden");
+    banner.innerText = `Quiz Score: ${score} / ${quizQuestions.length} (${pct}%)`;
   }
 </script>
 
