@@ -7,175 +7,174 @@
   <style>
     :root {
       --primary: #1e3a8a;
-      --primary-hover: #1d4ed8;
-      --bg: #f8fafc;
+      --primary-600: #1d4ed8;
+      --muted: #64748b;
+      --bg: #f1f5f9;
       --card-bg: #ffffff;
       --text: #0f172a;
-      --border: #cbd5e1;
+      --border: #e2e8f0;
+      --success: #16a34a;
+      --danger: #dc2626;
+      --glass: rgba(255,255,255,0.6);
     }
 
+    /* Reset / base */
+    * { box-sizing: border-box; }
+
     body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      background-color: var(--bg);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      background: linear-gradient(180deg, #f8fafc 0%, var(--bg) 100%);
       color: var(--text);
       margin: 0;
-      padding: 24px;
+      padding: 28px;
       line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
     }
 
     .container {
-      max-width: 900px;
+      max-width: 980px;
       margin: 0 auto;
     }
 
     header {
-      text-align: center;
-      margin-bottom: 24px;
-      padding-bottom: 16px;
-      border-bottom: 2px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 20px;
+      padding: 18px 22px;
+      border-radius: 12px;
+      background: linear-gradient(90deg, rgba(29,78,216,0.08), rgba(30,58,138,0.06));
+      border: 1px solid var(--border);
+      box-shadow: 0 6px 18px rgba(15,23,42,0.03);
     }
 
-    h1 {
+    header h1 {
       color: var(--primary);
-      margin: 0 0 8px 0;
-      font-size: 1.8rem;
+      margin: 0 0 6px 0;
+      font-size: 1.4rem;
+      line-height: 1.1;
     }
+
+    header p { margin: 0; color: var(--muted); font-size: 0.95rem; }
+
+    .brand-note { font-size: 0.85rem; color: var(--muted); text-align: right; }
 
     .control-panel {
       background-color: var(--card-bg);
-      padding: 20px;
-      border-radius: 8px;
+      padding: 18px;
+      border-radius: 10px;
       border: 1px solid var(--border);
-      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-      margin-bottom: 24px;
+      box-shadow: 0 3px 10px rgba(2,6,23,0.03);
+      margin-bottom: 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
     }
 
-    .form-group {
-      margin-bottom: 16px;
-    }
+    .controls-row { display: flex; gap: 16px; align-items: center; }
 
-    label {
-      display: block;
-      font-weight: 600;
-      margin-bottom: 6px;
-      font-size: 0.95rem;
-    }
+    .form-group { margin-bottom: 8px; flex: 1; }
 
-    select, input[type="number"] {
+    label { display: block; font-weight: 600; margin-bottom: 6px; font-size: 0.92rem; color: #0f172a; }
+
+    select, input[type="number"], input[type="text"] {
       width: 100%;
-      padding: 8px 12px;
-      border-radius: 6px;
+      padding: 10px 12px;
+      border-radius: 10px;
       border: 1px solid var(--border);
       font-size: 1rem;
       box-sizing: border-box;
+      background: linear-gradient(180deg, #fff, #fbfdff);
+      transition: box-shadow 0.12s, transform 0.06s;
     }
 
-    .btn-group {
-      display: flex;
-      gap: 12px;
-      margin-top: 20px;
-    }
+    select:focus, input[type="number"]:focus, input[type="text"]:focus { outline: none; box-shadow: 0 4px 14px rgba(29,78,216,0.08); transform: translateY(-1px); }
+
+    .btn-group { display: flex; gap: 12px; margin-top: 6px; }
 
     button {
-      flex: 1;
-      background-color: var(--primary);
-      color: white;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 10px 14px;
+      border-radius: 10px;
       border: none;
-      padding: 10px 16px;
-      border-radius: 6px;
-      font-size: 1rem;
-      font-weight: 600;
       cursor: pointer;
-      transition: background-color 0.2s;
+      font-weight: 700;
+      color: white;
+      background-color: var(--primary);
+      transition: transform 0.08s, box-shadow 0.12s, background-color 0.12s;
+      box-shadow: 0 6px 14px rgba(16,24,40,0.06);
     }
 
-    button:hover {
-      background-color: var(--primary-hover);
-    }
-
-    button.secondary {
-      background-color: #475569;
-    }
-
-    button.secondary:hover {
-      background-color: #334155;
-    }
+    button:hover { transform: translateY(-2px); background-color: var(--primary-600); }
+    button.secondary { background-color: #475569; }
+    button.secondary:hover { background-color: #334155; }
+    button.ghost { background: transparent; color: var(--primary); border: 1px solid var(--border); box-shadow: none; }
 
     .quiz-output {
       background-color: var(--card-bg);
-      padding: 32px;
-      border-radius: 8px;
+      padding: 26px;
+      border-radius: 10px;
       border: 1px solid var(--border);
-      min-height: 300px;
+      min-height: 320px;
+      box-shadow: 0 4px 18px rgba(2,6,23,0.03);
     }
 
     .quiz-header {
       display: flex;
       justify-content: space-between;
-      border-bottom: 2px solid #000;
+      align-items: flex-start;
+      border-bottom: 2px solid rgba(2,6,23,0.06);
       padding-bottom: 12px;
-      margin-bottom: 24px;
+      margin-bottom: 18px;
     }
 
     .question-item {
-      margin-bottom: 28px;
+      margin-bottom: 18px;
       page-break-inside: avoid;
       padding: 12px;
-      border-radius: 6px;
+      border-radius: 8px;
+      transition: background 0.12s, border-color 0.12s;
+      border: 1px solid transparent;
     }
 
-    .question-title {
-      font-weight: 600;
-      margin-bottom: 8px;
-    }
+    .question-item.correct { border-color: rgba(22,163,74,0.18); background: rgba(16,185,129,0.04); }
+    .question-item.incorrect { border-color: rgba(220,38,38,0.12); background: rgba(254,242,242,0.6); }
 
-    .options-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 8px;
-      margin-top: 8px;
-      margin-left: 16px;
-    }
+    .question-title { font-weight: 700; margin-bottom: 8px; }
 
-    .work-space {
-      height: 60px;
-      border-bottom: 1px dashed #cbd5e1;
-      margin-top: 12px;
-    }
+    .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 8px; margin-left: 12px; }
 
-    .answer-key {
-      margin-top: 40px;
-      padding-top: 20px;
-      border-top: 3px double #000;
-      page-break-before: always;
-    }
+    .option { padding: 8px 10px; border-radius: 8px; border: 1px solid var(--border); background: linear-gradient(180deg,#fff,#fbfdff); }
 
-    .hidden {
-      display: none;
-    }
+    .option label { display: flex; align-items: center; gap: 10px; cursor: pointer; user-select: none; }
 
-    .correct {
-      border: 2px solid #16a34a;
-      background-color: #ecfdf5;
-    }
+    input[type="radio"] { accent-color: var(--primary); width: 18px; height: 18px; }
 
-    .incorrect {
-      border: 2px solid #dc2626;
-      background-color: #fff1f2;
-    }
+    .work-space { height: 64px; border-bottom: 1px dashed #cbd5e1; margin-top: 12px; }
 
-    .result-badge {
-      display: inline-block;
-      padding: 6px 10px;
-      border-radius: 999px;
-      font-weight: 700;
-      margin-left: 8px;
+    .answer-key { margin-top: 26px; padding-top: 18px; border-top: 3px double #000; page-break-before: always; }
+
+    .hidden { display: none; }
+
+    .result-badge { display: inline-block; padding: 6px 10px; border-radius: 999px; font-weight: 700; margin-left: 8px; }
+
+    #quizResults { margin-top: 12px; }
+
+    @media (max-width: 720px) {
+      .options-grid { grid-template-columns: 1fr; }
+      header { flex-direction: column; align-items: flex-start; }
+      .controls-row { flex-direction: column; }
     }
 
     @media print {
       body { background-color: #fff; padding: 0; }
       .control-panel, header p { display: none; }
-      .quiz-output { border: none; padding: 0; }
+      .quiz-output { border: none; padding: 0; box-shadow:none }
       button { display: none; }
     }
   </style>
@@ -184,95 +183,100 @@
 
 <div class="container">
   <header>
-    <h1>Big Ideas Math: Algebra 2 Honors Quiz Generator</h1>
-    <p>Select chapter sections and parameters to generate dynamic practice quizzes.</p>
+    <div>
+      <h1>Big Ideas Math: Algebra 2 Honors Quiz Generator</h1>
+      <p>Select chapter sections and parameters to generate custom practice quizzes.</p>
+    </div>
+    <div class="brand-note">Quick generator • Print-friendly • Answers toggle</div>
   </header>
 
-  <div class="control-panel">
-    <div class="form-group">
-      <label for="chapterSelect">Select Chapter & Section:</label>
-      <select id="chapterSelect">
-        <optgroup label="Ch 1: Linear Functions & Systems">
-          <option value="1.1">1.1 Parent Functions & Transformations</option>
-          <option value="1.2">1.2 Transformations of Absolute Value Functions</option>
-          <option value="1.3">1.3 Modeling with Linear Functions</option>
-          <option value="1.4">1.4 Solving Linear Systems in Three Variables</option>
-        </optgroup>
-        <optgroup label="Ch 2: Quadratic Functions">
-          <option value="2.1">2.1 Transformations of Quadratic Functions</option>
-          <option value="2.2">2.2 Characteristics of Quadratic Functions</option>
-          <option value="2.3">2.3 Focus and Directrix of a Parabola</option>
-          <option value="2.4">2.4 Modeling with Quadratic Functions</option>
-        </optgroup>
-        <optgroup label="Ch 3: Quadratic Equations & Complex Numbers">
-          <option value="3.1">3.1 Solving Quadratic Equations</option>
-          <option value="3.2">3.2 Complex Numbers</option>
-          <option value="3.3">3.3 Completing the Square</option>
-          <option value="3.4">3.4 Using the Quadratic Formula</option>
-          <option value="3.5">3.5 Solving Nonlinear Systems</option>
-        </optgroup>
-        <optgroup label="Ch 4: Polynomial Functions">
-          <option value="4.1">4.1 Graphing Polynomial Functions</option>
-          <option value="4.2">4.2 Operations with Polynomials</option>
-          <option value="4.3">4.3 Dividing Polynomials (Synthetic/Long)</option>
-          <option value="4.4">4.4 Factoring Polynomials</option>
-          <option value="4.5">4.5 Solving Polynomial Equations</option>
-          <option value="4.6">4.6 Fundamental Theorem of Algebra</option>
-        </optgroup>
-        <optgroup label="Ch 5: Rational Exponents & Radical Functions">
-          <option value="5.1">5.1 nth Roots and Rational Exponents</option>
-          <option value="5.2">5.2 Properties of Rational Exponents & Radicals</option>
-          <option value="5.3">5.3 Graphing Radical Functions</option>
-          <option value="5.4">5.4 Solving Radical Equations</option>
-          <option value="5.5">5.5 Performing Function Operations</option>
-          <option value="5.6">5.6 Inverse of a Function</option>
-        </optgroup>
-        <optgroup label="Ch 6: Exponential & Logarithmic Functions">
-          <option value="6.1">6.1 Exponential Growth and Decay</option>
-          <option value="6.2">6.2 The Natural Base e</option>
-          <option value="6.3">6.3 Logarithms & Logarithmic Functions</option>
-          <option value="6.4">6.5 Properties of Logarithms</option>
-          <option value="6.5">6.6 Solving Exponential & Logarithmic Equations</option>
-        </optgroup>
-        <optgroup label="Ch 7: Rational Functions">
-          <option value="7.1">7.1 Inverse Variation & Rational Functions</option>
-          <option value="7.2">7.2 Graphing Rational Functions</option>
-          <option value="7.3">7.3 Multiplying & Dividing Rational Expressions</option>
-          <option value="7.4">7.4 Adding & Subtracting Rational Expressions</option>
-          <option value="7.5">7.5 Solving Rational Equations</option>
-        </optgroup>
-        <optgroup label="Ch 8: Sequences & Series">
-          <option value="8.1">8.1 Defining & Using Sequences & Series</option>
-          <option value="8.2">8.2 Arithmetic Sequences & Series</option>
-          <option value="8.3">8.3 Geometric Sequences & Series</option>
-        </optgroup>
-      </select>
-    </div>
-
-    <div style="display: flex; gap: 16px;">
+  <div class="control-panel" role="region" aria-label="Quiz controls">
+    <div class="controls-row">
       <div class="form-group" style="flex: 1;">
-        <label for="numQuestions">Number of Questions:</label>
-        <input type="number" id="numQuestions" min="1" max="15" value="5">
-      </div>
-      <div class="form-group" style="flex: 1;">
-        <label for="formatSelect">Format:</label>
-        <select id="formatSelect">
-          <option value="free">Free Response</option>
-          <option value="mc">Multiple Choice</option>
+        <label for="chapterSelect">Select Chapter & Section</label>
+        <select id="chapterSelect" aria-label="Chapter and section selector">
+          <optgroup label="Ch 1: Linear Functions & Systems">
+            <option value="1.1">1.1 Parent Functions & Transformations</option>
+            <option value="1.2">1.2 Transformations of Absolute Value Functions</option>
+            <option value="1.3">1.3 Modeling with Linear Functions</option>
+            <option value="1.4">1.4 Solving Linear Systems in Three Variables</option>
+          </optgroup>
+          <optgroup label="Ch 2: Quadratic Functions">
+            <option value="2.1">2.1 Transformations of Quadratic Functions</option>
+            <option value="2.2">2.2 Characteristics of Quadratic Functions</option>
+            <option value="2.3">2.3 Focus and Directrix of a Parabola</option>
+            <option value="2.4">2.4 Modeling with Quadratic Functions</option>
+          </optgroup>
+          <optgroup label="Ch 3: Quadratic Equations & Complex Numbers">
+            <option value="3.1">3.1 Solving Quadratic Equations</option>
+            <option value="3.2">3.2 Complex Numbers</option>
+            <option value="3.3">3.3 Completing the Square</option>
+            <option value="3.4">3.4 Using the Quadratic Formula</option>
+            <option value="3.5">3.5 Solving Nonlinear Systems</option>
+          </optgroup>
+          <optgroup label="Ch 4: Polynomial Functions">
+            <option value="4.1">4.1 Graphing Polynomial Functions</option>
+            <option value="4.2">4.2 Operations with Polynomials</option>
+            <option value="4.3">4.3 Dividing Polynomials (Synthetic/Long)</option>
+            <option value="4.4">4.4 Factoring Polynomials</option>
+            <option value="4.5">4.5 Solving Polynomial Equations</option>
+            <option value="4.6">4.6 Fundamental Theorem of Algebra</option>
+          </optgroup>
+          <optgroup label="Ch 5: Rational Exponents & Radical Functions">
+            <option value="5.1">5.1 nth Roots and Rational Exponents</option>
+            <option value="5.2">5.2 Properties of Rational Exponents & Radicals</option>
+            <option value="5.3">5.3 Graphing Radical Functions</option>
+            <option value="5.4">5.4 Solving Radical Equations</option>
+            <option value="5.5">5.5 Performing Function Operations</option>
+            <option value="5.6">5.6 Inverse of a Function</option>
+          </optgroup>
+          <optgroup label="Ch 6: Exponential & Logarithmic Functions">
+            <option value="6.1">6.1 Exponential Growth and Decay</option>
+            <option value="6.2">6.2 The Natural Base e</option>
+            <option value="6.3">6.3 Logarithms & Logarithmic Functions</option>
+            <option value="6.4">6.5 Properties of Logarithms</option>
+            <option value="6.5">6.6 Solving Exponential & Logarithmic Equations</option>
+          </optgroup>
+          <optgroup label="Ch 7: Rational Functions">
+            <option value="7.1">7.1 Inverse Variation & Rational Functions</option>
+            <option value="7.2">7.2 Graphing Rational Functions</option>
+            <option value="7.3">7.3 Multiplying & Dividing Rational Expressions</option>
+            <option value="7.4">7.4 Adding & Subtracting Rational Expressions</option>
+            <option value="7.5">7.5 Solving Rational Equations</option>
+          </optgroup>
+          <optgroup label="Ch 8: Sequences & Series">
+            <option value="8.1">8.1 Defining & Using Sequences & Series</option>
+            <option value="8.2">8.2 Arithmetic Sequences & Series</option>
+            <option value="8.3">8.3 Geometric Sequences & Series</option>
+          </optgroup>
         </select>
       </div>
+
+      <div style="display:flex; gap:12px; width:320px;">
+        <div class="form-group" style="flex:1; min-width:120px;">
+          <label for="numQuestions">Number of Questions</label>
+          <input type="number" id="numQuestions" min="1" max="15" value="5">
+        </div>
+        <div class="form-group" style="flex:1; min-width:120px;">
+          <label for="formatSelect">Format</label>
+          <select id="formatSelect">
+            <option value="free">Free Response</option>
+            <option value="mc">Multiple Choice</option>
+          </select>
+        </div>
+      </div>
     </div>
 
-    <div class="btn-group">
+    <div class="btn-group" role="toolbar" aria-label="Quiz actions">
       <button onclick="generateQuiz()">Generate Quiz</button>
       <button class="secondary" onclick="checkAnswers()">Check Answers</button>
       <button class="secondary" onclick="toggleAnswerKey()">Toggle Answer Key</button>
-      <button class="secondary" onclick="window.print()">Print / Export PDF</button>
+      <button class="ghost" onclick="window.print()">Print / Export PDF</button>
     </div>
   </div>
 
   <div class="quiz-output" id="quizContainer">
-    <div style="text-align: center; color: #64748b; margin-top: 40px;" id="placeholder">
+    <div style="text-align: center; color: var(--muted); margin-top: 40px;" id="placeholder">
       Click "Generate Quiz" to create a custom practice test.
     </div>
   </div>
@@ -407,12 +411,12 @@
     let html = `
       <div class="quiz-header">
         <div>
-          <h2>Algebra 2 Honors Practice Quiz</h2>
-          <div>Section ${sec} Practice</div>
+          <h2 style="margin:0;">Algebra 2 Honors Practice Quiz</h2>
+          <div style="color:var(--muted);">Section ${sec} Practice</div>
         </div>
         <div style="text-align: right;">
-          <div>Name: ______________________</div>
-          <div>Date: ______________________</div>
+          <div style="font-weight:600">Name: ______________________</div>
+          <div style="font-weight:600; margin-top:6px;">Date: ______________________</div>
         </div>
       </div>
     `;
@@ -432,7 +436,7 @@
         html += `<div class="options-grid">`;
         options.forEach((opt, idx) => {
           const inputId = `q${i}-opt${idx}`;
-          html += `<div><label for="${inputId}"><input type="radio" name="q${i}" id="${inputId}" value="${escapeHtml(opt)}"> <strong>${String.fromCharCode(65+idx)}.</strong> ${escapeHtml(opt)}</label></div>`;
+          html += `<div class="option"><label for="${inputId}"><input type="radio" name="q${i}" id="${inputId}" value="${escapeHtml(opt)}"> <strong>${String.fromCharCode(65+idx)}.</strong> ${escapeHtml(opt)}</label></div>`;
         });
         html += `</div>`;
 
@@ -440,7 +444,7 @@
         html += `<input type="hidden" id="ans-${i}" value="${escapeHtml(q.ans)}">`;
       } else {
         // free response: add a text input for student's answer
-        html += `<input type="text" id="ans-input-${i}" placeholder="Enter your answer here" style="width:100%; padding:8px; margin-top:8px; border-radius:6px; border:1px solid var(--border);">`;
+        html += `<input type="text" id="ans-input-${i}" placeholder="Enter your answer here" style="width:100%; padding:10px; margin-top:8px; border-radius:8px; border:1px solid var(--border);">`;
       }
 
       html += `</div>`;
@@ -455,7 +459,7 @@
         <h2>Answer Key & Solutions</h2>
     `;
     currentQuizData.forEach((q, idx) => {
-      html += `<p><strong>${idx + 1}.</strong> ${q.ans}</p>`;
+      html += `<p style="margin:6px 0;"><strong>${idx + 1}.</strong> ${q.ans}</p>`;
     });
     html += `</div>`;
 
@@ -468,7 +472,7 @@
 
   // Basic HTML escaping for values placed into attributes
   function escapeHtml(str) {
-    return String(str).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    return String(str).replace(/&/g, '&amp;').replace(/\"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
   }
 
   // Normalize string for comparison: trim, lowercase, collapse spaces
@@ -521,7 +525,7 @@
 
     const results = document.getElementById('quizResults');
     const pct = Math.round((correct / currentQuizData.length) * 100);
-    results.innerHTML = `Score: ${correct} / ${currentQuizData.length} <span class="result-badge" style="background:${pct>=70? '#16a34a':'#dc2626'}; color: white">${pct}%</span>`;
+    results.innerHTML = `Score: ${correct} / ${currentQuizData.length} <span class="result-badge" style="background:${pct>=70? 'var(--success)':'var(--danger)'}; color: white">${pct}%</span>`;
 
     // Reveal answer key when checking
     const key = document.getElementById('answerKeySection');
