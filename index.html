@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Big Ideas Math - Algebra 2 Honors Interactive Quiz</title>
+  <title>Big Ideas Math - Algebra 2 Honors Quiz Generator</title>
   <style>
     :root {
       --primary: #1e3a8a;
@@ -12,10 +12,6 @@
       --card-bg: #ffffff;
       --text: #0f172a;
       --border: #cbd5e1;
-      --correct: #16a34a;
-      --correct-bg: #f0fdf4;
-      --incorrect: #dc2626;
-      --incorrect-bg: #fef2f2;
     }
 
     body {
@@ -65,7 +61,7 @@
       font-size: 0.95rem;
     }
 
-    select, input[type="number"], input[type="text"] {
+    select, input[type="number"] {
       width: 100%;
       padding: 8px 12px;
       border-radius: 6px;
@@ -78,7 +74,6 @@
       display: flex;
       gap: 12px;
       margin-top: 20px;
-      flex-wrap: wrap;
     }
 
     button {
@@ -92,7 +87,6 @@
       font-weight: 600;
       cursor: pointer;
       transition: background-color 0.2s;
-      min-width: 140px;
     }
 
     button:hover {
@@ -105,19 +99,6 @@
 
     button.secondary:hover {
       background-color: #334155;
-    }
-
-    button.check-btn {
-      background-color: #0284c7;
-      margin-top: 10px;
-      padding: 6px 12px;
-      font-size: 0.9rem;
-      width: auto;
-      flex: none;
-    }
-
-    button.check-btn:hover {
-      background-color: #0369a1;
     }
 
     .quiz-output {
@@ -136,40 +117,14 @@
       margin-bottom: 24px;
     }
 
-    .score-banner {
-      background-color: #e0f2fe;
-      border: 1px solid #7dd3fc;
-      border-radius: 6px;
-      padding: 12px 16px;
-      font-size: 1.1rem;
-      font-weight: bold;
-      color: #0369a1;
-      margin-bottom: 24px;
-      text-align: center;
-    }
-
     .question-item {
       margin-bottom: 28px;
-      padding: 16px;
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      background-color: #fff;
-      transition: all 0.2s;
-    }
-
-    .question-item.correct {
-      border-color: var(--correct);
-      background-color: var(--correct-bg);
-    }
-
-    .question-item.incorrect {
-      border-color: var(--incorrect);
-      background-color: var(--incorrect-bg);
+      page-break-inside: avoid;
     }
 
     .question-title {
       font-weight: 600;
-      margin-bottom: 12px;
+      margin-bottom: 8px;
     }
 
     .options-grid {
@@ -177,35 +132,20 @@
       grid-template-columns: 1fr 1fr;
       gap: 8px;
       margin-top: 8px;
+      margin-left: 16px;
     }
 
-    .mc-option {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 8px 12px;
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      cursor: pointer;
-      background-color: #fff;
+    .work-space {
+      height: 60px;
+      border-bottom: 1px dashed #cbd5e1;
+      margin-top: 12px;
     }
 
-    .mc-option:hover {
-      background-color: #f1f5f9;
-    }
-
-    .feedback {
-      margin-top: 10px;
-      font-weight: 600;
-      font-size: 0.95rem;
-    }
-
-    .feedback.correct {
-      color: var(--correct);
-    }
-
-    .feedback.incorrect {
-      color: var(--incorrect);
+    .answer-key {
+      margin-top: 40px;
+      padding-top: 20px;
+      border-top: 3px double #000;
+      page-break-before: always;
     }
 
     .hidden {
@@ -214,8 +154,9 @@
 
     @media print {
       body { background-color: #fff; padding: 0; }
-      .control-panel, header p, .check-btn, .btn-group { display: none; }
+      .control-panel, header p { display: none; }
       .quiz-output { border: none; padding: 0; }
+      button { display: none; }
     }
   </style>
 </head>
@@ -224,7 +165,7 @@
 <div class="container">
   <header>
     <h1>Big Ideas Math: Algebra 2 Honors Quiz Generator</h1>
-    <p>Generate interactive practice quizzes with instant answer checking and feedback.</p>
+    <p>Select chapter sections and parameters to generate dynamic practice quizzes.</p>
   </header>
 
   <div class="control-panel">
@@ -233,13 +174,57 @@
       <select id="chapterSelect">
         <optgroup label="Ch 1: Linear Functions & Systems">
           <option value="1.1">1.1 Parent Functions & Transformations</option>
+          <option value="1.2">1.2 Transformations of Absolute Value Functions</option>
+          <option value="1.3">1.3 Modeling with Linear Functions</option>
+          <option value="1.4">1.4 Solving Linear Systems in Three Variables</option>
+        </optgroup>
+        <optgroup label="Ch 2: Quadratic Functions">
           <option value="2.1">2.1 Transformations of Quadratic Functions</option>
+          <option value="2.2">2.2 Characteristics of Quadratic Functions</option>
+          <option value="2.3">2.3 Focus and Directrix of a Parabola</option>
+          <option value="2.4">2.4 Modeling with Quadratic Functions</option>
+        </optgroup>
+        <optgroup label="Ch 3: Quadratic Equations & Complex Numbers">
+          <option value="3.1">3.1 Solving Quadratic Equations</option>
           <option value="3.2">3.2 Complex Numbers</option>
+          <option value="3.3">3.3 Completing the Square</option>
+          <option value="3.4">3.4 Using the Quadratic Formula</option>
+          <option value="3.5">3.5 Solving Nonlinear Systems</option>
+        </optgroup>
+        <optgroup label="Ch 4: Polynomial Functions">
+          <option value="4.1">4.1 Graphing Polynomial Functions</option>
+          <option value="4.2">4.2 Operations with Polynomials</option>
           <option value="4.3">4.3 Dividing Polynomials (Synthetic/Long)</option>
+          <option value="4.4">4.4 Factoring Polynomials</option>
+          <option value="4.5">4.5 Solving Polynomial Equations</option>
+          <option value="4.6">4.6 Fundamental Theorem of Algebra</option>
+        </optgroup>
+        <optgroup label="Ch 5: Rational Exponents & Radical Functions">
           <option value="5.1">5.1 nth Roots and Rational Exponents</option>
+          <option value="5.2">5.2 Properties of Rational Exponents & Radicals</option>
+          <option value="5.3">5.3 Graphing Radical Functions</option>
+          <option value="5.4">5.4 Solving Radical Equations</option>
+          <option value="5.5">5.5 Performing Function Operations</option>
+          <option value="5.6">5.6 Inverse of a Function</option>
+        </optgroup>
+        <optgroup label="Ch 6: Exponential & Logarithmic Functions">
+          <option value="6.1">6.1 Exponential Growth and Decay</option>
+          <option value="6.2">6.2 The Natural Base e</option>
           <option value="6.3">6.3 Logarithms & Logarithmic Functions</option>
+          <option value="6.4">6.5 Properties of Logarithms</option>
+          <option value="6.5">6.6 Solving Exponential & Logarithmic Equations</option>
+        </optgroup>
+        <optgroup label="Ch 7: Rational Functions">
+          <option value="7.1">7.1 Inverse Variation & Rational Functions</option>
+          <option value="7.2">7.2 Graphing Rational Functions</option>
+          <option value="7.3">7.3 Multiplying & Dividing Rational Expressions</option>
+          <option value="7.4">7.4 Adding & Subtracting Rational Expressions</option>
           <option value="7.5">7.5 Solving Rational Equations</option>
+        </optgroup>
+        <optgroup label="Ch 8: Sequences & Series">
+          <option value="8.1">8.1 Defining & Using Sequences & Series</option>
           <option value="8.2">8.2 Arithmetic Sequences & Series</option>
+          <option value="8.3">8.3 Geometric Sequences & Series</option>
         </optgroup>
       </select>
     </div>
@@ -252,27 +237,28 @@
       <div class="form-group" style="flex: 1;">
         <label for="formatSelect">Format:</label>
         <select id="formatSelect">
-          <option value="mc">Multiple Choice</option>
           <option value="free">Free Response</option>
+          <option value="mc">Multiple Choice</option>
         </select>
       </div>
     </div>
 
     <div class="btn-group">
       <button onclick="generateQuiz()">Generate Quiz</button>
-      <button class="secondary" onclick="checkAllAnswers()">Grade Entire Quiz</button>
+      <button class="secondary" onclick="toggleAnswerKey()">Toggle Answer Key</button>
       <button class="secondary" onclick="window.print()">Print / Export PDF</button>
     </div>
   </div>
 
   <div class="quiz-output" id="quizContainer">
     <div style="text-align: center; color: #64748b; margin-top: 40px;">
-      Click "Generate Quiz" to create an interactive test.
+      Click "Generate Quiz" to create a custom practice test.
     </div>
   </div>
 </div>
 
 <script>
+  // Helper functions for random integer generation
   function rand(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
   }
@@ -283,10 +269,7 @@
     return val;
   }
 
-  function normalizeStr(str) {
-    return str.toString().toLowerCase().replace(/\s+/g, '').replace(/,/g, '');
-  }
-
+  // Question Generators by Section
   const generators = {
     "1.1": () => {
       const h = rand(-5, 5);
@@ -294,39 +277,35 @@
       const signH = h >= 0 ? `- ${h}` : `+ ${Math.abs(h)}`;
       const signK = k >= 0 ? `+ ${k}` : `- ${Math.abs(k)}`;
       return {
-        prompt: `Describe the transformations from f(x) = |x| to g(x) = |x ${signH}| ${signK}.`,
-        ans: `Shift ${h >= 0 ? 'right' : 'left'} ${Math.abs(h)}, ${k >= 0 ? 'up' : 'down'} ${Math.abs(k)}`,
-        acceptAnswers: [`shift ${h >= 0 ? 'right' : 'left'} ${Math.abs(h)}, ${k >= 0 ? 'up' : 'down'} ${Math.abs(k)}`],
+        prompt: `Describe the transformations from the parent function f(x) = |x| to g(x) = |x ${signH}| ${signK}.`,
+        ans: `Horizontal shift ${h >= 0 ? 'right' : 'left'} by ${Math.abs(h)} unit(s), Vertical shift ${k >= 0 ? 'up' : 'down'} by ${Math.abs(k)} unit(s).`,
         distractors: [
-          `Shift ${h >= 0 ? 'left' : 'right'} ${Math.abs(h)}, ${k >= 0 ? 'down' : 'up'} ${Math.abs(k)}`,
-          `Shift ${h >= 0 ? 'right' : 'left'} ${Math.abs(h)}, ${k >= 0 ? 'down' : 'up'} ${Math.abs(k)}`,
-          `Shift ${h >= 0 ? 'left' : 'right'} ${Math.abs(h)}, ${k >= 0 ? 'up' : 'down'} ${Math.abs(k)}`
+          `Horizontal shift ${h >= 0 ? 'left' : 'right'} by ${Math.abs(h)} unit(s), Vertical shift ${k >= 0 ? 'down' : 'up'} by ${Math.abs(k)} unit(s).`,
+          `Vertical shift ${h >= 0 ? 'right' : 'left'} by ${Math.abs(h)} unit(s), Horizontal shift ${k >= 0 ? 'up' : 'down'} by ${Math.abs(k)} unit(s).`,
+          `Reflection across x-axis and shift up by ${Math.abs(h + k)} unit(s).`
         ]
       };
     },
     "2.1": () => {
       const a = randNonZero(-4, 4);
-      const h = rand(-5, 5);
-      const k = rand(-5, 5);
+      const h = rand(-3, 3);
+      const k = rand(-3, 3);
       return {
-        prompt: `Identify the vertex of f(x) = ${a === 1 ? '' : a === -1 ? '-' : a}(x ${h >= 0 ? '- ' + h : '+ ' + Math.abs(h)})² ${k >= 0 ? '+ ' + k : '- ' + Math.abs(k)}.`,
+        prompt: `Identify the vertex of the quadratic function f(x) = ${a === 1 ? '' : a === -1 ? '-' : a}(x ${h >= 0 ? '- ' + h : '+ ' + Math.abs(h)})² ${k >= 0 ? '+ ' + k : '- ' + Math.abs(k)}.`,
         ans: `(${h}, ${k})`,
-        acceptAnswers: [`(${h},${k})`, `(${h}, ${k})`, `${h},${k}`],
         distractors: [`(${-h}, ${k})`, `(${h}, ${-k})`, `(${-h}, ${-k})`]
       };
     },
     "3.2": () => {
-      const a = rand(2, 5);
-      const b = rand(2, 5);
-      const c = rand(2, 5);
-      const d = rand(2, 5);
+      const a = rand(2, 6);
+      const b = rand(2, 6);
+      const c = rand(2, 6);
+      const d = rand(2, 6);
       const real = a * c - b * d;
       const imag = a * d + b * c;
-      const ansText = `${real} ${imag >= 0 ? '+' : '-'} ${Math.abs(imag)}i`;
       return {
-        prompt: `Multiply (${a} + ${b}i)(${c} + ${d}i). Write in a + bi form.`,
-        ans: ansText,
-        acceptAnswers: [`${real}+${imag}i`, `${real}+${imag}i`, `${real} + ${imag}i`],
+        prompt: `Simplify the complex product: (${a} + ${b}i)(${c} + ${d}i). Write in a + bi form.`,
+        ans: `${real} + ${imag}i`,
         distractors: [
           `${a * c + b * d} + ${imag}i`,
           `${real} - ${imag}i`,
@@ -336,14 +315,15 @@
     },
     "4.3": () => {
       const r = randNonZero(-3, 3);
+      const a = 1;
       const b = rand(-4, 4);
       const c = rand(-5, 5);
+      // P(x) = (x - r)(x + b) + c
       const p1 = b - r;
       const p0 = -r * b + c;
       return {
         prompt: `Find the remainder when P(x) = x² ${p1 >= 0 ? '+ ' + p1 : '- ' + Math.abs(p1)}x ${p0 >= 0 ? '+ ' + p0 : '- ' + Math.abs(p0)} is divided by (x - ${r}).`,
         ans: `${c}`,
-        acceptAnswers: [`${c}`],
         distractors: [`${c + 2}`, `${-c}`, `${c - r}`]
       };
     },
@@ -352,9 +332,8 @@
       const exp = rand(2, 3);
       const val = Math.pow(base, exp);
       return {
-        prompt: `Evaluate: ${val}^(1/${exp}).`,
+        prompt: `Evaluate the expression: ${val}^(1/${exp}).`,
         ans: `${base}`,
-        acceptAnswers: [`${base}`],
         distractors: [`${base * 2}`, `${Math.pow(val, exp)}`, `${base + 1}`]
       };
     },
@@ -363,9 +342,8 @@
       const x = rand(1, 4);
       const val = Math.pow(b, x);
       return {
-        prompt: `Evaluate: log_${b}(${val}).`,
+        prompt: `Evaluate the logarithm: log_${b}(${val}).`,
         ans: `${x}`,
-        acceptAnswers: [`${x}`],
         distractors: [`${val / b}`, `${x + 1}`, `${Math.pow(b, val)}`]
       };
     },
@@ -375,9 +353,8 @@
       const sol = a * b;
       return {
         prompt: `Solve for x: ${a} / x = 1 / ${b}.`,
-        ans: `${sol}`,
-        acceptAnswers: [`${sol}`, `x=${sol}`, `x = ${sol}`],
-        distractors: [`${a + b}`, `${b / a}`, `${sol + 1}`]
+        ans: `x = ${sol}`,
+        distractors: [`x = ${a + b}`, `x = ${b / a}`, `x = ${sol + 1}`]
       };
     },
     "8.2": () => {
@@ -386,15 +363,14 @@
       const n = rand(5, 10);
       const an = a1 + (n - 1) * d;
       return {
-        prompt: `Find the ${n}th term (a_${n}) of the arithmetic sequence with a₁ = ${a1} and d = ${d}.`,
-        ans: `${an}`,
-        acceptAnswers: [`${an}`, `a_${n}=${an}`, `a_${n} = ${an}`],
-        distractors: [`${an + d}`, `${a1 * Math.pow(d, n-1)}`, `${an - 2}`]
+        prompt: `Find the ${n}th term of the arithmetic sequence where a₁ = ${a1} and d = ${d}.`,
+        ans: `a_${n} = ${an}`,
+        distractors: [`a_${n} = ${an + d}`, `a_${n} = ${a1 * Math.pow(d, n-1)}`, `a_${n} = ${an - 2}`]
       };
     }
   };
 
-  let quizQuestions = [];
+  let currentQuizData = [];
 
   function generateQuiz() {
     const sec = document.getElementById("chapterSelect").value;
@@ -403,117 +379,63 @@
     const container = document.getElementById("quizContainer");
 
     const gen = generators[sec] || generators["1.1"];
-    quizQuestions = [];
+    currentQuizData = [];
 
     let html = `
       <div class="quiz-header">
         <div>
-          <h2>Algebra 2 Honors Interactive Practice</h2>
-          <div>Section ${sec} Quiz</div>
+          <h2>Algebra 2 Honors Practice Quiz</h2>
+          <div>Section ${sec} Practice</div>
         </div>
-        <div>
+        <div style="text-align: right;">
           <div>Name: ______________________</div>
+          <div>Date: ______________________</div>
         </div>
       </div>
-      <div id="scoreBanner" class="scoreBanner hidden"></div>
     `;
 
-    for (let i = 0; i < count; i++) {
+    for (let i = 1; i <= count; i++) {
       const q = gen();
-      quizQuestions.push({ ...q, format, checked: false });
+      currentQuizData.push(q);
 
       html += `
-        <div class="question-item" id="qItem_${i}">
-          <div class="question-title">${i + 1}. ${q.prompt}</div>
+        <div class="question-item">
+          <div class="question-title">${i}. ${q.prompt}</div>
       `;
 
       if (format === "mc") {
         const options = [q.ans, ...q.distractors].sort(() => Math.random() - 0.5);
+        const labels = ['A', 'B', 'C', 'D'];
         html += `<div class="options-grid">`;
-        options.forEach((opt, optIdx) => {
-          html += `
-            <label class="mc-option">
-              <input type="radio" name="q_${i}" value="${opt}">
-              <span>${opt}</span>
-            </label>
-          `;
+        options.forEach((opt, idx) => {
+          html += `<div><strong>${labels[idx]}.</strong> ${opt}</div>`;
         });
         html += `</div>`;
       } else {
-        html += `
-          <div>
-            <input type="text" id="input_${i}" placeholder="Enter your answer..." autocomplete="off">
-          </div>
-        `;
+        html += `<div class="work-space"></div>`;
       }
 
-      html += `
-          <button class="check-btn" onclick="checkAnswer(${i})">Check Answer</button>
-          <div class="feedback hidden" id="feedback_${i}"></div>
-        </div>
-      `;
+      html += `</div>`;
     }
+
+    // Answer Key Section
+    html += `
+      <div id="answerKeySection" class="answer-key hidden">
+        <h2>Answer Key & Solutions</h2>
+    `;
+    currentQuizData.forEach((q, idx) => {
+      html += `<p><strong>${idx + 1}.</strong> ${q.ans}</p>`;
+    });
+    html += `</div>`;
 
     container.innerHTML = html;
   }
 
-  function checkAnswer(idx) {
-    const q = quizQuestions[idx];
-    const itemEl = document.getElementById(`qItem_${idx}`);
-    const fbEl = document.getElementById(`feedback_${idx}`);
-    let userAns = "";
-
-    if (q.format === "mc") {
-      const selected = document.querySelector(`input[name="q_${idx}"]:checked`);
-      if (selected) userAns = selected.value;
-    } else {
-      const input = document.getElementById(`input_${idx}`);
-      if (input) userAns = input.value.trim();
+  function toggleAnswerKey() {
+    const key = document.getElementById("answerKeySection");
+    if (key) {
+      key.classList.toggle("hidden");
     }
-
-    if (!userAns) {
-      fbEl.className = "feedback incorrect";
-      fbEl.innerText = "Please provide an answer before checking.";
-      fbEl.classList.remove("hidden");
-      return false;
-    }
-
-    let isCorrect = false;
-    if (q.format === "mc") {
-      isCorrect = (userAns === q.ans);
-    } else {
-      const normUser = normalizeStr(userAns);
-      isCorrect = q.acceptAnswers.some(ans => normalizeStr(ans) === normUser);
-    }
-
-    fbEl.classList.remove("hidden");
-    if (isCorrect) {
-      itemEl.className = "question-item correct";
-      fbEl.className = "feedback correct";
-      fbEl.innerText = "✓ Correct!";
-    } else {
-      itemEl.className = "question-item incorrect";
-      fbEl.className = "feedback incorrect";
-      fbEl.innerText = `✗ Incorrect. Correct answer: ${q.ans}`;
-    }
-
-    q.checked = true;
-    return isCorrect;
-  }
-
-  function checkAllAnswers() {
-    if (quizQuestions.length === 0) return;
-
-    let score = 0;
-    quizQuestions.forEach((_, idx) => {
-      const correct = checkAnswer(idx);
-      if (correct) score++;
-    });
-
-    const banner = document.getElementById("scoreBanner");
-    const pct = Math.round((score / quizQuestions.length) * 100);
-    banner.className = "score-banner";
-    banner.innerText = `Quiz Completed! Score: ${score} / ${quizQuestions.length} (${pct}%)`;
   }
 </script>
 
