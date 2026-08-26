@@ -7,175 +7,280 @@
   <style>
     :root {
       --primary: #1e3a8a;
-      --primary-600: #1d4ed8;
-      --muted: #64748b;
-      --bg: #f1f5f9;
+      --primary-hover: #1d4ed8;
+      --bg: #f8fafc;
       --card-bg: #ffffff;
       --text: #0f172a;
-      --border: #e2e8f0;
-      --success: #16a34a;
-      --danger: #dc2626;
-      --glass: rgba(255,255,255,0.6);
+      --border: #cbd5e1;
+      --correct: #16a34a;
+      --correct-bg: #f0fdf4;
+      --incorrect: #dc2626;
+      --incorrect-bg: #fef2f2;
     }
 
-    /* Reset / base */
-    * { box-sizing: border-box; }
-
     body {
-      font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
-      background: linear-gradient(180deg, #f8fafc 0%, var(--bg) 100%);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: var(--bg);
       color: var(--text);
       margin: 0;
-      padding: 28px;
+      padding: 24px;
       line-height: 1.5;
-      -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
     }
 
     .container {
-      max-width: 980px;
+      max-width: 960px;
       margin: 0 auto;
     }
 
     header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 16px;
-      margin-bottom: 20px;
-      padding: 18px 22px;
-      border-radius: 12px;
-      background: linear-gradient(90deg, rgba(29,78,216,0.08), rgba(30,58,138,0.06));
-      border: 1px solid var(--border);
-      box-shadow: 0 6px 18px rgba(15,23,42,0.03);
+      text-align: center;
+      margin-bottom: 24px;
+      padding-bottom: 16px;
+      border-bottom: 2px solid var(--border);
     }
 
-    header h1 {
+    h1 {
       color: var(--primary);
-      margin: 0 0 6px 0;
-      font-size: 1.4rem;
-      line-height: 1.1;
+      margin: 0 0 8px 0;
+      font-size: 1.8rem;
     }
-
-    header p { margin: 0; color: var(--muted); font-size: 0.95rem; }
-
-    .brand-note { font-size: 0.85rem; color: var(--muted); text-align: right; }
 
     .control-panel {
       background-color: var(--card-bg);
-      padding: 18px;
-      border-radius: 10px;
+      padding: 20px;
+      border-radius: 8px;
       border: 1px solid var(--border);
-      box-shadow: 0 3px 10px rgba(2,6,23,0.03);
-      margin-bottom: 22px;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+      margin-bottom: 24px;
     }
 
-    .controls-row { display: flex; gap: 16px; align-items: center; }
+    .form-group {
+      margin-bottom: 16px;
+    }
 
-    .form-group { margin-bottom: 8px; flex: 1; }
-
-    label { display: block; font-weight: 600; margin-bottom: 6px; font-size: 0.92rem; color: #0f172a; }
+    label.group-label {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-weight: 600;
+      margin-bottom: 8px;
+      font-size: 0.95rem;
+    }
 
     select, input[type="number"], input[type="text"] {
       width: 100%;
-      padding: 10px 12px;
-      border-radius: 10px;
+      padding: 8px 12px;
+      border-radius: 6px;
       border: 1px solid var(--border);
       font-size: 1rem;
       box-sizing: border-box;
-      background: linear-gradient(180deg, #fff, #fbfdff);
-      transition: box-shadow 0.12s, transform 0.06s;
     }
 
-    select:focus, input[type="number"]:focus, input[type="text"]:focus { outline: none; box-shadow: 0 4px 14px rgba(29,78,216,0.08); transform: translateY(-1px); }
+    .checkbox-container {
+      max-height: 280px;
+      overflow-y: auto;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 12px;
+      background-color: #f1f5f9;
+    }
 
-    .btn-group { display: flex; gap: 12px; margin-top: 6px; }
+    .chapter-group {
+      margin-bottom: 14px;
+    }
+
+    .chapter-title {
+      font-weight: 700;
+      font-size: 0.85rem;
+      color: var(--primary);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 6px;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 2px;
+    }
+
+    .section-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 6px;
+    }
+
+    .checkbox-label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.85rem;
+      cursor: pointer;
+      background: #fff;
+      padding: 6px 10px;
+      border-radius: 4px;
+      border: 1px solid #e2e8f0;
+    }
+
+    .checkbox-label:hover {
+      background-color: #f8fafc;
+    }
+
+    .btn-group {
+      display: flex;
+      gap: 12px;
+      margin-top: 20px;
+      flex-wrap: wrap;
+    }
 
     button {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      padding: 10px 14px;
-      border-radius: 10px;
-      border: none;
-      cursor: pointer;
-      font-weight: 700;
-      color: white;
+      flex: 1;
       background-color: var(--primary);
-      transition: transform 0.08s, box-shadow 0.12s, background-color 0.12s;
-      box-shadow: 0 6px 14px rgba(16,24,40,0.06);
+      color: white;
+      border: none;
+      padding: 10px 16px;
+      border-radius: 6px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 0.2s;
+      min-width: 140px;
     }
 
-    button:hover { transform: translateY(-2px); background-color: var(--primary-600); }
-    button.secondary { background-color: #475569; }
-    button.secondary:hover { background-color: #334155; }
-    button.ghost { background: transparent; color: var(--primary); border: 1px solid var(--border); box-shadow: none; }
+    button:hover {
+      background-color: var(--primary-hover);
+    }
+
+    button.secondary {
+      background-color: #475569;
+    }
+
+    button.secondary:hover {
+      background-color: #334155;
+    }
+
+    button.small-btn {
+      padding: 2px 8px;
+      font-size: 0.75rem;
+      background-color: #64748b;
+      min-width: auto;
+      flex: none;
+    }
+
+    button.check-btn {
+      background-color: #0284c7;
+      margin-top: 10px;
+      padding: 6px 12px;
+      font-size: 0.9rem;
+      width: auto;
+      flex: none;
+    }
+
+    button.check-btn:hover {
+      background-color: #0369a1;
+    }
 
     .quiz-output {
       background-color: var(--card-bg);
-      padding: 26px;
-      border-radius: 10px;
+      padding: 32px;
+      border-radius: 8px;
       border: 1px solid var(--border);
-      min-height: 320px;
-      box-shadow: 0 4px 18px rgba(2,6,23,0.03);
+      min-height: 300px;
     }
 
     .quiz-header {
       display: flex;
       justify-content: space-between;
-      align-items: flex-start;
-      border-bottom: 2px solid rgba(2,6,23,0.06);
+      border-bottom: 2px solid #000;
       padding-bottom: 12px;
-      margin-bottom: 18px;
+      margin-bottom: 24px;
+    }
+
+    .score-banner {
+      background-color: #e0f2fe;
+      border: 1px solid #7dd3fc;
+      border-radius: 6px;
+      padding: 12px 16px;
+      font-size: 1.1rem;
+      font-weight: bold;
+      color: #0369a1;
+      margin-bottom: 24px;
+      text-align: center;
     }
 
     .question-item {
-      margin-bottom: 18px;
-      page-break-inside: avoid;
-      padding: 12px;
+      margin-bottom: 28px;
+      padding: 16px;
+      border: 1px solid var(--border);
       border-radius: 8px;
-      transition: background 0.12s, border-color 0.12s;
-      border: 1px solid transparent;
+      background-color: #fff;
+      transition: all 0.2s;
     }
 
-    .question-item.correct { border-color: rgba(22,163,74,0.18); background: rgba(16,185,129,0.04); }
-    .question-item.incorrect { border-color: rgba(220,38,38,0.12); background: rgba(254,242,242,0.6); }
+    .question-item.correct {
+      border-color: var(--correct);
+      background-color: var(--correct-bg);
+    }
 
-    .question-title { font-weight: 700; margin-bottom: 8px; }
+    .question-item.incorrect {
+      border-color: var(--incorrect);
+      background-color: var(--incorrect-bg);
+    }
 
-    .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 8px; margin-left: 12px; }
+    .question-title {
+      font-weight: 600;
+      margin-bottom: 12px;
+    }
 
-    .option { padding: 8px 10px; border-radius: 8px; border: 1px solid var(--border); background: linear-gradient(180deg,#fff,#fbfdff); }
+    .section-tag {
+      font-size: 0.75rem;
+      background-color: #e2e8f0;
+      color: #334155;
+      padding: 2px 6px;
+      border-radius: 4px;
+      margin-left: 8px;
+    }
 
-    .option label { display: flex; align-items: center; gap: 10px; cursor: pointer; user-select: none; }
+    .options-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-top: 8px;
+    }
 
-    input[type="radio"] { accent-color: var(--primary); width: 18px; height: 18px; }
+    .mc-option {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      cursor: pointer;
+      background-color: #fff;
+    }
 
-    .work-space { height: 64px; border-bottom: 1px dashed #cbd5e1; margin-top: 12px; }
+    .mc-option:hover {
+      background-color: #f1f5f9;
+    }
 
-    .answer-key { margin-top: 26px; padding-top: 18px; border-top: 3px double #000; page-break-before: always; }
+    .feedback {
+      margin-top: 10px;
+      font-weight: 600;
+      font-size: 0.95rem;
+    }
 
-    .hidden { display: none; }
+    .feedback.correct {
+      color: var(--correct);
+    }
 
-    .result-badge { display: inline-block; padding: 6px 10px; border-radius: 999px; font-weight: 700; margin-left: 8px; }
+    .feedback.incorrect {
+      color: var(--incorrect);
+    }
 
-    #quizResults { margin-top: 12px; }
-
-    @media (max-width: 720px) {
-      .options-grid { grid-template-columns: 1fr; }
-      header { flex-direction: column; align-items: flex-start; }
-      .controls-row { flex-direction: column; }
+    .hidden {
+      display: none;
     }
 
     @media print {
       body { background-color: #fff; padding: 0; }
-      .control-panel, header p { display: none; }
-      .quiz-output { border: none; padding: 0; box-shadow:none }
-      button { display: none; }
+      .control-panel, header p, .check-btn, .btn-group, .small-btn { display: none; }
+      .quiz-output { border: none; padding: 0; }
     }
   </style>
 </head>
@@ -183,379 +288,783 @@
 
 <div class="container">
   <header>
-    <div>
-      <h1>Big Ideas Math: Algebra 2 Honors Quiz Generator</h1>
-      <p>Select chapter sections and parameters to generate custom practice quizzes.</p>
-    </div>
-    <div class="brand-note">Quick generator • Print-friendly • Answers toggle</div>
+    <h1>Big Ideas Math: Algebra 2 Honors Quiz Generator</h1>
+    <p>Comprehensive practice builder for Chapters 1–10 with multi-section selection & instant grading.</p>
   </header>
 
-  <div class="control-panel" role="region" aria-label="Quiz controls">
-    <div class="controls-row">
-      <div class="form-group" style="flex: 1;">
-        <label for="chapterSelect">Select Chapter & Section</label>
-        <select id="chapterSelect" aria-label="Chapter and section selector">
-          <optgroup label="Ch 1: Linear Functions & Systems">
-            <option value="1.1">1.1 Parent Functions & Transformations</option>
-            <option value="1.2">1.2 Transformations of Absolute Value Functions</option>
-            <option value="1.3">1.3 Modeling with Linear Functions</option>
-            <option value="1.4">1.4 Solving Linear Systems in Three Variables</option>
-          </optgroup>
-          <optgroup label="Ch 2: Quadratic Functions">
-            <option value="2.1">2.1 Transformations of Quadratic Functions</option>
-            <option value="2.2">2.2 Characteristics of Quadratic Functions</option>
-            <option value="2.3">2.3 Focus and Directrix of a Parabola</option>
-            <option value="2.4">2.4 Modeling with Quadratic Functions</option>
-          </optgroup>
-          <optgroup label="Ch 3: Quadratic Equations & Complex Numbers">
-            <option value="3.1">3.1 Solving Quadratic Equations</option>
-            <option value="3.2">3.2 Complex Numbers</option>
-            <option value="3.3">3.3 Completing the Square</option>
-            <option value="3.4">3.4 Using the Quadratic Formula</option>
-            <option value="3.5">3.5 Solving Nonlinear Systems</option>
-          </optgroup>
-          <optgroup label="Ch 4: Polynomial Functions">
-            <option value="4.1">4.1 Graphing Polynomial Functions</option>
-            <option value="4.2">4.2 Operations with Polynomials</option>
-            <option value="4.3">4.3 Dividing Polynomials (Synthetic/Long)</option>
-            <option value="4.4">4.4 Factoring Polynomials</option>
-            <option value="4.5">4.5 Solving Polynomial Equations</option>
-            <option value="4.6">4.6 Fundamental Theorem of Algebra</option>
-          </optgroup>
-          <optgroup label="Ch 5: Rational Exponents & Radical Functions">
-            <option value="5.1">5.1 nth Roots and Rational Exponents</option>
-            <option value="5.2">5.2 Properties of Rational Exponents & Radicals</option>
-            <option value="5.3">5.3 Graphing Radical Functions</option>
-            <option value="5.4">5.4 Solving Radical Equations</option>
-            <option value="5.5">5.5 Performing Function Operations</option>
-            <option value="5.6">5.6 Inverse of a Function</option>
-          </optgroup>
-          <optgroup label="Ch 6: Exponential & Logarithmic Functions">
-            <option value="6.1">6.1 Exponential Growth and Decay</option>
-            <option value="6.2">6.2 The Natural Base e</option>
-            <option value="6.3">6.3 Logarithms & Logarithmic Functions</option>
-            <option value="6.4">6.5 Properties of Logarithms</option>
-            <option value="6.5">6.6 Solving Exponential & Logarithmic Equations</option>
-          </optgroup>
-          <optgroup label="Ch 7: Rational Functions">
-            <option value="7.1">7.1 Inverse Variation & Rational Functions</option>
-            <option value="7.2">7.2 Graphing Rational Functions</option>
-            <option value="7.3">7.3 Multiplying & Dividing Rational Expressions</option>
-            <option value="7.4">7.4 Adding & Subtracting Rational Expressions</option>
-            <option value="7.5">7.5 Solving Rational Equations</option>
-          </optgroup>
-          <optgroup label="Ch 8: Sequences & Series">
-            <option value="8.1">8.1 Defining & Using Sequences & Series</option>
-            <option value="8.2">8.2 Arithmetic Sequences & Series</option>
-            <option value="8.3">8.3 Geometric Sequences & Series</option>
-          </optgroup>
-        </select>
-      </div>
+  <div class="control-panel">
+    <div class="form-group">
+      <label class="group-label">
+        <span>Select Sections (Check all that apply):</span>
+        <span>
+          <button class="small-btn" onclick="toggleAllSections(true)">Select All</button>
+          <button class="small-btn" onclick="toggleAllSections(false)">Clear All</button>
+        </span>
+      </label>
 
-      <div style="display:flex; gap:12px; width:320px;">
-        <div class="form-group" style="flex:1; min-width:120px;">
-          <label for="numQuestions">Number of Questions</label>
-          <input type="number" id="numQuestions" min="1" max="15" value="5">
+      <div class="checkbox-container">
+        <!-- Chapter 1 -->
+        <div class="chapter-group">
+          <div class="chapter-title">Ch 1: Linear Functions & Systems</div>
+          <div class="section-grid">
+            <label class="checkbox-label"><input type="checkbox" class="section-cb" value="1.1" checked> 1.1 Parent Functions & Transformations</label>
+            <label class="checkbox-label"><input type="checkbox" class="section-cb" value="1.2"> 1.2 Transformations of Linear/Abs Value</label>
+            <label class="checkbox-label"><input type="checkbox" class="section-cb" value="1.3"> 1.3 Modeling with Linear Functions</label>
+            <label class="checkbox-label"><input type="checkbox" class="section-cb" value="1.4"> 1.4 Solving Linear Systems in 3 Variables</label>
+          </div>
         </div>
-        <div class="form-group" style="flex:1; min-width:120px;">
-          <label for="formatSelect">Format</label>
-          <select id="formatSelect">
-            <option value="free">Free Response</option>
-            <option value="mc">Multiple Choice</option>
-          </select>
+
+        <!-- Chapter 2 -->
+        <div class="chapter-group">
+          <div class="chapter-title">Ch 2: Quadratic Functions</div>
+          <div class="section-grid">
+            <label class="checkbox-label"><input type="checkbox" class="section-cb" value="2.1" checked> 2.1 Transformations of Quadratic Functions</label>
+            <label class="checkbox-label"><input type="checkbox" class="section-cb" value="2.2"> 2.2 Characteristics of Quadratic Functions</label>
+            <label class="checkbox-label"><input type="checkbox" class="section-cb" value="2.3"> 2.3 Focus and Directrix of a Parabola</label>
+            <label class="checkbox-label"><input type="checkbox" class="section-cb" value="2.4"> 2.4 Modeling with Quadratic Functions</label>
+          </div>
+        </div>
+
+        <!-- Chapter 3 -->
+        <div class="chapter-group">
+          <div class="chapter-title">Ch 3: Quadratic Equations & Complex Numbers</div>
+          <div class="section-grid">
+            <label class="checkbox-label"><input type="checkbox" class="section-cb" value="3.1"> 3.1 Solving Quadratic Equations</label>
+            <label class="checkbox-label"><input type="checkbox" class="section-cb" value="3.2"> 3.2 Complex Numbers</label>
+            <label class="checkbox-label"><input type="checkbox" class="section-cb" value="3.3"> 3.3 Completing the Square</label>
+            <label class="checkbox-label"><input type="checkbox" class="section-cb" value="3.4"> 3.4 Quadratic Formula & Discriminant</label>
+            <label class="checkbox-label"><input type="checkbox" class="section-cb" value="3.5"> 3.5 Solving Nonlinear Systems</label>
+            <label class="checkbox-label"><input type="checkbox" class="section-cb" value="3.6"> 3.6 Quadratic Inequalities</label>
+          </div>
+        </div>
+
+        <!-- Chapter 4 -->
+        <div class="chapter-group">
+          <div class="chapter-title">Ch 4: Polynomial Functions</div>
+          <div class="section-grid">
+            <label class="checkbox-label"><input type="checkbox" class="section-cb" value="4.1"> 4.1 Graphing Polynomial Functions</label>
+            <label class="checkbox-label"><input type="checkbox" class="section-cb" value="4.2"> 4.2 Operations with Polynomials</label>
+            <label class="checkbox-label"><input type="checkbox" class="section-cb" value="4.3"> 4.3 Dividing Polynomials</label>
+            <label class="checkbox-label"><input type="checkbox" class="section-cb" value="4.4"> 4.4 Factoring Polynomials</label>
+            <label class="checkbox-label"><input type="checkbox" class="section-cb" value="4.5"> 4.5 Solving Polynomial Equations</label>
+            <label class="checkbox-label"><input type="checkbox" class="section-cb" value="4.6"> 4.6 Fundamental Theorem of Algebra</label>
+            <label class="checkbox-label"><input type="checkbox" class="section-cb" value="4.7"> 4.7 Transformations of Polynomials</label>
+            <label class="checkbox-label"><input type="checkbox" class="section-cb" value="4.8"> 4.8 Analyzing Graphs of Polynomials</label>
+          </div>
+        </div>
+
+        <!-- Chapter 5 -->
+        <div class="chapter-group">
+          <div class="chapter-title">Ch 5: Rational Exponents & Radical Functions</div>
+          <div class="section-grid">
+            <label class="checkbox-label"><input type="checkbox" class="section-cb" value="5.1"> 5.1 nth Roots & Rational Exponents</label>
+            <label class="checkbox-label"><input type="checkbox" class="section-cb" value="5.2"> 5.2 Properties of Rational Exponents</label>
+            <label class="checkbox-label"><input type="checkbox" class="section-cb" value="5.3"> 5.3 Graphing Radical Functions</label>
+            <label class="checkbox-label"><input type="checkbox" class="section-cb" value="5.4"> 5.4 Solving Radical Equations</label>
+            <label class="checkbox-label"><input type="checkbox" class="section-cb" value="5.5"> 5.5 Performing Function Operations</label>
+            <label class="checkbox-label"><input type="checkbox" class="section-cb" value="5.6"> 5.6 Inverse of a Function</label>
+          </div>
+        </div>
+
+        <!-- Chapter 6 -->
+        <div class="chapter-group">
+          <div class="chapter-title">Ch 6: Exponential & Logarithmic Functions</div>
+          <div class="section-grid">
+            <label class="checkbox-label"><input type="checkbox" class="section-cb" value="6.1"> 6.1 Exponential Growth & Decay</label>
+            <label class="checkbox-label"><input type="checkbox" class="section-cb" value="6.2"> 6.2 The Natural Base e</label>
+            <label class="checkbox-label"><input type="checkbox" class="section-cb" value="6.3"> 6.3 Logarithms & Logarithmic Functions</label>
+            <label class="checkbox-label"><input type="checkbox" class="section-cb" value="6.4"> 6.4 Transformations of Log Functions</label>
+            <label class="checkbox-label"><input type="checkbox" class="section-cb" value="6.5"> 6.5 Properties of Logarithms</label>
+            <label class="checkbox-label"><input type="checkbox" class="section-cb" value="6.6"> 6.6 Solving Exponential/Log Equations</label>
+          </div>
+        </div>
+
+        <!-- Chapter 7 -->
+        <div class="chapter-group">
+          <div class="chapter-title">Ch 7: Rational Functions</div>
+          <div class="section-grid">
+            <label class="checkbox-label"><input type="checkbox" class="section-cb" value="7.1"> 7.1 Inverse Variation</label>
+            <label class="checkbox-label"><input type="checkbox" class="section-cb" value="7.2"> 7.2 Graphing Rational Functions</label>
+            <label class="checkbox-label"><input type="checkbox" class="section-cb" value="7.3"> 7.3 Multiplying/Dividing Rational Expr</label>
+            <label class="checkbox-label"><input type="checkbox" class="section-cb" value="7.4"> 7.4 Adding/Subtracting Rational Expr</label>
+            <label class="checkbox-label"><input type="checkbox" class="section-cb" value="7.5"> 7.5 Solving Rational Equations</label>
+          </div>
+        </div>
+
+        <!-- Chapter 8 -->
+        <div class="chapter-group">
+          <div class="chapter-title">Ch 8: Sequences & Series</div>
+          <div class="section-grid">
+            <label class="checkbox-label"><input type="checkbox" class="section-cb" value="8.1"> 8.1 Defining Sequences & Series</label>
+            <label class="checkbox-label"><input type="checkbox" class="section-cb" value="8.2"> 8.2 Arithmetic Sequences & Series</label>
+            <label class="checkbox-label"><input type="checkbox" class="section-cb" value="8.3"> 8.3 Geometric Sequences & Series</label>
+            <label class="checkbox-label"><input type="checkbox" class="section-cb" value="8.4"> 8.4 Infinite Geometric Series</label>
+          </div>
+        </div>
+
+        <!-- Chapter 9 -->
+        <div class="chapter-group">
+          <div class="chapter-title">Ch 9: Trigonometric Ratios & Functions</div>
+          <div class="section-grid">
+            <label class="checkbox-label"><input type="checkbox" class="section-cb" value="9.1"> 9.1 Right Triangle Trigonometry</label>
+            <label class="checkbox-label"><input type="checkbox" class="section-cb" value="9.2"> 9.2 Angles and Radian Measure</label>
+            <label class="checkbox-label"><input type="checkbox" class="section-cb" value="9.3"> 9.3 Trigonometric Functions of Any Angle</label>
+            <label class="checkbox-label"><input type="checkbox" class="section-cb" value="9.4"> 9.4 Graphing Sine & Cosine Functions</label>
+          </div>
+        </div>
+
+        <!-- Chapter 10 -->
+        <div class="chapter-group">
+          <div class="chapter-title">Ch 10: Probability & Statistics</div>
+          <div class="section-grid">
+            <label class="checkbox-label"><input type="checkbox" class="section-cb" value="10.1"> 10.1 Sample Spaces and Probability</label>
+            <label class="checkbox-label"><input type="checkbox" class="section-cb" value="10.2"> 10.2 Independent & Dependent Events</label>
+            <label class="checkbox-label"><input type="checkbox" class="section-cb" value="10.3"> 10.3 Two-Way Tables & Probability</label>
+            <label class="checkbox-label"><input type="checkbox" class="section-cb" value="10.4"> 10.4 Permutations and Combinations</label>
+          </div>
         </div>
       </div>
     </div>
 
-    <div class="btn-group" role="toolbar" aria-label="Quiz actions">
+    <div style="display: flex; gap: 16px;">
+      <div class="form-group" style="flex: 1;">
+        <label for="numQuestions">Total Questions:</label>
+        <input type="number" id="numQuestions" min="1" max="25" value="6">
+      </div>
+      <div class="form-group" style="flex: 1;">
+        <label for="formatSelect">Format:</label>
+        <select id="formatSelect">
+          <option value="mc">Multiple Choice</option>
+          <option value="free">Free Response</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="btn-group">
       <button onclick="generateQuiz()">Generate Quiz</button>
-      <button class="secondary" onclick="checkAnswers()">Check Answers</button>
-      <button class="secondary" onclick="toggleAnswerKey()">Toggle Answer Key</button>
-      <button class="ghost" onclick="window.print()">Print / Export PDF</button>
+      <button class="secondary" onclick="checkAllAnswers()">Grade Entire Quiz</button>
+      <button class="secondary" onclick="window.print()">Print / Export PDF</button>
     </div>
   </div>
 
   <div class="quiz-output" id="quizContainer">
-    <div style="text-align: center; color: var(--muted); margin-top: 40px;" id="placeholder">
-      Click "Generate Quiz" to create a custom practice test.
+    <div style="text-align: center; color: #64748b; margin-top: 40px;">
+      Select desired sections and click "Generate Quiz" to begin.
     </div>
   </div>
 </div>
 
 <script>
-  // Helper functions for random integer generation
-  function rand(min, max) {
-    return Math.floor(Math.random() * (max - min + 1)) + min;
+  function rand(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
+  function randNonZero(min, max) { let v = 0; while (v === 0) v = rand(min, max); return v; }
+  function normalizeStr(str) { return str.toString().toLowerCase().replace(/\s+/g, '').replace(/,/g, ''); }
+
+  function toggleAllSections(checked) {
+    document.querySelectorAll('.section-cb').forEach(cb => cb.checked = checked);
   }
 
-  function randNonZero(min, max) {
-    let val = 0;
-    while (val === 0) val = rand(min, max);
-    return val;
-  }
-
-  // Question Generators by Section
+  // Generators covering Chapters 1 through 10
   const generators = {
     "1.1": () => {
-      const h = rand(-5, 5);
-      const k = rand(-5, 5);
+      const h = rand(-5, 5), k = rand(-5, 5);
       const signH = h >= 0 ? `- ${h}` : `+ ${Math.abs(h)}`;
       const signK = k >= 0 ? `+ ${k}` : `- ${Math.abs(k)}`;
       return {
-        prompt: `Describe the transformations from the parent function f(x) = |x| to g(x) = |x ${signH}| ${signK}.`,
-        ans: `Horizontal shift ${h >= 0 ? 'right' : 'left'} by ${Math.abs(h)} unit(s), Vertical shift ${k >= 0 ? 'up' : 'down'} by ${Math.abs(k)} unit(s).`,
+        prompt: `Describe the transformations from f(x) = |x| to g(x) = |x ${signH}| ${signK}.`,
+        ans: `Shift ${h >= 0 ? 'right' : 'left'} ${Math.abs(h)}, ${k >= 0 ? 'up' : 'down'} ${Math.abs(k)}`,
+        acceptAnswers: [`shift ${h >= 0 ? 'right' : 'left'} ${Math.abs(h)}, ${k >= 0 ? 'up' : 'down'} ${Math.abs(k)}`],
         distractors: [
-          `Horizontal shift ${h >= 0 ? 'left' : 'right'} by ${Math.abs(h)} unit(s), Vertical shift ${k >= 0 ? 'down' : 'up'} by ${Math.abs(k)} unit(s).`,
-          `Vertical shift ${h >= 0 ? 'right' : 'left'} by ${Math.abs(h)} unit(s), Horizontal shift ${k >= 0 ? 'up' : 'down'} by ${Math.abs(k)} unit(s).`,
-          `Reflection across x-axis and shift up by ${Math.abs(h + k)} unit(s).`
+          `Shift ${h >= 0 ? 'left' : 'right'} ${Math.abs(h)}, ${k >= 0 ? 'down' : 'up'} ${Math.abs(k)}`,
+          `Shift ${h >= 0 ? 'right' : 'left'} ${Math.abs(h)}, ${k >= 0 ? 'down' : 'up'} ${Math.abs(k)}`,
+          `Shift ${h >= 0 ? 'left' : 'right'} ${Math.abs(h)}, ${k >= 0 ? 'up' : 'down'} ${Math.abs(k)}`
         ]
+      };
+    },
+    "1.2": () => {
+      const a = randNonZero(-3, 3);
+      return {
+        prompt: `Describe the transformation of g(x) = ${a}x relative to parent linear function f(x) = x.`,
+        ans: `${a < 0 ? 'Reflect across x-axis, ' : ''}Vertical ${Math.abs(a) > 1 ? 'stretch' : 'shrink'} by factor ${Math.abs(a)}`,
+        acceptAnswers: [`${a < 0 ? 'reflect across x-axis, ' : ''}vertical ${Math.abs(a) > 1 ? 'stretch' : 'shrink'} by factor ${Math.abs(a)}`],
+        distractors: [
+          `Horizontal stretch by factor ${Math.abs(a)}`,
+          `Shift up by ${Math.abs(a)} units`,
+          `Vertical shift down by ${Math.abs(a)} units`
+        ]
+      };
+    },
+    "1.3": () => {
+      const m = rand(2, 6), b = rand(5, 20), x = rand(3, 8);
+      return {
+        prompt: `A taxi charges $${b} initial fee plus $${m}/mile. Write and evaluate linear function f(${x}).`,
+        ans: `${m * x + b}`,
+        acceptAnswers: [`${m * x + b}`, `f(${x})=${m * x + b}`],
+        distractors: [`${b * x + m}`, `${m * x}`, `${(m + b) * x}`]
+      };
+    },
+    "1.4": () => {
+      const x = rand(1, 4), y = rand(1, 4), z = rand(1, 4);
+      return {
+        prompt: `Solve system: x+y+z=${x+y+z}, x-y+z=${x-y+z}, x+y-z=${x+y-z}. Find (x, y, z).`,
+        ans: `(${x}, ${y}, ${z})`,
+        acceptAnswers: [`(${x},${y},${z})`, `(${x}, ${y}, ${z})`],
+        distractors: [`(${x+1}, ${y}, ${z})`, `(${x}, ${y-1}, ${z})`, `(${z}, ${y}, ${x})`]
       };
     },
     "2.1": () => {
-      const a = randNonZero(-4, 4);
-      const h = rand(-3, 3);
-      const k = rand(-3, 3);
+      const a = randNonZero(-3, 3), h = rand(-4, 4), k = rand(-4, 4);
       return {
-        prompt: `Identify the vertex of the quadratic function f(x) = ${a === 1 ? '' : a === -1 ? '-' : a}(x ${h >= 0 ? '- ' + h : '+ ' + Math.abs(h)})² ${k >= 0 ? '+ ' + k : '- ' + Math.abs(k)}.`,
+        prompt: `Identify vertex of f(x) = ${a === 1 ? '' : a}(x ${h >= 0 ? '- ' + h : '+ ' + Math.abs(h)})² ${k >= 0 ? '+ ' + k : '- ' + Math.abs(k)}.`,
         ans: `(${h}, ${k})`,
+        acceptAnswers: [`(${h},${k})`, `(${h}, ${k})`],
         distractors: [`(${-h}, ${k})`, `(${h}, ${-k})`, `(${-h}, ${-k})`]
       };
     },
-    "3.2": () => {
-      const a = rand(2, 6);
-      const b = rand(2, 6);
-      const c = rand(2, 6);
-      const d = rand(2, 6);
-      const real = a * c - b * d;
-      const imag = a * d + b * c;
+    "2.2": () => {
+      const h = rand(-4, 4);
       return {
-        prompt: `Simplify the complex product: (${a} + ${b}i)(${c} + ${d}i). Write in a + bi form.`,
-        ans: `${real} + ${imag}i`,
-        distractors: [
-          `${a * c + b * d} + ${imag}i`,
-          `${real} - ${imag}i`,
-          `${a * c} + ${b * d}i`
-        ]
+        prompt: `Find axis of symmetry for f(x) = 2(x - ${h})² + 5.`,
+        ans: `x = ${h}`,
+        acceptAnswers: [`x=${h}`, `x = ${h}`, `${h}`],
+        distractors: [`y = ${h}`, `x = ${-h}`, `x = 5`]
+      };
+    },
+    "2.3": () => {
+      const p = rand(1, 4);
+      return {
+        prompt: `Find focus of parabola y = (1/${4*p})x².`,
+        ans: `(0, ${p})`,
+        acceptAnswers: [`(0,${p})`, `(0, ${p})`],
+        distractors: [`(${p}, 0)`, `(0, ${-p})`, `(${4*p}, 0)`]
+      };
+    },
+    "2.4": () => {
+      const p1 = rand(1, 3), p2 = rand(4, 6);
+      return {
+        prompt: `A parabola has x-intercepts at x = ${p1} and x = ${p2}. Find its axis of symmetry.`,
+        ans: `x = ${(p1 + p2) / 2}`,
+        acceptAnswers: [`x=${(p1 + p2) / 2}`, `x = ${(p1 + p2) / 2}`, `${(p1 + p2) / 2}`],
+        distractors: [`x = ${p1 + p2}`, `x = ${p2 - p1}`, `y = ${(p1 + p2) / 2}`]
+      };
+    },
+    "3.1": () => {
+      const r = rand(2, 7);
+      return {
+        prompt: `Solve x² - ${r*r} = 0.`,
+        ans: `x = ±${r}`,
+        acceptAnswers: [`x=±${r}`, `±${r}`, `${r}, -${r}`, `${r},-${r}`],
+        distractors: [`x = ${r}`, `x = ${r*r}`, `x = ±${r*2}`]
+      };
+    },
+    "3.2": () => {
+      const a = rand(2, 5), b = rand(2, 5), c = rand(2, 5), d = rand(2, 5);
+      const real = a * c - b * d, imag = a * d + b * c;
+      return {
+        prompt: `Multiply (${a} + ${b}i)(${c} + ${d}i). Write in a + bi form.`,
+        ans: `${real} ${imag >= 0 ? '+' : '-'} ${Math.abs(imag)}i`,
+        acceptAnswers: [`${real}+${imag}i`, `${real} + ${imag}i`],
+        distractors: [`${a*c + b*d} + ${imag}i`, `${real} - ${imag}i`, `${a*c} + ${b*d}i`]
+      };
+    },
+    "3.3": () => {
+      const b = randNonZero(-5, 5) * 2;
+      const c = Math.pow(b / 2, 2);
+      return {
+        prompt: `What term completes the square for x² ${b >= 0 ? '+ ' + b : '- ' + Math.abs(b)}x + ___?`,
+        ans: `${c}`,
+        acceptAnswers: [`${c}`],
+        distractors: [`${Math.abs(b)}`, `${c * 2}`, `${Math.abs(b / 2)}`]
+      };
+    },
+    "3.4": () => {
+      const a = 1, b = rand(2, 6), c = rand(1, 5);
+      const disc = b*b - 4*a*c;
+      return {
+        prompt: `Find the discriminant of x² + ${b}x + ${c} = 0.`,
+        ans: `${disc}`,
+        acceptAnswers: [`${disc}`],
+        distractors: [`${b*b + 4*a*c}`, `${b*b}`, `${disc - 4}`]
+      };
+    },
+    "3.5": () => {
+      const x = rand(1, 3);
+      const y = x * x;
+      return {
+        prompt: `Solve system y = x² and y = ${2*x} - ${2*x - y}. Find positive x solution.`,
+        ans: `x = ${x}`,
+        acceptAnswers: [`${x}`, `x=${x}`, `x = ${x}`],
+        distractors: [`x = ${x + 2}`, `x = ${y + 1}`, `x = 0`]
+      };
+    },
+    "3.6": () => {
+      const r = rand(1, 4);
+      return {
+        prompt: `Solve quadratic inequality x² - ${r*r} < 0.`,
+        ans: `-${r} < x < ${r}`,
+        acceptAnswers: [`-${r}<x<${r}`, `-${r} < x < ${r}`],
+        distractors: [`x < -${r} or x > ${r}`, `x < ${r}`, `-${r} <= x <= ${r}`]
+      };
+    },
+    "4.1": () => {
+      const n = rand(3, 5);
+      return {
+        prompt: `State maximum possible turning points for degree ${n} polynomial.`,
+        ans: `${n - 1}`,
+        acceptAnswers: [`${n - 1}`],
+        distractors: [`${n}`, `${n + 1}`, `${n / 2}`]
+      };
+    },
+    "4.2": () => {
+      const a = rand(2, 5), b = rand(2, 5);
+      return {
+        prompt: `Expand (x + ${a})(x² + ${b}).`,
+        ans: `x³ + ${a}x² + ${b}x + ${a*b}`,
+        acceptAnswers: [`x^3+${a}x^2+${b}x+${a*b}`, `x³+${a}x²+${b}x+${a*b}`],
+        distractors: [`x³ + ${a+b}x² + ${a*b}`, `x³ + ${b}x + ${a}`, `x² + ${a+b}x + ${a*b}`]
       };
     },
     "4.3": () => {
-      const r = randNonZero(-3, 3);
-      const a = 1;
-      const b = rand(-4, 4);
-      const c = rand(-5, 5);
-      // P(x) = (x - r)(x + b) + c
-      const p1 = b - r;
-      const p0 = -r * b + c;
+      const r = randNonZero(-3, 3), c = rand(-5, 5);
       return {
-        prompt: `Find the remainder when P(x) = x² ${p1 >= 0 ? '+ ' + p1 : '- ' + Math.abs(p1)}x ${p0 >= 0 ? '+ ' + p0 : '- ' + Math.abs(p0)} is divided by (x - ${r}).`,
+        prompt: `Find remainder when P(x) = x² - ${r+2}x + ${2*r + c} is divided by (x - ${r}).`,
         ans: `${c}`,
+        acceptAnswers: [`${c}`],
         distractors: [`${c + 2}`, `${-c}`, `${c - r}`]
       };
     },
-    "5.1": () => {
-      const base = rand(2, 5);
-      const exp = rand(2, 3);
-      const val = Math.pow(base, exp);
+    "4.4": () => {
+      const a = rand(2, 4);
       return {
-        prompt: `Evaluate the expression: ${val}^(1/${exp}).`,
+        prompt: `Factor difference of cubes x³ - ${a*a*a}.`,
+        ans: `(x - ${a})(x² + ${a}x + ${a*a})`,
+        acceptAnswers: [`(x-${a})(x^2+${a}x+${a*a})`, `(x - ${a})(x² + ${a}x + ${a*a})`],
+        distractors: [`(x - ${a})³`, `(x - ${a})(x² - ${a}x + ${a*a})`, `(x + ${a})(x² - ${a}x + ${a*a})`]
+      };
+    },
+    "4.5": () => {
+      const r1 = rand(1, 3), r2 = rand(4, 6);
+      return {
+        prompt: `Solve polynomial equation x(x - ${r1})(x - ${r2}) = 0. List all real roots.`,
+        ans: `0, ${r1}, ${r2}`,
+        acceptAnswers: [`0,${r1},${r2}`, `0, ${r1}, ${r2}`],
+        distractors: [`${r1}, ${r2}`, `0, -${r1}, -${r2}`, `1, ${r1}, ${r2}`]
+      };
+    },
+    "4.6": () => {
+      const deg = rand(3, 6);
+      return {
+        prompt: `By Fundamental Theorem of Algebra, how many complex roots does a degree ${deg} polynomial have?`,
+        ans: `${deg}`,
+        acceptAnswers: [`${deg}`],
+        distractors: [`${deg - 1}`, `${deg + 1}`, `2`]
+      };
+    },
+    "4.7": () => {
+      const k = rand(2, 5);
+      return {
+        prompt: `Describe vertical shift from f(x) = x³ to g(x) = x³ - ${k}.`,
+        ans: `Shift down ${k} units`,
+        acceptAnswers: [`shift down ${k} units`, `down ${k}`],
+        distractors: [`Shift up ${k} units`, `Shift left ${k} units`, `Shift right ${k} units`]
+      };
+    },
+    "4.8": () => {
+      const p1 = rand(1, 3);
+      return {
+        prompt: `If x = ${p1} is a root of multiplicity 2, how does the graph behave at x = ${p1}?`,
+        ans: `Touches x-axis and turns around`,
+        acceptAnswers: [`touches x-axis and turns around`, `touches and turns`],
+        distractors: [`Crosses x-axis cleanly`, `Has vertical asymptote`, `Has hole`]
+      };
+    },
+    "5.1": () => {
+      const base = rand(2, 4), exp = rand(2, 3), val = Math.pow(base, exp);
+      return {
+        prompt: `Evaluate ${val}^(1/${exp}).`,
         ans: `${base}`,
+        acceptAnswers: [`${base}`],
         distractors: [`${base * 2}`, `${Math.pow(val, exp)}`, `${base + 1}`]
       };
     },
-    "6.3": () => {
-      const b = rand(2, 5);
-      const x = rand(1, 4);
-      const val = Math.pow(b, x);
+    "5.2": () => {
+      const a = rand(2, 5), b = rand(2, 5);
       return {
-        prompt: `Evaluate the logarithm: log_${b}(${val}).`,
+        prompt: `Simplify: x^(${a}/3) * x^(${b}/3).`,
+        ans: `x^(${(a+b)}/3)`,
+        acceptAnswers: [`x^(${(a+b)}/3)`, `x^${(a+b)/3}`],
+        distractors: [`x^(${a*b}/9)`, `x^(${a+b}/6)`, `x^${a*b}`]
+      };
+    },
+    "5.3": () => {
+      return {
+        prompt: `What is domain of radical function f(x) = √(x - 3)?`,
+        ans: `x ≥ 3`,
+        acceptAnswers: [`x>=3`, `x ≥ 3`, `[3, infinity)`],
+        distractors: [`x > 3`, `x ≤ 3`, `All real numbers`]
+      };
+    },
+    "5.4": () => {
+      const v = rand(2, 6);
+      return {
+        prompt: `Solve √(x + 4) = ${v}.`,
+        ans: `x = ${v*v - 4}`,
+        acceptAnswers: [`${v*v - 4}`, `x=${v*v - 4}`, `x = ${v*v - 4}`],
+        distractors: [`x = ${v*v}`, `x = ${v - 4}`, `x = ${v*v + 4}`]
+      };
+    },
+    "5.5": () => {
+      const a = rand(2, 5), b = rand(1, 4);
+      return {
+        prompt: `If f(x) = ${a}x and g(x) = x + ${b}, find (f ∘ g)(x).`,
+        ans: `${a}x + ${a*b}`,
+        acceptAnswers: [`${a}x+${a*b}`, `${a}x + ${a*b}`],
+        distractors: [`${a}x + ${b}`, `${a}x² + ${b}`, `x + ${a*b}`]
+      };
+    },
+    "5.6": () => {
+      const m = rand(2, 5), b = rand(1, 5);
+      return {
+        prompt: `Find inverse function f⁻¹(x) for f(x) = ${m}x + ${b}.`,
+        ans: `(x - ${b}) / ${m}`,
+        acceptAnswers: [`(x-${b})/${m}`, `(x - ${b}) / ${m}`],
+        distractors: [`${m}x - ${b}`, `(x + ${b}) / ${m}`, `1/(${m}x + ${b})`]
+      };
+    },
+    "6.1": () => {
+      const a = rand(100, 500), r = rand(2, 8);
+      return {
+        prompt: `Write exponential growth model for initial amount $${a} growing at ${r}% per year.`,
+        ans: `y = ${a}(1.${r < 10 ? '0' + r : r})^t`,
+        acceptAnswers: [`y=${a}(1.${r < 10 ? '0' + r : r})^t`, `y = ${a}(1.${r < 10 ? '0' + r : r})^t`],
+        distractors: [`y = ${a}(0.${r})^t`, `y = ${a}(${r})^t`, `y = ${a} + ${r}t`]
+      };
+    },
+    "6.2": () => {
+      const P = 1000, r = 0.05, t = 2;
+      return {
+        prompt: `Formula for continuous compounding interest: A = ____.`,
+        ans: `P e^(rt)`,
+        acceptAnswers: [`Pe^(rt)`, `P e^(rt)`, `Pe^rt`],
+        distractors: [`P(1+r)^t`, `P(1+r/n)^(nt)`, `P r t`]
+      };
+    },
+    "6.3": () => {
+      const b = rand(2, 5), x = rand(1, 4), val = Math.pow(b, x);
+      return {
+        prompt: `Evaluate log_${b}(${val}).`,
         ans: `${x}`,
+        acceptAnswers: [`${x}`],
         distractors: [`${val / b}`, `${x + 1}`, `${Math.pow(b, val)}`]
       };
     },
+    "6.4": () => {
+      const k = rand(2, 5);
+      return {
+        prompt: `Identify vertical asymptote of g(x) = log(x - ${k}).`,
+        ans: `x = ${k}`,
+        acceptAnswers: [`x=${k}`, `x = ${k}`, `${k}`],
+        distractors: [`y = ${k}`, `x = -${k}`, `y = 0`]
+      };
+    },
+    "6.5": () => {
+      const a = rand(2, 5), b = rand(2, 5);
+      return {
+        prompt: `Expand log(x^${a} * y^${b}) using log properties.`,
+        ans: `${a} log(x) + ${b} log(y)`,
+        acceptAnswers: [`${a}log(x)+${b}log(y)`, `${a} log(x) + ${b} log(y)`],
+        distractors: [`${a*b} log(xy)`, `log(${a}x) + log(${b}y)`, `${a} log(x) * ${b} log(y)`]
+      };
+    },
+    "6.6": () => {
+      const b = rand(2, 4), exp = rand(2, 4), val = Math.pow(b, exp);
+      return {
+        prompt: `Solve ${b}^x = ${val}.`,
+        ans: `x = ${exp}`,
+        acceptAnswers: [`${exp}`, `x=${exp}`, `x = ${exp}`],
+        distractors: [`x = ${val / b}`, `x = ${exp + 1}`, `x = ${val}`]
+      };
+    },
+    "7.1": () => {
+      const k = rand(10, 30), x = rand(2, 5);
+      return {
+        prompt: `If y varies inversely with x, and y = ${k} when x = 1, find y when x = ${x}.`,
+        ans: `${k / x}`,
+        acceptAnswers: [`${k / x}`],
+        distractors: [`${k * x}`, `${k + x}`, `${x / k}`]
+      };
+    },
+    "7.2": () => {
+      const h = rand(1, 5);
+      return {
+        prompt: `Find vertical asymptote of f(x) = 1 / (x - ${h}).`,
+        ans: `x = ${h}`,
+        acceptAnswers: [`x=${h}`, `x = ${h}`, `${h}`],
+        distractors: [`y = ${h}`, `x = -${h}`, `y = 0`]
+      };
+    },
+    "7.3": () => {
+      const a = rand(2, 5);
+      return {
+        prompt: `Simplify: (x² - ${a*a}) / (x - ${a}).`,
+        ans: `x + ${a}`,
+        acceptAnswers: [`x+${a}`, `x + ${a}`],
+        distractors: [`x - ${a}`, `x² + ${a}`, `${a}`]
+      };
+    },
+    "7.4": () => {
+      const a = rand(1, 4), b = rand(1, 4);
+      return {
+        prompt: `Add: ${a}/x + ${b}/x.`,
+        ans: `${a + b}/x`,
+        acceptAnswers: [`${a + b}/x`, `(${a + b})/x`],
+        distractors: [`${a * b}/x`, `${a + b}/x²`, `${a + b}`]
+      };
+    },
     "7.5": () => {
-      const a = rand(1, 5);
-      const b = rand(2, 6);
-      const sol = a * b;
+      const a = rand(1, 5), b = rand(2, 6);
       return {
         prompt: `Solve for x: ${a} / x = 1 / ${b}.`,
-        ans: `x = ${sol}`,
-        distractors: [`x = ${a + b}`, `x = ${b / a}`, `x = ${sol + 1}`]
+        ans: `x = ${a * b}`,
+        acceptAnswers: [`${a * b}`, `x=${a * b}`, `x = ${a * b}`],
+        distractors: [`${a + b}`, `${b / a}`, `${a * b + 1}`]
+      };
+    },
+    "8.1": () => {
+      const c = rand(2, 5);
+      return {
+        prompt: `Find first 3 terms of sequence a_n = ${c}n - 1.`,
+        ans: `${c-1}, ${2*c-1}, ${3*c-1}`,
+        acceptAnswers: [`${c-1},${2*c-1},${3*c-1}`, `${c-1}, ${2*c-1}, ${3*c-1}`],
+        distractors: [`${c}, ${2*c}, ${3*c}`, `1, 2, 3`, `${c+1}, ${2*c+1}, ${3*c+1}`]
       };
     },
     "8.2": () => {
-      const a1 = rand(1, 10);
-      const d = rand(2, 6);
-      const n = rand(5, 10);
-      const an = a1 + (n - 1) * d;
+      const a1 = rand(1, 10), d = rand(2, 6), n = rand(5, 10);
       return {
-        prompt: `Find the ${n}th term of the arithmetic sequence where a₁ = ${a1} and d = ${d}.`,
-        ans: `a_${n} = ${an}`,
-        distractors: [`a_${n} = ${an + d}`, `a_${n} = ${a1 * Math.pow(d, n-1)}`, `a_${n} = ${an - 2}`]
+        prompt: `Find ${n}th term (a_${n}) of arithmetic sequence with a₁ = ${a1} and d = ${d}.`,
+        ans: `${a1 + (n - 1) * d}`,
+        acceptAnswers: [`${a1 + (n - 1) * d}`],
+        distractors: [`${a1 + n * d}`, `${a1 * Math.pow(d, n-1)}`, `${a1 + (n-1)*d - 2}`]
+      };
+    },
+    "8.3": () => {
+      const a1 = rand(1, 5), r = rand(2, 3), n = 4;
+      return {
+        prompt: `Find ${n}th term (a_${n}) of geometric sequence with a₁ = ${a1} and r = ${r}.`,
+        ans: `${a1 * Math.pow(r, n - 1)}`,
+        acceptAnswers: [`${a1 * Math.pow(r, n - 1)}`],
+        distractors: [`${a1 * Math.pow(r, n)}`, `${a1 + (n-1)*r}`, `${a1 * r * n}`]
+      };
+    },
+    "8.4": () => {
+      const a1 = rand(2, 8);
+      return {
+        prompt: `Find sum of infinite geometric series with a₁ = ${a1} and r = 1/2.`,
+        ans: `${a1 * 2}`,
+        acceptAnswers: [`${a1 * 2}`],
+        distractors: [`${a1}`, `${a1 * 1.5}`, `Diverges`]
+      };
+    },
+    "9.1": () => {
+      return {
+        prompt: `In a right triangle, sin(θ) = 3/5. Find cos(θ).`,
+        ans: `4/5`,
+        acceptAnswers: [`4/5`, `0.8`],
+        distractors: [`3/4`, `5/4`, `5/3`]
+      };
+    },
+    "9.2": () => {
+      const deg = 180;
+      return {
+        prompt: `Convert ${deg}° to radians.`,
+        ans: `π radians`,
+        acceptAnswers: [`pi`, `π`, `pi radians`],
+        distractors: [`2π radians`, `π/2 radians`, `3π/2 radians`]
+      };
+    },
+    "9.3": () => {
+      return {
+        prompt: `Evaluate tan(45°) or tan(π/4).`,
+        ans: `1`,
+        acceptAnswers: [`1`],
+        distractors: [`0`, `√2 / 2`, `√3`]
+      };
+    },
+    "9.4": () => {
+      const a = rand(2, 6);
+      return {
+        prompt: `Find amplitude of y = ${a} sin(x).`,
+        ans: `${a}`,
+        acceptAnswers: [`${a}`],
+        distractors: [`${a * 2}`, `2π`, `1`]
+      };
+    },
+    "10.1": () => {
+      return {
+        prompt: `What is probability of rolling a sum of 7 with two standard 6-sided dice?`,
+        ans: `1/6`,
+        acceptAnswers: [`1/6`],
+        distractors: [`1/12`, `7/36`, `1/7`]
+      };
+    },
+    "10.2": () => {
+      return {
+        prompt: `If P(A) = 0.4 and P(B) = 0.5 for independent events A and B, find P(A and B).`,
+        ans: `0.2`,
+        acceptAnswers: [`0.2`, `0.20`, `1/5`],
+        distractors: [`0.9`, `0.1`, `0.8`]
+      };
+    },
+    "10.3": () => {
+      return {
+        prompt: `In a survey of 100 people, 60 like coffee, 40 like tea, and 20 like both. P(Coffee | Tea) = ?`,
+        ans: `1/2`,
+        acceptAnswers: [`1/2`, `0.5`, `50%`],
+        distractors: [`2/5`, `3/5`, `1/3`]
+      };
+    },
+    "10.4": () => {
+      const n = 5, r = 2;
+      return {
+        prompt: `Evaluate ₅C₂ (5 choose 2).`,
+        ans: `10`,
+        acceptAnswers: [`10`],
+        distractors: [`20`, `60`, `5`]
       };
     }
   };
 
-  let currentQuizData = [];
-  let currentFormat = 'free';
+  let quizQuestions = [];
 
   function generateQuiz() {
-    const sec = document.getElementById("chapterSelect").value;
+    const selectedBoxes = Array.from(document.querySelectorAll('.section-cb:checked'));
+    if (selectedBoxes.length === 0) {
+      alert("Please select at least one section before generating the quiz.");
+      return;
+    }
+
+    const selectedSections = selectedBoxes.map(cb => cb.value);
     const count = parseInt(document.getElementById("numQuestions").value);
     const format = document.getElementById("formatSelect").value;
-    currentFormat = format;
     const container = document.getElementById("quizContainer");
 
-    const gen = generators[sec] || generators["1.1"];
-    currentQuizData = [];
+    quizQuestions = [];
 
     let html = `
       <div class="quiz-header">
         <div>
-          <h2 style="margin:0;">Algebra 2 Honors Practice Quiz</h2>
-          <div style="color:var(--muted);">Section ${sec} Practice</div>
+          <h2>Algebra 2 Honors Practice Quiz</h2>
+          <div>Sections: <strong>${selectedSections.join(', ')}</strong></div>
         </div>
-        <div style="text-align: right;">
-          <div style="font-weight:600">Name: ______________________</div>
-          <div style="font-weight:600; margin-top:6px;">Date: ______________________</div>
+        <div>
+          <div>Name: ______________________</div>
         </div>
       </div>
+      <div id="scoreBanner" class="score-banner hidden"></div>
     `;
 
-    for (let i = 1; i <= count; i++) {
+    for (let i = 0; i < count; i++) {
+      const sec = selectedSections[Math.floor(Math.random() * selectedSections.length)];
+      const gen = generators[sec] || generators["1.1"];
       const q = gen();
-      currentQuizData.push(q);
+
+      quizQuestions.push({ ...q, section: sec, format, checked: false });
 
       html += `
-        <div class="question-item" id="q-${i}">
-          <div class="question-title">${i}. ${q.prompt}</div>
+        <div class="question-item" id="qItem_${i}">
+          <div class="question-title">
+            ${i + 1}. ${q.prompt}
+            <span class="section-tag">Sec ${sec}</span>
+          </div>
       `;
 
       if (format === "mc") {
-        // Shuffle options but keep track of correct label
         const options = [q.ans, ...q.distractors].sort(() => Math.random() - 0.5);
         html += `<div class="options-grid">`;
-        options.forEach((opt, idx) => {
-          const inputId = `q${i}-opt${idx}`;
-          html += `<div class="option"><label for="${inputId}"><input type="radio" name="q${i}" id="${inputId}" value="${escapeHtml(opt)}"> <strong>${String.fromCharCode(65+idx)}.</strong> ${escapeHtml(opt)}</label></div>`;
+        options.forEach((opt) => {
+          html += `
+            <label class="mc-option">
+              <input type="radio" name="q_${i}" value="${opt}">
+              <span>${opt}</span>
+            </label>
+          `;
         });
         html += `</div>`;
-
-        // store which option is correct in a data-* attribute on the question div
-        html += `<input type="hidden" id="ans-${i}" value="${escapeHtml(q.ans)}">`;
       } else {
-        // free response: add a text input for student's answer
-        html += `<input type="text" id="ans-input-${i}" placeholder="Enter your answer here" style="width:100%; padding:10px; margin-top:8px; border-radius:8px; border:1px solid var(--border);">`;
+        html += `
+          <div>
+            <input type="text" id="input_${i}" placeholder="Enter your answer..." autocomplete="off">
+          </div>
+        `;
       }
 
-      html += `</div>`;
+      html += `
+          <button class="check-btn" onclick="checkAnswer(${i})">Check Answer</button>
+          <div class="feedback hidden" id="feedback_${i}"></div>
+        </div>
+      `;
     }
-
-    // results area
-    html += `<div id="quizResults" style="margin-top:16px; font-weight:700;"></div>`;
-
-    // Answer Key Section
-    html += `
-      <div id="answerKeySection" class="answer-key hidden">
-        <h2>Answer Key & Solutions</h2>
-    `;
-    currentQuizData.forEach((q, idx) => {
-      html += `<p style="margin:6px 0;"><strong>${idx + 1}.</strong> ${q.ans}</p>`;
-    });
-    html += `</div>`;
 
     container.innerHTML = html;
-
-    // remove placeholder if present
-    const ph = document.getElementById('placeholder');
-    if (ph) ph.remove();
   }
 
-  // Basic HTML escaping for values placed into attributes
-  function escapeHtml(str) {
-    return String(str).replace(/&/g, '&amp;').replace(/\"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-  }
+  function checkAnswer(idx) {
+    const q = quizQuestions[idx];
+    const itemEl = document.getElementById(`qItem_${idx}`);
+    const fbEl = document.getElementById(`feedback_${idx}`);
+    let userAns = "";
 
-  // Normalize string for comparison: trim, lowercase, collapse spaces
-  function normalizeAnswer(s) {
-    return String(s || '').toLowerCase().replace(/\s+/g, ' ').trim();
-  }
-
-  // Try to extract a number from an answer string (first numeric token)
-  function extractNumber(s) {
-    const m = String(s).match(/-?\d+(?:\.\d+)?/);
-    return m ? Number(m[0]) : null;
-  }
-
-  function checkAnswers() {
-    if (!currentQuizData || currentQuizData.length === 0) {
-      alert('Please generate a quiz first.');
-      return;
+    if (q.format === "mc") {
+      const selected = document.querySelector(`input[name="q_${idx}"]:checked`);
+      if (selected) userAns = selected.value;
+    } else {
+      const input = document.getElementById(`input_${idx}`);
+      if (input) userAns = input.value.trim();
     }
 
-    let correct = 0;
-    currentQuizData.forEach((q, idx) => {
-      const i = idx + 1;
-      const qDiv = document.getElementById(`q-${i}`);
-      qDiv.classList.remove('correct','incorrect');
+    if (!userAns) {
+      fbEl.className = "feedback incorrect";
+      fbEl.innerText = "Please enter or select an answer first.";
+      fbEl.classList.remove("hidden");
+      return false;
+    }
 
-      if (currentFormat === 'mc') {
-        const selected = document.querySelector(`input[name=q${i}]:checked`);
-        const student = selected ? selected.value : '';
-        const expected = q.ans;
+    let isCorrect = false;
+    if (q.format === "mc") {
+      isCorrect = (userAns === q.ans);
+    } else {
+      const normUser = normalizeStr(userAns);
+      isCorrect = q.acceptAnswers.some(ans => normalizeStr(ans) === normUser);
+    }
 
-        if (compareAnswers(student, expected)) {
-          qDiv.classList.add('correct');
-          correct++;
-        } else {
-          qDiv.classList.add('incorrect');
-        }
-      } else {
-        const input = document.getElementById(`ans-input-${i}`);
-        const student = input ? input.value : '';
-        const expected = q.ans;
+    fbEl.classList.remove("hidden");
+    if (isCorrect) {
+      itemEl.className = "question-item correct";
+      fbEl.className = "feedback correct";
+      fbEl.innerText = "✓ Correct!";
+    } else {
+      itemEl.className = "question-item incorrect";
+      fbEl.className = "feedback incorrect";
+      fbEl.innerText = `✗ Incorrect. Correct answer: ${q.ans}`;
+    }
 
-        if (compareAnswers(student, expected)) {
-          qDiv.classList.add('correct');
-          correct++;
-        } else {
-          qDiv.classList.add('incorrect');
-        }
-      }
+    q.checked = true;
+    return isCorrect;
+  }
+
+  function checkAllAnswers() {
+    if (quizQuestions.length === 0) return;
+
+    let score = 0;
+    quizQuestions.forEach((_, idx) => {
+      const correct = checkAnswer(idx);
+      if (correct) score++;
     });
 
-    const results = document.getElementById('quizResults');
-    const pct = Math.round((correct / currentQuizData.length) * 100);
-    results.innerHTML = `Score: ${correct} / ${currentQuizData.length} <span class="result-badge" style="background:${pct>=70? 'var(--success)':'var(--danger)'}; color: white">${pct}%</span>`;
-
-    // Reveal answer key when checking
-    const key = document.getElementById('answerKeySection');
-    if (key && key.classList.contains('hidden')) key.classList.remove('hidden');
-
-    // scroll to results
-    results.scrollIntoView({ behavior: 'smooth' });
-  }
-
-  // compare student and expected answers with some tolerance
-  function compareAnswers(studentRaw, expectedRaw) {
-    const student = normalizeAnswer(studentRaw);
-    const expected = normalizeAnswer(expectedRaw);
-
-    // If both contain numbers, compare numeric values (first number found)
-    const sn = extractNumber(student);
-    const en = extractNumber(expected);
-    if (sn !== null && en !== null) {
-      return Math.abs(sn - en) < 1e-6; // exact numeric match for now
-    }
-
-    // fallback: compare cleaned strings
-    return student === expected;
-  }
-
-  function toggleAnswerKey() {
-    const key = document.getElementById("answerKeySection");
-    if (key) {
-      key.classList.toggle("hidden");
-    }
+    const banner = document.getElementById("scoreBanner");
+    const pct = Math.round((score / quizQuestions.length) * 100);
+    banner.classList.remove("hidden");
+    banner.innerText = `Quiz Score: ${score} / ${quizQuestions.length} (${pct}%)`;
   }
 </script>
 
