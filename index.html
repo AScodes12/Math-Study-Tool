@@ -120,6 +120,8 @@
     .question-item {
       margin-bottom: 28px;
       page-break-inside: avoid;
+      padding: 12px;
+      border-radius: 6px;
     }
 
     .question-title {
@@ -150,6 +152,24 @@
 
     .hidden {
       display: none;
+    }
+
+    .correct {
+      border: 2px solid #16a34a;
+      background-color: #ecfdf5;
+    }
+
+    .incorrect {
+      border: 2px solid #dc2626;
+      background-color: #fff1f2;
+    }
+
+    .result-badge {
+      display: inline-block;
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-weight: 700;
+      margin-left: 8px;
     }
 
     @media print {
@@ -245,13 +265,14 @@
 
     <div class="btn-group">
       <button onclick="generateQuiz()">Generate Quiz</button>
+      <button class="secondary" onclick="checkAnswers()">Check Answers</button>
       <button class="secondary" onclick="toggleAnswerKey()">Toggle Answer Key</button>
       <button class="secondary" onclick="window.print()">Print / Export PDF</button>
     </div>
   </div>
 
   <div class="quiz-output" id="quizContainer">
-    <div style="text-align: center; color: #64748b; margin-top: 40px;">
+    <div style="text-align: center; color: #64748b; margin-top: 40px;" id="placeholder">
       Click "Generate Quiz" to create a custom practice test.
     </div>
   </div>
@@ -371,11 +392,13 @@
   };
 
   let currentQuizData = [];
+  let currentFormat = 'free';
 
   function generateQuiz() {
     const sec = document.getElementById("chapterSelect").value;
     const count = parseInt(document.getElementById("numQuestions").value);
     const format = document.getElementById("formatSelect").value;
+    currentFormat = format;
     const container = document.getElementById("quizContainer");
 
     const gen = generators[sec] || generators["1.1"];
@@ -399,24 +422,32 @@
       currentQuizData.push(q);
 
       html += `
-        <div class="question-item">
+        <div class="question-item" id="q-${i}">
           <div class="question-title">${i}. ${q.prompt}</div>
       `;
 
       if (format === "mc") {
+        // Shuffle options but keep track of correct label
         const options = [q.ans, ...q.distractors].sort(() => Math.random() - 0.5);
-        const labels = ['A', 'B', 'C', 'D'];
         html += `<div class="options-grid">`;
         options.forEach((opt, idx) => {
-          html += `<div><strong>${labels[idx]}.</strong> ${opt}</div>`;
+          const inputId = `q${i}-opt${idx}`;
+          html += `<div><label for="${inputId}"><input type="radio" name="q${i}" id="${inputId}" value="${escapeHtml(opt)}"> <strong>${String.fromCharCode(65+idx)}.</strong> ${escapeHtml(opt)}</label></div>`;
         });
         html += `</div>`;
+
+        // store which option is correct in a data-* attribute on the question div
+        html += `<input type="hidden" id="ans-${i}" value="${escapeHtml(q.ans)}">`;
       } else {
-        html += `<div class="work-space"></div>`;
+        // free response: add a text input for student's answer
+        html += `<input type="text" id="ans-input-${i}" placeholder="Enter your answer here" style="width:100%; padding:8px; margin-top:8px; border-radius:6px; border:1px solid var(--border);">`;
       }
 
       html += `</div>`;
     }
+
+    // results area
+    html += `<div id="quizResults" style="margin-top:16px; font-weight:700;"></div>`;
 
     // Answer Key Section
     html += `
@@ -429,6 +460,91 @@
     html += `</div>`;
 
     container.innerHTML = html;
+
+    // remove placeholder if present
+    const ph = document.getElementById('placeholder');
+    if (ph) ph.remove();
+  }
+
+  // Basic HTML escaping for values placed into attributes
+  function escapeHtml(str) {
+    return String(str).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
+
+  // Normalize string for comparison: trim, lowercase, collapse spaces
+  function normalizeAnswer(s) {
+    return String(s || '').toLowerCase().replace(/\s+/g, ' ').trim();
+  }
+
+  // Try to extract a number from an answer string (first numeric token)
+  function extractNumber(s) {
+    const m = String(s).match(/-?\d+(?:\.\d+)?/);
+    return m ? Number(m[0]) : null;
+  }
+
+  function checkAnswers() {
+    if (!currentQuizData || currentQuizData.length === 0) {
+      alert('Please generate a quiz first.');
+      return;
+    }
+
+    let correct = 0;
+    currentQuizData.forEach((q, idx) => {
+      const i = idx + 1;
+      const qDiv = document.getElementById(`q-${i}`);
+      qDiv.classList.remove('correct','incorrect');
+
+      if (currentFormat === 'mc') {
+        const selected = document.querySelector(`input[name=q${i}]:checked`);
+        const student = selected ? selected.value : '';
+        const expected = q.ans;
+
+        if (compareAnswers(student, expected)) {
+          qDiv.classList.add('correct');
+          correct++;
+        } else {
+          qDiv.classList.add('incorrect');
+        }
+      } else {
+        const input = document.getElementById(`ans-input-${i}`);
+        const student = input ? input.value : '';
+        const expected = q.ans;
+
+        if (compareAnswers(student, expected)) {
+          qDiv.classList.add('correct');
+          correct++;
+        } else {
+          qDiv.classList.add('incorrect');
+        }
+      }
+    });
+
+    const results = document.getElementById('quizResults');
+    const pct = Math.round((correct / currentQuizData.length) * 100);
+    results.innerHTML = `Score: ${correct} / ${currentQuizData.length} <span class="result-badge" style="background:${pct>=70? '#16a34a':'#dc2626'}; color: white">${pct}%</span>`;
+
+    // Reveal answer key when checking
+    const key = document.getElementById('answerKeySection');
+    if (key && key.classList.contains('hidden')) key.classList.remove('hidden');
+
+    // scroll to results
+    results.scrollIntoView({ behavior: 'smooth' });
+  }
+
+  // compare student and expected answers with some tolerance
+  function compareAnswers(studentRaw, expectedRaw) {
+    const student = normalizeAnswer(studentRaw);
+    const expected = normalizeAnswer(expectedRaw);
+
+    // If both contain numbers, compare numeric values (first number found)
+    const sn = extractNumber(student);
+    const en = extractNumber(expected);
+    if (sn !== null && en !== null) {
+      return Math.abs(sn - en) < 1e-6; // exact numeric match for now
+    }
+
+    // fallback: compare cleaned strings
+    return student === expected;
   }
 
   function toggleAnswerKey() {
