@@ -6,149 +6,216 @@
   <title>Big Ideas Math - Algebra 2 Honors Quiz Generator</title>
   <style>
     :root {
-      --primary: #1e3a8a;
+      --primary: #2563eb;
       --primary-hover: #1d4ed8;
+      --primary-light: #eff6ff;
       --bg: #f8fafc;
       --card-bg: #ffffff;
-      --text: #0f172a;
-      --border: #cbd5e1;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --border: #e2e8f0;
+      --border-focus: #93c5fd;
       --correct: #16a34a;
       --correct-bg: #f0fdf4;
       --incorrect: #dc2626;
       --incorrect-bg: #fef2f2;
+      --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+      --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+      --radius: 12px;
+    }
+
+    * {
+      box-sizing: border-box;
     }
 
     body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
       background-color: var(--bg);
-      color: var(--text);
+      color: var(--text-main);
       margin: 0;
-      padding: 24px;
+      padding: 32px 16px;
       line-height: 1.5;
     }
 
     .container {
-      max-width: 960px;
+      max-width: 980px;
       margin: 0 auto;
     }
 
     header {
       text-align: center;
-      margin-bottom: 24px;
-      padding-bottom: 16px;
-      border-bottom: 2px solid var(--border);
+      margin-bottom: 32px;
     }
 
     h1 {
-      color: var(--primary);
+      color: var(--text-main);
       margin: 0 0 8px 0;
-      font-size: 1.8rem;
+      font-size: 2rem;
+      font-weight: 800;
+      letter-spacing: -0.025em;
+    }
+
+    header p {
+      color: var(--text-muted);
+      margin: 0;
+      font-size: 1rem;
     }
 
     .control-panel {
       background-color: var(--card-bg);
-      padding: 20px;
-      border-radius: 8px;
+      padding: 24px;
+      border-radius: var(--radius);
       border: 1px solid var(--border);
-      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-      margin-bottom: 24px;
+      box-shadow: var(--shadow-md);
+      margin-bottom: 32px;
     }
 
-    .form-group {
-      margin-bottom: 16px;
-    }
-
-    label.group-label {
+    .panel-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      font-weight: 600;
-      margin-bottom: 8px;
-      font-size: 0.95rem;
+      margin-bottom: 12px;
     }
 
-    select, input[type="number"], input[type="text"] {
-      width: 100%;
-      padding: 8px 12px;
-      border-radius: 6px;
-      border: 1px solid var(--border);
-      font-size: 1rem;
-      box-sizing: border-box;
+    .panel-title {
+      font-weight: 700;
+      font-size: 1.05rem;
+      color: var(--text-main);
+    }
+
+    .btn-row {
+      display: flex;
+      gap: 8px;
     }
 
     .checkbox-container {
-      max-height: 280px;
+      max-height: 320px;
       overflow-y: auto;
       border: 1px solid var(--border);
-      border-radius: 6px;
-      padding: 12px;
+      border-radius: 8px;
+      padding: 16px;
       background-color: #f1f5f9;
+      margin-bottom: 20px;
     }
 
     .chapter-group {
-      margin-bottom: 14px;
+      margin-bottom: 20px;
+    }
+
+    .chapter-group:last-child {
+      margin-bottom: 0;
     }
 
     .chapter-title {
       font-weight: 700;
-      font-size: 0.85rem;
+      font-size: 0.8rem;
       color: var(--primary);
       text-transform: uppercase;
       letter-spacing: 0.05em;
-      margin-bottom: 6px;
-      border-bottom: 1px solid var(--border);
-      padding-bottom: 2px;
+      margin-bottom: 8px;
     }
 
     .section-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-      gap: 6px;
+      gap: 8px;
     }
 
     .checkbox-label {
       display: flex;
       align-items: center;
-      gap: 8px;
-      font-size: 0.85rem;
+      gap: 10px;
+      font-size: 0.875rem;
+      font-weight: 500;
       cursor: pointer;
-      background: #fff;
-      padding: 6px 10px;
-      border-radius: 4px;
-      border: 1px solid #e2e8f0;
+      background: var(--card-bg);
+      padding: 8px 12px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      transition: all 0.15s ease;
     }
 
     .checkbox-label:hover {
-      background-color: #f8fafc;
+      border-color: var(--border-focus);
+      background-color: var(--primary-light);
+    }
+
+    .checkbox-label input[type="checkbox"] {
+      accent-color: var(--primary);
+      width: 16px;
+      height: 16px;
+    }
+
+    .controls-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .form-group label {
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--text-main);
+    }
+
+    select, input[type="number"], input[type="text"] {
+      width: 100%;
+      padding: 10px 14px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      font-size: 0.95rem;
+      background-color: var(--card-bg);
+      transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    select:focus, input:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
     }
 
     .btn-group {
       display: flex;
       gap: 12px;
-      margin-top: 20px;
       flex-wrap: wrap;
     }
 
     button {
-      flex: 1;
       background-color: var(--primary);
       color: white;
       border: none;
-      padding: 10px 16px;
-      border-radius: 6px;
-      font-size: 1rem;
+      padding: 10px 18px;
+      border-radius: 8px;
+      font-size: 0.95rem;
       font-weight: 600;
       cursor: pointer;
-      transition: background-color 0.2s;
-      min-width: 140px;
+      transition: background-color 0.15s ease, transform 0.1s ease;
     }
 
     button:hover {
       background-color: var(--primary-hover);
     }
 
+    button:active {
+      transform: scale(0.99);
+    }
+
+    button.primary-btn {
+      flex: 2;
+      min-width: 160px;
+    }
+
     button.secondary {
+      flex: 1;
       background-color: #475569;
+      min-width: 130px;
     }
 
     button.secondary:hover {
@@ -156,20 +223,21 @@
     }
 
     button.small-btn {
-      padding: 2px 8px;
+      padding: 4px 10px;
       font-size: 0.75rem;
+      background-color: #94a3b8;
+      border-radius: 6px;
+    }
+
+    button.small-btn:hover {
       background-color: #64748b;
-      min-width: auto;
-      flex: none;
     }
 
     button.check-btn {
       background-color: #0284c7;
-      margin-top: 10px;
-      padding: 6px 12px;
-      font-size: 0.9rem;
-      width: auto;
-      flex: none;
+      margin-top: 12px;
+      padding: 8px 14px;
+      font-size: 0.875rem;
     }
 
     button.check-btn:hover {
@@ -178,39 +246,59 @@
 
     .quiz-output {
       background-color: var(--card-bg);
-      padding: 32px;
-      border-radius: 8px;
+      padding: 36px;
+      border-radius: var(--radius);
       border: 1px solid var(--border);
-      min-height: 300px;
+      box-shadow: var(--shadow-md);
+      min-height: 240px;
+    }
+
+    .empty-state {
+      text-align: center;
+      color: var(--text-muted);
+      padding: 48px 0;
+      font-size: 1rem;
     }
 
     .quiz-header {
       display: flex;
       justify-content: space-between;
-      border-bottom: 2px solid #000;
-      padding-bottom: 12px;
-      margin-bottom: 24px;
+      align-items: flex-end;
+      border-bottom: 2px solid var(--text-main);
+      padding-bottom: 16px;
+      margin-bottom: 28px;
+    }
+
+    .quiz-header h2 {
+      margin: 0 0 6px 0;
+      font-size: 1.5rem;
+    }
+
+    .quiz-header .meta {
+      font-size: 0.875rem;
+      color: var(--text-muted);
     }
 
     .score-banner {
       background-color: #e0f2fe;
       border: 1px solid #7dd3fc;
-      border-radius: 6px;
-      padding: 12px 16px;
+      border-radius: 8px;
+      padding: 14px 18px;
       font-size: 1.1rem;
-      font-weight: bold;
+      font-weight: 700;
       color: #0369a1;
-      margin-bottom: 24px;
+      margin-bottom: 28px;
       text-align: center;
     }
 
     .question-item {
-      margin-bottom: 28px;
-      padding: 16px;
+      margin-bottom: 24px;
+      padding: 20px;
       border: 1px solid var(--border);
-      border-radius: 8px;
-      background-color: #fff;
-      transition: all 0.2s;
+      border-radius: 10px;
+      background-color: var(--card-bg);
+      box-shadow: var(--shadow-sm);
+      transition: border-color 0.2s, background-color 0.2s;
     }
 
     .question-item.correct {
@@ -225,62 +313,86 @@
 
     .question-title {
       font-weight: 600;
-      margin-bottom: 12px;
+      font-size: 1rem;
+      margin-bottom: 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
     }
 
     .section-tag {
       font-size: 0.75rem;
+      font-weight: 700;
       background-color: #e2e8f0;
       color: #334155;
-      padding: 2px 6px;
-      border-radius: 4px;
-      margin-left: 8px;
+      padding: 3px 8px;
+      border-radius: 20px;
+      white-space: nowrap;
     }
 
     .options-grid {
       display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 8px;
-      margin-top: 8px;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 10px;
+      margin-top: 10px;
     }
 
     .mc-option {
       display: flex;
       align-items: center;
-      gap: 8px;
-      padding: 8px 12px;
+      gap: 10px;
+      padding: 10px 14px;
       border: 1px solid var(--border);
-      border-radius: 6px;
+      border-radius: 8px;
       cursor: pointer;
-      background-color: #fff;
+      background-color: var(--card-bg);
+      font-size: 0.9rem;
+      transition: background-color 0.15s, border-color 0.15s;
     }
 
     .mc-option:hover {
-      background-color: #f1f5f9;
+      background-color: var(--primary-light);
+      border-color: var(--border-focus);
+    }
+
+    .mc-option input[type="radio"] {
+      accent-color: var(--primary);
     }
 
     .feedback {
-      margin-top: 10px;
+      margin-top: 12px;
       font-weight: 600;
-      font-size: 0.95rem;
+      font-size: 0.9rem;
+      padding: 8px 12px;
+      border-radius: 6px;
     }
 
     .feedback.correct {
       color: var(--correct);
+      background-color: #dcfce7;
     }
 
     .feedback.incorrect {
       color: var(--incorrect);
+      background-color: #fee2e2;
     }
 
     .hidden {
-      display: none;
+      display: none !important;
+    }
+
+    @media (max-width: 640px) {
+      .controls-grid { grid-template-columns: 1fr; }
+      .options-grid { grid-template-columns: 1fr; }
+      .btn-group { flex-direction: column; }
+      button { width: 100%; }
     }
 
     @media print {
       body { background-color: #fff; padding: 0; }
-      .control-panel, header p, .check-btn, .btn-group, .small-btn { display: none; }
-      .quiz-output { border: none; padding: 0; }
+      .control-panel, header p, .check-btn, .btn-group, .small-btn { display: none !important; }
+      .quiz-output { border: none; padding: 0; box-shadow: none; }
     }
   </style>
 </head>
@@ -288,151 +400,149 @@
 
 <div class="container">
   <header>
-    <h1>Big Ideas Math: Algebra 2 Honors Quiz Generator</h1>
-    <p>Comprehensive practice builder for Chapters 1–10 with multi-section selection & instant grading.</p>
+    <h1>Big Ideas Math: Algebra 2 Honors</h1>
+    <p>Custom quiz builder with section filtering & automatic grading.</p>
   </header>
 
   <div class="control-panel">
-    <div class="form-group">
-      <label class="group-label">
-        <span>Select Sections (Check all that apply):</span>
-        <span>
-          <button class="small-btn" onclick="toggleAllSections(true)">Select All</button>
-          <button class="small-btn" onclick="toggleAllSections(false)">Clear All</button>
-        </span>
-      </label>
+    <div class="panel-header">
+      <span class="panel-title">1. Select Chapter Sections</span>
+      <div class="btn-row">
+        <button class="small-btn" onclick="toggleAllSections(true)">Select All</button>
+        <button class="small-btn" onclick="toggleAllSections(false)">Clear All</button>
+      </div>
+    </div>
 
-      <div class="checkbox-container">
-        <!-- Chapter 1 -->
-        <div class="chapter-group">
-          <div class="chapter-title">Ch 1: Linear Functions & Systems</div>
-          <div class="section-grid">
-            <label class="checkbox-label"><input type="checkbox" class="section-cb" value="1.1" checked> 1.1 Parent Functions & Transformations</label>
-            <label class="checkbox-label"><input type="checkbox" class="section-cb" value="1.2"> 1.2 Transformations of Linear/Abs Value</label>
-            <label class="checkbox-label"><input type="checkbox" class="section-cb" value="1.3"> 1.3 Modeling with Linear Functions</label>
-            <label class="checkbox-label"><input type="checkbox" class="section-cb" value="1.4"> 1.4 Solving Linear Systems in 3 Variables</label>
-          </div>
+    <div class="checkbox-container">
+      <!-- Chapter 1 -->
+      <div class="chapter-group">
+        <div class="chapter-title">Ch 1: Linear Functions & Systems</div>
+        <div class="section-grid">
+          <label class="checkbox-label"><input type="checkbox" class="section-cb" value="1.1" checked> 1.1 Parent Functions & Transformations</label>
+          <label class="checkbox-label"><input type="checkbox" class="section-cb" value="1.2"> 1.2 Transformations of Linear/Abs Value</label>
+          <label class="checkbox-label"><input type="checkbox" class="section-cb" value="1.3"> 1.3 Modeling with Linear Functions</label>
+          <label class="checkbox-label"><input type="checkbox" class="section-cb" value="1.4"> 1.4 Solving Linear Systems in 3 Variables</label>
         </div>
+      </div>
 
-        <!-- Chapter 2 -->
-        <div class="chapter-group">
-          <div class="chapter-title">Ch 2: Quadratic Functions</div>
-          <div class="section-grid">
-            <label class="checkbox-label"><input type="checkbox" class="section-cb" value="2.1" checked> 2.1 Transformations of Quadratic Functions</label>
-            <label class="checkbox-label"><input type="checkbox" class="section-cb" value="2.2"> 2.2 Characteristics of Quadratic Functions</label>
-            <label class="checkbox-label"><input type="checkbox" class="section-cb" value="2.3"> 2.3 Focus and Directrix of a Parabola</label>
-            <label class="checkbox-label"><input type="checkbox" class="section-cb" value="2.4"> 2.4 Modeling with Quadratic Functions</label>
-          </div>
+      <!-- Chapter 2 -->
+      <div class="chapter-group">
+        <div class="chapter-title">Ch 2: Quadratic Functions</div>
+        <div class="section-grid">
+          <label class="checkbox-label"><input type="checkbox" class="section-cb" value="2.1" checked> 2.1 Transformations of Quadratic Functions</label>
+          <label class="checkbox-label"><input type="checkbox" class="section-cb" value="2.2"> 2.2 Characteristics of Quadratic Functions</label>
+          <label class="checkbox-label"><input type="checkbox" class="section-cb" value="2.3"> 2.3 Focus and Directrix of a Parabola</label>
+          <label class="checkbox-label"><input type="checkbox" class="section-cb" value="2.4"> 2.4 Modeling with Quadratic Functions</label>
         </div>
+      </div>
 
-        <!-- Chapter 3 -->
-        <div class="chapter-group">
-          <div class="chapter-title">Ch 3: Quadratic Equations & Complex Numbers</div>
-          <div class="section-grid">
-            <label class="checkbox-label"><input type="checkbox" class="section-cb" value="3.1"> 3.1 Solving Quadratic Equations</label>
-            <label class="checkbox-label"><input type="checkbox" class="section-cb" value="3.2"> 3.2 Complex Numbers</label>
-            <label class="checkbox-label"><input type="checkbox" class="section-cb" value="3.3"> 3.3 Completing the Square</label>
-            <label class="checkbox-label"><input type="checkbox" class="section-cb" value="3.4"> 3.4 Quadratic Formula & Discriminant</label>
-            <label class="checkbox-label"><input type="checkbox" class="section-cb" value="3.5"> 3.5 Solving Nonlinear Systems</label>
-            <label class="checkbox-label"><input type="checkbox" class="section-cb" value="3.6"> 3.6 Quadratic Inequalities</label>
-          </div>
+      <!-- Chapter 3 -->
+      <div class="chapter-group">
+        <div class="chapter-title">Ch 3: Quadratic Equations & Complex Numbers</div>
+        <div class="section-grid">
+          <label class="checkbox-label"><input type="checkbox" class="section-cb" value="3.1"> 3.1 Solving Quadratic Equations</label>
+          <label class="checkbox-label"><input type="checkbox" class="section-cb" value="3.2"> 3.2 Complex Numbers</label>
+          <label class="checkbox-label"><input type="checkbox" class="section-cb" value="3.3"> 3.3 Completing the Square</label>
+          <label class="checkbox-label"><input type="checkbox" class="section-cb" value="3.4"> 3.4 Quadratic Formula & Discriminant</label>
+          <label class="checkbox-label"><input type="checkbox" class="section-cb" value="3.5"> 3.5 Solving Nonlinear Systems</label>
+          <label class="checkbox-label"><input type="checkbox" class="section-cb" value="3.6"> 3.6 Quadratic Inequalities</label>
         </div>
+      </div>
 
-        <!-- Chapter 4 -->
-        <div class="chapter-group">
-          <div class="chapter-title">Ch 4: Polynomial Functions</div>
-          <div class="section-grid">
-            <label class="checkbox-label"><input type="checkbox" class="section-cb" value="4.1"> 4.1 Graphing Polynomial Functions</label>
-            <label class="checkbox-label"><input type="checkbox" class="section-cb" value="4.2"> 4.2 Operations with Polynomials</label>
-            <label class="checkbox-label"><input type="checkbox" class="section-cb" value="4.3"> 4.3 Dividing Polynomials</label>
-            <label class="checkbox-label"><input type="checkbox" class="section-cb" value="4.4"> 4.4 Factoring Polynomials</label>
-            <label class="checkbox-label"><input type="checkbox" class="section-cb" value="4.5"> 4.5 Solving Polynomial Equations</label>
-            <label class="checkbox-label"><input type="checkbox" class="section-cb" value="4.6"> 4.6 Fundamental Theorem of Algebra</label>
-            <label class="checkbox-label"><input type="checkbox" class="section-cb" value="4.7"> 4.7 Transformations of Polynomials</label>
-            <label class="checkbox-label"><input type="checkbox" class="section-cb" value="4.8"> 4.8 Analyzing Graphs of Polynomials</label>
-          </div>
+      <!-- Chapter 4 -->
+      <div class="chapter-group">
+        <div class="chapter-title">Ch 4: Polynomial Functions</div>
+        <div class="section-grid">
+          <label class="checkbox-label"><input type="checkbox" class="section-cb" value="4.1"> 4.1 Graphing Polynomial Functions</label>
+          <label class="checkbox-label"><input type="checkbox" class="section-cb" value="4.2"> 4.2 Operations with Polynomials</label>
+          <label class="checkbox-label"><input type="checkbox" class="section-cb" value="4.3"> 4.3 Dividing Polynomials</label>
+          <label class="checkbox-label"><input type="checkbox" class="section-cb" value="4.4"> 4.4 Factoring Polynomials</label>
+          <label class="checkbox-label"><input type="checkbox" class="section-cb" value="4.5"> 4.5 Solving Polynomial Equations</label>
+          <label class="checkbox-label"><input type="checkbox" class="section-cb" value="4.6"> 4.6 Fundamental Theorem of Algebra</label>
+          <label class="checkbox-label"><input type="checkbox" class="section-cb" value="4.7"> 4.7 Transformations of Polynomials</label>
+          <label class="checkbox-label"><input type="checkbox" class="section-cb" value="4.8"> 4.8 Analyzing Graphs of Polynomials</label>
         </div>
+      </div>
 
-        <!-- Chapter 5 -->
-        <div class="chapter-group">
-          <div class="chapter-title">Ch 5: Rational Exponents & Radical Functions</div>
-          <div class="section-grid">
-            <label class="checkbox-label"><input type="checkbox" class="section-cb" value="5.1"> 5.1 nth Roots & Rational Exponents</label>
-            <label class="checkbox-label"><input type="checkbox" class="section-cb" value="5.2"> 5.2 Properties of Rational Exponents</label>
-            <label class="checkbox-label"><input type="checkbox" class="section-cb" value="5.3"> 5.3 Graphing Radical Functions</label>
-            <label class="checkbox-label"><input type="checkbox" class="section-cb" value="5.4"> 5.4 Solving Radical Equations</label>
-            <label class="checkbox-label"><input type="checkbox" class="section-cb" value="5.5"> 5.5 Performing Function Operations</label>
-            <label class="checkbox-label"><input type="checkbox" class="section-cb" value="5.6"> 5.6 Inverse of a Function</label>
-          </div>
+      <!-- Chapter 5 -->
+      <div class="chapter-group">
+        <div class="chapter-title">Ch 5: Rational Exponents & Radical Functions</div>
+        <div class="section-grid">
+          <label class="checkbox-label"><input type="checkbox" class="section-cb" value="5.1"> 5.1 nth Roots & Rational Exponents</label>
+          <label class="checkbox-label"><input type="checkbox" class="section-cb" value="5.2"> 5.2 Properties of Rational Exponents</label>
+          <label class="checkbox-label"><input type="checkbox" class="section-cb" value="5.3"> 5.3 Graphing Radical Functions</label>
+          <label class="checkbox-label"><input type="checkbox" class="section-cb" value="5.4"> 5.4 Solving Radical Equations</label>
+          <label class="checkbox-label"><input type="checkbox" class="section-cb" value="5.5"> 5.5 Performing Function Operations</label>
+          <label class="checkbox-label"><input type="checkbox" class="section-cb" value="5.6"> 5.6 Inverse of a Function</label>
         </div>
+      </div>
 
-        <!-- Chapter 6 -->
-        <div class="chapter-group">
-          <div class="chapter-title">Ch 6: Exponential & Logarithmic Functions</div>
-          <div class="section-grid">
-            <label class="checkbox-label"><input type="checkbox" class="section-cb" value="6.1"> 6.1 Exponential Growth & Decay</label>
-            <label class="checkbox-label"><input type="checkbox" class="section-cb" value="6.2"> 6.2 The Natural Base e</label>
-            <label class="checkbox-label"><input type="checkbox" class="section-cb" value="6.3"> 6.3 Logarithms & Logarithmic Functions</label>
-            <label class="checkbox-label"><input type="checkbox" class="section-cb" value="6.4"> 6.4 Transformations of Log Functions</label>
-            <label class="checkbox-label"><input type="checkbox" class="section-cb" value="6.5"> 6.5 Properties of Logarithms</label>
-            <label class="checkbox-label"><input type="checkbox" class="section-cb" value="6.6"> 6.6 Solving Exponential/Log Equations</label>
-          </div>
+      <!-- Chapter 6 -->
+      <div class="chapter-group">
+        <div class="chapter-title">Ch 6: Exponential & Logarithmic Functions</div>
+        <div class="section-grid">
+          <label class="checkbox-label"><input type="checkbox" class="section-cb" value="6.1"> 6.1 Exponential Growth & Decay</label>
+          <label class="checkbox-label"><input type="checkbox" class="section-cb" value="6.2"> 6.2 The Natural Base e</label>
+          <label class="checkbox-label"><input type="checkbox" class="section-cb" value="6.3"> 6.3 Logarithms & Logarithmic Functions</label>
+          <label class="checkbox-label"><input type="checkbox" class="section-cb" value="6.4"> 6.4 Transformations of Log Functions</label>
+          <label class="checkbox-label"><input type="checkbox" class="section-cb" value="6.5"> 6.5 Properties of Logarithms</label>
+          <label class="checkbox-label"><input type="checkbox" class="section-cb" value="6.6"> 6.6 Solving Exponential/Log Equations</label>
         </div>
+      </div>
 
-        <!-- Chapter 7 -->
-        <div class="chapter-group">
-          <div class="chapter-title">Ch 7: Rational Functions</div>
-          <div class="section-grid">
-            <label class="checkbox-label"><input type="checkbox" class="section-cb" value="7.1"> 7.1 Inverse Variation</label>
-            <label class="checkbox-label"><input type="checkbox" class="section-cb" value="7.2"> 7.2 Graphing Rational Functions</label>
-            <label class="checkbox-label"><input type="checkbox" class="section-cb" value="7.3"> 7.3 Multiplying/Dividing Rational Expr</label>
-            <label class="checkbox-label"><input type="checkbox" class="section-cb" value="7.4"> 7.4 Adding/Subtracting Rational Expr</label>
-            <label class="checkbox-label"><input type="checkbox" class="section-cb" value="7.5"> 7.5 Solving Rational Equations</label>
-          </div>
+      <!-- Chapter 7 -->
+      <div class="chapter-group">
+        <div class="chapter-title">Ch 7: Rational Functions</div>
+        <div class="section-grid">
+          <label class="checkbox-label"><input type="checkbox" class="section-cb" value="7.1"> 7.1 Inverse Variation</label>
+          <label class="checkbox-label"><input type="checkbox" class="section-cb" value="7.2"> 7.2 Graphing Rational Functions</label>
+          <label class="checkbox-label"><input type="checkbox" class="section-cb" value="7.3"> 7.3 Multiplying/Dividing Rational Expr</label>
+          <label class="checkbox-label"><input type="checkbox" class="section-cb" value="7.4"> 7.4 Adding/Subtracting Rational Expr</label>
+          <label class="checkbox-label"><input type="checkbox" class="section-cb" value="7.5"> 7.5 Solving Rational Equations</label>
         </div>
+      </div>
 
-        <!-- Chapter 8 -->
-        <div class="chapter-group">
-          <div class="chapter-title">Ch 8: Sequences & Series</div>
-          <div class="section-grid">
-            <label class="checkbox-label"><input type="checkbox" class="section-cb" value="8.1"> 8.1 Defining Sequences & Series</label>
-            <label class="checkbox-label"><input type="checkbox" class="section-cb" value="8.2"> 8.2 Arithmetic Sequences & Series</label>
-            <label class="checkbox-label"><input type="checkbox" class="section-cb" value="8.3"> 8.3 Geometric Sequences & Series</label>
-            <label class="checkbox-label"><input type="checkbox" class="section-cb" value="8.4"> 8.4 Infinite Geometric Series</label>
-          </div>
+      <!-- Chapter 8 -->
+      <div class="chapter-group">
+        <div class="chapter-title">Ch 8: Sequences & Series</div>
+        <div class="section-grid">
+          <label class="checkbox-label"><input type="checkbox" class="section-cb" value="8.1"> 8.1 Defining Sequences & Series</label>
+          <label class="checkbox-label"><input type="checkbox" class="section-cb" value="8.2"> 8.2 Arithmetic Sequences & Series</label>
+          <label class="checkbox-label"><input type="checkbox" class="section-cb" value="8.3"> 8.3 Geometric Sequences & Series</label>
+          <label class="checkbox-label"><input type="checkbox" class="section-cb" value="8.4"> 8.4 Infinite Geometric Series</label>
         </div>
+      </div>
 
-        <!-- Chapter 9 -->
-        <div class="chapter-group">
-          <div class="chapter-title">Ch 9: Trigonometric Ratios & Functions</div>
-          <div class="section-grid">
-            <label class="checkbox-label"><input type="checkbox" class="section-cb" value="9.1"> 9.1 Right Triangle Trigonometry</label>
-            <label class="checkbox-label"><input type="checkbox" class="section-cb" value="9.2"> 9.2 Angles and Radian Measure</label>
-            <label class="checkbox-label"><input type="checkbox" class="section-cb" value="9.3"> 9.3 Trigonometric Functions of Any Angle</label>
-            <label class="checkbox-label"><input type="checkbox" class="section-cb" value="9.4"> 9.4 Graphing Sine & Cosine Functions</label>
-          </div>
+      <!-- Chapter 9 -->
+      <div class="chapter-group">
+        <div class="chapter-title">Ch 9: Trigonometric Ratios & Functions</div>
+        <div class="section-grid">
+          <label class="checkbox-label"><input type="checkbox" class="section-cb" value="9.1"> 9.1 Right Triangle Trigonometry</label>
+          <label class="checkbox-label"><input type="checkbox" class="section-cb" value="9.2"> 9.2 Angles and Radian Measure</label>
+          <label class="checkbox-label"><input type="checkbox" class="section-cb" value="9.3"> 9.3 Trigonometric Functions of Any Angle</label>
+          <label class="checkbox-label"><input type="checkbox" class="section-cb" value="9.4"> 9.4 Graphing Sine & Cosine Functions</label>
         </div>
+      </div>
 
-        <!-- Chapter 10 -->
-        <div class="chapter-group">
-          <div class="chapter-title">Ch 10: Probability & Statistics</div>
-          <div class="section-grid">
-            <label class="checkbox-label"><input type="checkbox" class="section-cb" value="10.1"> 10.1 Sample Spaces and Probability</label>
-            <label class="checkbox-label"><input type="checkbox" class="section-cb" value="10.2"> 10.2 Independent & Dependent Events</label>
-            <label class="checkbox-label"><input type="checkbox" class="section-cb" value="10.3"> 10.3 Two-Way Tables & Probability</label>
-            <label class="checkbox-label"><input type="checkbox" class="section-cb" value="10.4"> 10.4 Permutations and Combinations</label>
-          </div>
+      <!-- Chapter 10 -->
+      <div class="chapter-group">
+        <div class="chapter-title">Ch 10: Probability & Statistics</div>
+        <div class="section-grid">
+          <label class="checkbox-label"><input type="checkbox" class="section-cb" value="10.1"> 10.1 Sample Spaces and Probability</label>
+          <label class="checkbox-label"><input type="checkbox" class="section-cb" value="10.2"> 10.2 Independent & Dependent Events</label>
+          <label class="checkbox-label"><input type="checkbox" class="section-cb" value="10.3"> 10.3 Two-Way Tables & Probability</label>
+          <label class="checkbox-label"><input type="checkbox" class="section-cb" value="10.4"> 10.4 Permutations and Combinations</label>
         </div>
       </div>
     </div>
 
-    <div style="display: flex; gap: 16px;">
-      <div class="form-group" style="flex: 1;">
-        <label for="numQuestions">Total Questions:</label>
+    <div class="controls-grid">
+      <div class="form-group">
+        <label for="numQuestions">Total Questions</label>
         <input type="number" id="numQuestions" min="1" max="25" value="6">
       </div>
-      <div class="form-group" style="flex: 1;">
-        <label for="formatSelect">Format:</label>
+      <div class="form-group">
+        <label for="formatSelect">Format</label>
         <select id="formatSelect">
           <option value="mc">Multiple Choice</option>
           <option value="free">Free Response</option>
@@ -441,15 +551,15 @@
     </div>
 
     <div class="btn-group">
-      <button onclick="generateQuiz()">Generate Quiz</button>
+      <button class="primary-btn" onclick="generateQuiz()">Generate Quiz</button>
       <button class="secondary" onclick="checkAllAnswers()">Grade Entire Quiz</button>
       <button class="secondary" onclick="window.print()">Print / Export PDF</button>
     </div>
   </div>
 
   <div class="quiz-output" id="quizContainer">
-    <div style="text-align: center; color: #64748b; margin-top: 40px;">
-      Select desired sections and click "Generate Quiz" to begin.
+    <div class="empty-state">
+      Select your target sections above and click <strong>Generate Quiz</strong> to start practicing.
     </div>
   </div>
 </div>
@@ -463,7 +573,6 @@
     document.querySelectorAll('.section-cb').forEach(cb => cb.checked = checked);
   }
 
-  // Generators covering Chapters 1 through 10
   const generators = {
     "1.1": () => {
       const h = rand(-5, 5), k = rand(-5, 5);
@@ -954,11 +1063,9 @@
       <div class="quiz-header">
         <div>
           <h2>Algebra 2 Honors Practice Quiz</h2>
-          <div>Sections: <strong>${selectedSections.join(', ')}</strong></div>
+          <div class="meta">Sections: <strong>${selectedSections.join(', ')}</strong></div>
         </div>
-        <div>
-          <div>Name: ______________________</div>
-        </div>
+        <div class="meta">Name: ______________________</div>
       </div>
       <div id="scoreBanner" class="score-banner hidden"></div>
     `;
@@ -973,7 +1080,7 @@
       html += `
         <div class="question-item" id="qItem_${i}">
           <div class="question-title">
-            ${i + 1}. ${q.prompt}
+            <span>${i + 1}. ${q.prompt}</span>
             <span class="section-tag">Sec ${sec}</span>
           </div>
       `;
@@ -993,7 +1100,7 @@
       } else {
         html += `
           <div>
-            <input type="text" id="input_${i}" placeholder="Enter your answer..." autocomplete="off">
+            <input type="text" id="input_${i}" placeholder="Type your answer..." autocomplete="off">
           </div>
         `;
       }
@@ -1024,7 +1131,7 @@
 
     if (!userAns) {
       fbEl.className = "feedback incorrect";
-      fbEl.innerText = "Please enter or select an answer first.";
+      fbEl.innerText = "Please select or enter an answer.";
       fbEl.classList.remove("hidden");
       return false;
     }
