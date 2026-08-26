@@ -1,0 +1,1084 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Algebra 2 Honors - Advanced Study App</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#eff6ff',
+                            100: '#dbeafe',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                            900: '#1e3a8a',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+        }
+        
+        .flashcard-container { perspective: 1000px; }
+        .flashcard {
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            transform-style: preserve-3d;
+            position: relative;
+        }
+        .flashcard.is-flipped { transform: rotateY(180deg); }
+        .flashcard-face {
+            backface-visibility: hidden;
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            border-radius: 1.25rem; padding: 2rem;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.08), 0 8px 10px -6px rgba(0, 0, 0, 0.01);
+        }
+        .flashcard-front { background-color: #ffffff; color: #0f172a; border: 1px solid #e2e8f0; }
+        .flashcard-back { background-color: #1e293b; color: #ffffff; transform: rotateY(180deg); }
+
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 9999px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+        .checkbox-custom:checked + label {
+            background-color: #eff6ff;
+            border-color: #3b82f6;
+            color: #1d4ed8;
+        }
+    </style>
+</head>
+<body class="h-screen flex flex-col md:flex-row overflow-hidden text-slate-800">
+
+    <!-- Mobile Top Navigation Header -->
+    <div class="md:hidden bg-slate-900 text-white p-4 flex justify-between items-center shadow-md z-30">
+        <div class="flex items-center space-x-2">
+            <i class="fa-solid fa-square-root-variable text-blue-400 text-xl"></i>
+            <span class="font-bold tracking-tight">Algebra 2 Honors</span>
+        </div>
+        <button id="mobile-menu-btn" class="p-2 text-slate-300 hover:text-white focus:outline-none">
+            <i class="fa-solid fa-bars text-xl"></i>
+        </button>
+    </div>
+
+    <!-- Sidebar Navigation -->
+    <aside id="sidebar" class="bg-slate-900 text-slate-300 w-full md:w-80 flex-shrink-0 flex flex-col h-full absolute md:relative z-20 transform -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out shadow-2xl md:shadow-none">
+        <div class="p-5 border-b border-slate-800 flex justify-between items-center">
+            <div>
+                <h1 class="text-xl font-black text-white tracking-tight flex items-center">
+                    <i class="fa-solid fa-square-root-variable mr-2.5 text-blue-500 text-2xl"></i>
+                    Algebra 2 Honors
+                </h1>
+                <p class="text-xs text-slate-400 font-medium tracking-wide uppercase mt-0.5">Big Ideas Math</p>
+            </div>
+            <button id="mobile-close-btn" class="md:hidden text-slate-400 hover:text-white">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+        </div>
+        
+        <!-- Score & Quick Stats Widget -->
+        <div class="p-4 m-4 bg-slate-800/80 rounded-xl border border-slate-700/60 shadow-inner">
+            <div class="flex justify-between items-center mb-2">
+                <span class="text-xs text-slate-400 uppercase font-semibold">Total Practice Score</span>
+                <span id="overall-score" class="text-emerald-400 font-bold text-lg">0 pts</span>
+            </div>
+            <div class="flex justify-between items-center text-xs text-slate-400">
+                <span>Questions Answered:</span>
+                <span id="total-questions-count" class="text-white font-medium">0</span>
+            </div>
+        </div>
+
+        <!-- Section Navigation Tree -->
+        <div class="px-4 py-2 flex justify-between items-center text-xs font-semibold text-slate-400 uppercase tracking-wider">
+            <span>Chapters & Sections</span>
+            <div class="space-x-2">
+                <button id="select-all-btn" class="text-blue-400 hover:underline lowercase">all</button>
+                <span>/</span>
+                <button id="clear-all-btn" class="text-slate-500 hover:underline lowercase">clear</button>
+            </div>
+        </div>
+
+        <nav class="flex-1 overflow-y-auto px-4 pb-6 space-y-2 text-sm" id="curriculum-tree">
+            <!-- Dynamically populated chapters & sections accordions -->
+        </nav>
+        
+        <div class="p-4 bg-slate-900 border-t border-slate-800">
+            <button id="generate-quiz-btn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-xl shadow-lg transition flex items-center justify-center space-x-2">
+                <i class="fa-solid fa-wand-magic-sparkles"></i>
+                <span>Build Practice Quiz (<span id="selected-count">0</span>)</span>
+            </button>
+        </div>
+    </aside>
+
+    <!-- Main Workspace Area -->
+    <main class="flex-1 flex flex-col bg-slate-50 h-full relative overflow-hidden">
+        
+        <!-- Top Workspace Bar -->
+        <header class="bg-white border-b border-slate-200 px-6 py-4 flex flex-wrap justify-between items-center shadow-sm z-10 gap-3">
+            <div>
+                <h2 id="active-title" class="text-xl font-bold text-slate-800">Algebra 2 Practice Hub</h2>
+                <p id="active-subtitle" class="text-xs text-slate-500">Select topics on the left or customize your quiz parameters</p>
+            </div>
+
+            <div class="flex items-center space-x-2 bg-slate-100 p-1 rounded-xl border border-slate-200">
+                <button id="btn-mode-flashcards" class="px-4 py-2 rounded-lg text-xs font-semibold transition-all text-slate-600 hover:text-slate-900">
+                    <i class="fa-regular fa-clone mr-1.5"></i>Flashcards
+                </button>
+                <button id="btn-mode-quiz" class="px-4 py-2 rounded-lg text-xs font-semibold transition-all bg-white shadow-sm text-blue-600">
+                    <i class="fa-solid fa-list-check mr-1.5"></i>Custom Quiz
+                </button>
+            </div>
+        </header>
+
+        <!-- Main Dynamic Display View -->
+        <div id="workspace-content" class="flex-1 overflow-y-auto p-4 md:p-8">
+            
+            <!-- Quiz Configuration Modal / Screen -->
+            <div id="quiz-config-screen" class="max-w-2xl mx-auto bg-white p-8 rounded-2xl border border-slate-200 shadow-sm">
+                <div class="flex items-center space-x-3 mb-6 border-b border-slate-100 pb-4">
+                    <div class="p-3 bg-blue-100 text-blue-600 rounded-xl">
+                        <i class="fa-solid fa-sliders text-2xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-bold text-slate-800">Customize Practice Test</h3>
+                        <p class="text-xs text-slate-500">Select how many questions and which specific topics you want to practice</p>
+                    </div>
+                </div>
+
+                <div class="space-y-6">
+                    <!-- Question Count Selection -->
+                    <div>
+                        <label class="block text-sm font-bold text-slate-700 mb-2">Number of Questions</label>
+                        <div class="grid grid-cols-4 gap-3">
+                            <button data-count="5" class="q-count-btn border-2 border-blue-500 bg-blue-50 text-blue-700 font-bold py-2.5 rounded-xl transition">5 Qs</button>
+                            <button data-count="10" class="q-count-btn border-2 border-slate-200 hover:border-slate-300 font-bold py-2.5 rounded-xl transition">10 Qs</button>
+                            <button data-count="15" class="q-count-btn border-2 border-slate-200 hover:border-slate-300 font-bold py-2.5 rounded-xl transition">15 Qs</button>
+                            <button data-count="20" class="q-count-btn border-2 border-slate-200 hover:border-slate-300 font-bold py-2.5 rounded-xl transition">20 Qs</button>
+                        </div>
+                    </div>
+
+                    <!-- Question Type Options -->
+                    <div>
+                        <label class="block text-sm font-bold text-slate-700 mb-2">Question Difficulty & Variety</label>
+                        <div class="p-4 bg-slate-50 border border-slate-200 rounded-xl flex items-center justify-between">
+                            <div>
+                                <span class="font-semibold text-slate-800 text-sm block">Algorithmic Infinite Generation</span>
+                                <span class="text-xs text-slate-500">Generates randomized values for endless practice problems</span>
+                            </div>
+                            <span class="px-2.5 py-1 bg-emerald-100 text-emerald-800 text-xs font-bold rounded-full">ACTIVE</span>
+                        </div>
+                    </div>
+
+                    <!-- Active Selected Topics Overview -->
+                    <div>
+                        <div class="flex justify-between items-center mb-2">
+                            <label class="block text-sm font-bold text-slate-700">Selected Topics Scope (<span id="config-topic-count">0</span> sections)</label>
+                            <button id="open-sidebar-mobile-btn" class="md:hidden text-xs text-blue-600 font-semibold">Change Topics</button>
+                        </div>
+                        <div id="config-topics-list" class="max-h-40 overflow-y-auto p-3 bg-slate-50 rounded-xl border border-slate-200 text-xs text-slate-600 flex flex-wrap gap-2">
+                            <!-- Injected badges -->
+                        </div>
+                    </div>
+
+                    <button id="start-quiz-btn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-xl shadow-lg transition flex justify-center items-center space-x-2 text-base">
+                        <i class="fa-solid fa-play"></i>
+                        <span>Start Practice Quiz</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Quiz Execution Screen (Hidden initially) -->
+            <div id="quiz-active-screen" class="hidden max-w-3xl mx-auto pb-12">
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                    <div class="bg-slate-50 px-6 py-4 border-b border-slate-200 flex justify-between items-center">
+                        <div class="flex items-center space-x-3">
+                            <span id="quiz-section-badge" class="px-2.5 py-1 bg-blue-100 text-blue-700 font-bold text-xs rounded-full">Section 1.1</span>
+                            <span class="text-xs text-slate-500 font-semibold" id="quiz-progress-text">Question 1 of 10</span>
+                        </div>
+                        <div class="w-1/3 bg-slate-200 rounded-full h-2">
+                            <div id="quiz-progress-bar" class="bg-blue-600 h-2 rounded-full transition-all duration-300" style="width: 10%"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="p-6 md:p-8">
+                        <div id="quiz-question-text" class="text-xl font-semibold text-slate-800 mb-6 leading-relaxed">
+                            <!-- Question injected here -->
+                        </div>
+                        
+                        <div id="quiz-options-container" class="space-y-3">
+                            <!-- Options injected here -->
+                        </div>
+
+                        <!-- Step-by-Step Rationale Feedback Box -->
+                        <div id="quiz-rationale-box" class="mt-6 p-5 rounded-xl hidden border">
+                            <!-- Feedback header & step-by-step solution injected here -->
+                        </div>
+                    </div>
+                    
+                    <div class="bg-slate-50 px-6 py-4 border-t border-slate-200 flex justify-between items-center">
+                        <button id="quiz-hint-btn" class="text-slate-500 hover:text-blue-600 text-xs font-semibold flex items-center space-x-1.5">
+                            <i class="fa-regular fa-lightbulb text-amber-500"></i>
+                            <span>Show Concept Hint</span>
+                        </button>
+                        <button id="quiz-next-btn" class="hidden bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-xl shadow-md font-semibold text-sm transition flex items-center">
+                            <span>Next Question</span>
+                            <i class="fa-solid fa-arrow-right ml-2"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Concept Hint Modal/Drawer -->
+                <div id="quiz-hint-box" class="hidden mt-4 p-4 bg-amber-50 border border-amber-200 rounded-xl text-amber-900 text-sm">
+                    <span class="font-bold block mb-1"><i class="fa-solid fa-lightbulb text-amber-500 mr-1"></i> Concept Hint:</span>
+                    <span id="quiz-hint-text">---</span>
+                </div>
+            </div>
+
+            <!-- Quiz Results & Performance Analysis Screen -->
+            <div id="quiz-results-screen" class="hidden max-w-3xl mx-auto">
+                <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-8 text-center">
+                    <div class="w-20 h-20 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl">
+                        <i class="fa-solid fa-trophy"></i>
+                    </div>
+                    <h3 class="text-2xl font-black text-slate-800 mb-1">Quiz Completed!</h3>
+                    <p class="text-slate-500 text-sm mb-6">Here is your performance summary across the practiced sections</p>
+
+                    <div class="grid grid-cols-2 md:grid-cols-3 gap-4 mb-8">
+                        <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
+                            <span class="text-xs text-slate-400 font-semibold block uppercase">Score</span>
+                            <span id="res-score-percentage" class="text-3xl font-extrabold text-blue-600">80%</span>
+                        </div>
+                        <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
+                            <span class="text-xs text-slate-400 font-semibold block uppercase">Correct</span>
+                            <span id="res-correct-count" class="text-3xl font-extrabold text-emerald-600">8 / 10</span>
+                        </div>
+                        <div class="bg-slate-50 p-4 rounded-xl border border-slate-100 col-span-2 md:col-span-1">
+                            <span class="text-xs text-slate-400 font-semibold block uppercase">Points Earned</span>
+                            <span id="res-points-earned" class="text-3xl font-extrabold text-amber-500">+80</span>
+                        </div>
+                    </div>
+
+                    <!-- Section breakdown -->
+                    <div class="text-left mb-8">
+                        <h4 class="font-bold text-slate-800 text-sm uppercase tracking-wider mb-3">Section Mastery Breakdown</h4>
+                        <div id="res-section-breakdown" class="space-y-2">
+                            <!-- Injected section scores -->
+                        </div>
+                    </div>
+
+                    <div class="flex flex-col sm:flex-row justify-center gap-3">
+                        <button id="res-retry-btn" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-xl transition">
+                            <i class="fa-solid fa-rotate-right mr-2"></i>Practice Again
+                        </button>
+                        <button id="res-change-topics-btn" class="bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 font-semibold py-3 px-6 rounded-xl transition">
+                            <i class="fa-solid fa-sliders mr-2"></i>Change Topics
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Flashcards Screen View -->
+            <div id="flashcards-active-screen" class="hidden max-w-2xl mx-auto h-full flex flex-col items-center justify-center py-6">
+                <div class="w-full mb-4 flex justify-between items-center text-slate-500 font-medium text-xs">
+                    <span id="fc-section-label" class="bg-blue-100 text-blue-800 font-bold px-3 py-1 rounded-full">Section 1.1</span>
+                    <span id="fc-counter">Card 1 of 10</span>
+                </div>
+                
+                <div class="flashcard-container w-full h-80 relative cursor-pointer" id="flashcard-box">
+                    <div class="flashcard w-full h-full absolute" id="flashcard-element">
+                        <div class="flashcard-face flashcard-front">
+                            <span class="text-xs uppercase tracking-widest text-slate-400 mb-4 font-bold">Concept / Theorem</span>
+                            <div id="fc-front-text" class="text-xl md:text-2xl font-semibold text-center px-4"></div>
+                            <span class="mt-6 text-xs text-blue-500 font-medium"><i class="fa-solid fa-rotate mr-1"></i> Click to flip card</span>
+                        </div>
+                        <div class="flashcard-face flashcard-back">
+                            <span class="text-xs uppercase tracking-widest text-blue-300 mb-4 font-bold">Formula / Definition</span>
+                            <div id="fc-back-text" class="text-xl md:text-2xl font-semibold text-center px-4"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex space-x-4 mt-8">
+                    <button id="fc-prev-btn" class="bg-white hover:bg-slate-100 border border-slate-200 text-slate-700 px-5 py-2.5 rounded-xl font-semibold text-sm transition flex items-center shadow-sm">
+                        <i class="fa-solid fa-arrow-left mr-2"></i> Previous
+                    </button>
+                    <button id="fc-next-btn" class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-xl font-semibold text-sm transition flex items-center shadow-md">
+                        Next <i class="fa-solid fa-arrow-right ml-2"></i>
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <script>
+        // Comprehensive Big Ideas Math Algebra 2 Honors Curriculum Structure
+        const CURRICULUM = [
+            {
+                id: 'ch1',
+                title: 'Ch 1: Linear Functions & Systems',
+                sections: [
+                    { id: '1.1', title: '1.1 Parent Functions & Transformations' },
+                    { id: '1.2', title: '1.2 Transformations of Linear & Absolute Value' },
+                    { id: '1.3', title: '1.3 Modeling with Linear Functions' },
+                    { id: '1.4', title: '1.4 Solving Linear Systems' }
+                ]
+            },
+            {
+                id: 'ch2',
+                title: 'Ch 2: Quadratic Functions',
+                sections: [
+                    { id: '2.1', title: '2.1 Transformations of Quadratic Functions' },
+                    { id: '2.2', title: '2.2 Characteristics of Quadratic Functions' },
+                    { id: '2.3', title: '2.3 Focus & Directrix of a Parabola' },
+                    { id: '2.4', title: '2.4 Modeling with Quadratic Functions' }
+                ]
+            },
+            {
+                id: 'ch3',
+                title: 'Ch 3: Quadratic Equations & Complex Numbers',
+                sections: [
+                    { id: '3.1', title: '3.1 Solving Quadratic Equations' },
+                    { id: '3.2', title: '3.2 Complex Numbers' },
+                    { id: '3.3', title: '3.3 Completing the Square' },
+                    { id: '3.4', title: '3.4 Quadratic Formula & Discriminant' },
+                    { id: '3.5', title: '3.5 Solving Nonlinear Systems' }
+                ]
+            },
+            {
+                id: 'ch4',
+                title: 'Ch 4: Polynomial Functions',
+                sections: [
+                    { id: '4.1', title: '4.1 Graphing Polynomial Functions' },
+                    { id: '4.2', title: '4.2 Adding, Subtracting, & Multiplying Polynomials' },
+                    { id: '4.3', title: '4.3 Dividing Polynomials' },
+                    { id: '4.4', title: '4.4 Factoring Polynomials' },
+                    { id: '4.5', title: '4.5 Rational Root Theorem' },
+                    { id: '4.6', title: '4.6 Fundamental Theorem of Algebra' }
+                ]
+            },
+            {
+                id: 'ch5',
+                title: 'Ch 5: Rational Exponents & Radicals',
+                sections: [
+                    { id: '5.1', title: '5.1 nth Roots & Rational Exponents' },
+                    { id: '5.2', title: '5.2 Properties of Rational Exponents' },
+                    { id: '5.3', title: '5.3 Graphing Radical Functions' },
+                    { id: '5.4', title: '5.4 Solving Radical Equations' },
+                    { id: '5.5', title: '5.5 Function Operations & Composition' },
+                    { id: '5.6', title: '5.6 Inverse Functions' }
+                ]
+            },
+            {
+                id: 'ch6',
+                title: 'Ch 6: Exponential & Logarithmic Functions',
+                sections: [
+                    { id: '6.1', title: '6.1 Exponential Growth & Decay' },
+                    { id: '6.2', title: '6.2 The Natural Base e' },
+                    { id: '6.3', title: '6.3 Logarithms & Logarithmic Functions' },
+                    { id: '6.4', title: '6.4 Transformations of Exponential & Log' },
+                    { id: '6.5', title: '6.5 Properties of Logarithms' },
+                    { id: '6.6', title: '6.6 Solving Exponential & Logarithmic Equations' }
+                ]
+            },
+            {
+                id: 'ch7',
+                title: 'Ch 7: Rational Functions',
+                sections: [
+                    { id: '7.1', title: '7.1 Inverse Variation & Rational Functions' },
+                    { id: '7.2', title: '7.2 Graphing Rational Functions' },
+                    { id: '7.3', title: '7.3 Multiplying & Dividing Rational Expressions' },
+                    { id: '7.4', title: '7.4 Adding & Subtracting Rational Expressions' },
+                    { id: '7.5', title: '7.5 Solving Rational Equations' }
+                ]
+            },
+            {
+                id: 'ch8',
+                title: 'Ch 8: Sequences & Series',
+                sections: [
+                    { id: '8.1', title: '8.1 Defining Sequences and Series' },
+                    { id: '8.2', title: '8.2 Arithmetic Sequences & Series' },
+                    { id: '8.3', title: '8.3 Geometric Sequences & Series' },
+                    { id: '8.4', title: '8.4 Sums of Infinite Geometric Series' }
+                ]
+            },
+            {
+                id: 'ch9',
+                title: 'Ch 9: Trigonometric Functions',
+                sections: [
+                    { id: '9.1', title: '9.1 Right Triangle Trigonometry' },
+                    { id: '9.2', title: '9.2 Angles & Radian Measure' },
+                    { id: '9.3', title: '9.3 Trigonometric Functions of Any Angle' },
+                    { id: '9.4', title: '9.4 Graphing Sine & Cosine Functions' },
+                    { id: '9.5', title: '9.5 Graphing Other Trigonometric Functions' }
+                ]
+            }
+        ];
+
+        // Static Flashcards Bank
+        const FLASHCARDS_BANK = {
+            '1.1': [{ front: 'Absolute Value Parent Function', back: 'f(x) = |x|' }, { front: 'Linear Parent Function', back: 'f(x) = x' }],
+            '1.2': [{ front: 'Vertical Stretch by factor a', back: 'g(x) = a · f(x) where a > 1' }],
+            '1.4': [{ front: 'System Consistency', back: 'Consistent = has at least one solution; Inconsistent = no solution' }],
+            '2.1': [{ front: 'Vertex Form of Quadratic', back: 'f(x) = a(x - h)² + k' }],
+            '2.2': [{ front: 'Axis of Symmetry (Standard Form)', back: 'x = -b/(2a)' }],
+            '2.3': [{ front: 'Distance to Focus (p value)', back: 'p = 1/(4a)' }],
+            '3.2': [{ front: 'Definition of i', back: 'i = √(-1), i² = -1' }, { front: 'Complex Conjugate of a + bi', back: 'a - bi' }],
+            '3.4': [{ front: 'Quadratic Formula', back: 'x = (-b ± √(b² - 4ac))/(2a)' }, { front: 'Discriminant', back: 'D = b² - 4ac' }],
+            '4.3': [{ front: 'Remainder Theorem', back: 'If P(x) is divided by (x - k), remainder is r = P(k)' }],
+            '4.5': [{ front: 'Rational Root Theorem', back: 'Possible rational roots = ±(factors of constant)/(factors of leading coeff)' }],
+            '5.1': [{ front: 'Rational Exponent Rule', back: 'a^(m/n) = ⁿ√(a^m) = (ⁿ√a)^m' }],
+            '5.6': [{ front: 'Inverse Function Property', back: 'f(f⁻¹(x)) = x and f⁻¹(f(x)) = x' }],
+            '6.3': [{ front: 'Logarithm Definition', back: 'log_b(y) = x if and only if b^x = y' }],
+            '6.5': [{ front: 'Change of Base Formula', back: 'log_b(a) = log_c(a) / log_c(b)' }],
+            '7.2': [{ front: 'Vertical Asymptote', back: 'Occurs where denominator q(x) = 0 (after removing common factors)' }],
+            '8.2': [{ front: 'Sum of Finite Arithmetic Series', back: 'S_n = n(a₁ + aₙ)/2' }],
+            '8.4': [{ front: 'Sum of Infinite Geometric Series', back: 'S = a₁/(1 - r) when |r| < 1' }],
+            '9.2': [{ front: 'Degree to Radian Conversion', back: 'radians = degrees × π/180°' }]
+        };
+
+        // Procedural Dynamic Question Generators
+        function generateDynamicQuestion(secId) {
+            const rInt = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
+            
+            switch (secId) {
+                case '1.1': case '1.2': {
+                    const h = rInt(-5, 5);
+                    const k = rInt(-5, 5);
+                    const a = [2, 3, -2, -3][rInt(0, 3)];
+                    const correctVal = `(${h}, ${k})`;
+                    return {
+                        sectionId: secId,
+                        question: `Find the vertex of g(x) = ${a}|x - (${h})| + (${k}).`,
+                        options: [correctVal, `(${-h}, ${k})`, `(${h}, ${-k})`, `(${k}, ${h})`],
+                        answerIdx: 0,
+                        hint: "In vertex form g(x) = a|x - h| + k, the vertex is (h, k).",
+                        rationale: `The vertex form shows a horizontal shift of ${h} units and vertical shift of ${k} units from the origin.`
+                    };
+                }
+
+                case '2.2': case '2.1': {
+                    const a = rInt(1, 3);
+                    const h = rInt(-4, 4);
+                    const k = rInt(-6, 6);
+                    const b = -2 * a * h;
+                    const c = a * h * h + k;
+                    return {
+                        sectionId: secId,
+                        question: `Find the x-coordinate of the vertex for f(x) = ${a}x² + ${b}x + ${c}.`,
+                        options: [`${h}`, `${-h}`, `${2*h}`, `${Math.abs(b)}`],
+                        answerIdx: 0,
+                        hint: "Use the vertex formula x = -b/(2a).",
+                        rationale: `x = -${b}/(2·${a}) = ${-b}/${2*a} = ${h}`
+                    };
+                }
+
+                case '2.3': {
+                    const p = rInt(1, 3);
+                    const k = rInt(1, 4);
+                    const directrix = k - p;
+                    return {
+                        sectionId: secId,
+                        question: `What is the directrix for parabola y = (1/${4*p})x² + ${k}?`,
+                        options: [`y = ${directrix}`, `y = ${k + p}`, `y = ${p}`, `x = ${directrix}`],
+                        answerIdx: 0,
+                        hint: "The directrix is y = k - p, where p = 1/(4a).",
+                        rationale: `Here p = ${p} and vertex is at y = ${k}, so directrix is y = ${k} - ${p} = ${directrix}.`
+                    };
+                }
+
+                case '3.2': {
+                    const a1 = rInt(1, 4), b1 = rInt(1, 4);
+                    const a2 = rInt(1, 4), b2 = rInt(1, 4);
+                    const realPart = (a1 * a2) - (b1 * b2);
+                    const imagPart = (a1 * b2) + (a2 * b1);
+                    const correctAns = `${realPart} + ${imagPart}i`;
+                    return {
+                        sectionId: secId,
+                        question: `Simplify: (${a1} + ${b1}i)(${a2} + ${b2}i)`,
+                        options: [correctAns, `${a1*a2} + ${b1*b2}i`, `${realPart} - ${imagPart}i`, `${realPart + 2} + ${imagPart}i`],
+                        answerIdx: 0,
+                        hint: "Use FOIL and remember i² = -1.",
+                        rationale: `FOIL gives: ${a1}·${a2} + ${a1}·${b2}i + ${b1}i·${a2} + ${b1}·${b2}i². Since i² = -1: = ${realPart} + ${imagPart}i`
+                    };
+                }
+
+                case '3.4': {
+                    const a = 1;
+                    const b = rInt(2, 6) * 2;
+                    const c = rInt(1, 9);
+                    const disc = b*b - 4*a*c;
+                    let desc = disc > 0 ? "Two Real" : (disc === 0 ? "One Real" : "Two Complex");
+                    return {
+                        sectionId: secId,
+                        question: `Find the discriminant of x² + ${b}x + ${c} = 0.`,
+                        options: [`D = ${disc} (${desc})`, `D = ${disc + 10}`, `D = ${-disc}`, `D = ${Math.abs(disc)}`],
+                        answerIdx: 0,
+                        hint: "D = b² - 4ac",
+                        rationale: `D = ${b}² - 4(${c}) = ${b*b} - ${4*c} = ${disc}. Since D ${disc > 0 ? '> 0' : (disc===0 ? '= 0' : '< 0')}, there are ${desc} solutions.`
+                    };
+                }
+
+                case '4.3': {
+                    const k = rInt(1, 3);
+                    const c1 = rInt(1, 3), c2 = rInt(-3, 3), c3 = rInt(1, 5);
+                    const rem = c1*k*k + c2*k + c3;
+                    return {
+                        sectionId: secId,
+                        question: `Find the remainder when P(x) = ${c1}x² + ${c2}x + ${c3} is divided by (x - ${k}).`,
+                        options: [`${rem}`, `${rem + 3}`, `${rem - 2}`, `${c1 + c2 + c3}`],
+                        answerIdx: 0,
+                        hint: "By Remainder Theorem, remainder = P(k).",
+                        rationale: `P(${k}) = ${c1}(${k})² + ${c2}(${k}) + ${c3} = ${c1*k*k} + ${c2*k} + ${c3} = ${rem}`
+                    };
+                }
+
+                case '6.3': case '6.5': {
+                    const base = [2, 3, 5][rInt(0, 2)];
+                    const exp = rInt(2, 4);
+                    const val = Math.pow(base, exp);
+                    return {
+                        sectionId: secId,
+                        question: `Evaluate: log₍${base}₎(${val})`,
+                        options: [`${exp}`, `${base}`, `${val / base}`, `${exp + 1}`],
+                        answerIdx: 0,
+                        hint: `To what power must ${base} be raised to get ${val}?`,
+                        rationale: `Since ${base}^${exp} = ${val}, then log₍${base}₎(${val}) = ${exp}`
+                    };
+                }
+
+                case '8.2': {
+                    const a1 = rInt(1, 10);
+                    const d = rInt(2, 5);
+                    const n = 10;
+                    const an = a1 + (n - 1) * d;
+                    return {
+                        sectionId: secId,
+                        question: `Find the 10th term: a₁ = ${a1}, d = ${d}`,
+                        options: [`${an}`, `${an + d}`, `${an - 2}`, `${a1 * d}`],
+                        answerIdx: 0,
+                        hint: "Use aₙ = a₁ + (n - 1)d",
+                        rationale: `a₁₀ = ${a1} + (10 - 1)(${d}) = ${a1} + ${9*d} = ${an}`
+                    };
+                }
+
+                case '9.2': {
+                    const degs = [30, 45, 60, 90, 120, 135, 150][rInt(0, 6)];
+                    const gcd = (a, b) => b === 0 ? a : gcd(b, a % b);
+                    const g = gcd(degs, 180);
+                    const num = degs / g;
+                    const den = 180 / g;
+                    const radStr = den === 1 ? `${num}π` : (num === 1 ? `π/${den}` : `${num}π/${den}`);
+                    return {
+                        sectionId: secId,
+                        question: `Convert ${degs}° to radians.`,
+                        options: [radStr, `${degs}π/360`, `${(degs/100).toFixed(1)}π`, `π/${num}`],
+                        answerIdx: 0,
+                        hint: "Multiply by π/180° and simplify.",
+                        rationale: `${degs}° × π/180° = ${degs}π/180 = ${radStr}`
+                    };
+                }
+
+                default: {
+                    const num1 = rInt(2, 9);
+                    const num2 = rInt(1, 5);
+                    const ans = num1 + num2;
+                    return {
+                        sectionId: secId,
+                        question: `Solve: x - ${num2} = ${num1}`,
+                        options: [`x = ${ans}`, `x = ${ans + 2}`, `x = ${num1 - num2}`, `x = ${num1 * num2}`],
+                        answerIdx: 0,
+                        hint: `Add ${num2} to both sides.`,
+                        rationale: `Adding ${num2}: x = ${num1} + ${num2} = ${ans}`
+                    };
+                }
+            }
+        }
+
+        // Global State
+        let state = {
+            selectedSections: new Set(['1.1', '2.1', '3.2', '6.3']),
+            quizLength: 5,
+            currentQuizQuestions: [],
+            currentQIdx: 0,
+            quizScore: 0,
+            totalPoints: 0,
+            totalAnswered: 0,
+            userAnswers: [],
+            fcSectionList: [],
+            fcIdx: 0
+        };
+
+        // DOM Cache
+        const DOM = {
+            sidebar: document.getElementById('sidebar'),
+            curriculumTree: document.getElementById('curriculum-tree'),
+            selectedCount: document.getElementById('selected-count'),
+            overallScore: document.getElementById('overall-score'),
+            totalQuestionsCount: document.getElementById('total-questions-count'),
+            
+            quizConfigScreen: document.getElementById('quiz-config-screen'),
+            quizActiveScreen: document.getElementById('quiz-active-screen'),
+            quizResultsScreen: document.getElementById('quiz-results-screen'),
+            flashcardsActiveScreen: document.getElementById('flashcards-active-screen'),
+            
+            btnModeFlashcards: document.getElementById('btn-mode-flashcards'),
+            btnModeQuiz: document.getElementById('btn-mode-quiz'),
+            generateQuizBtn: document.getElementById('generate-quiz-btn'),
+            startQuizBtn: document.getElementById('start-quiz-btn'),
+            selectAllBtn: document.getElementById('select-all-btn'),
+            clearAllBtn: document.getElementById('clear-all-btn'),
+            
+            configTopicCount: document.getElementById('config-topic-count'),
+            configTopicsList: document.getElementById('config-topics-list'),
+            
+            quizSectionBadge: document.getElementById('quiz-section-badge'),
+            quizProgressText: document.getElementById('quiz-progress-text'),
+            quizProgressBar: document.getElementById('quiz-progress-bar'),
+            quizQuestionText: document.getElementById('quiz-question-text'),
+            quizOptionsContainer: document.getElementById('quiz-options-container'),
+            quizRationaleBox: document.getElementById('quiz-rationale-box'),
+            quizHintBtn: document.getElementById('quiz-hint-btn'),
+            quizHintBox: document.getElementById('quiz-hint-box'),
+            quizHintText: document.getElementById('quiz-hint-text'),
+            quizNextBtn: document.getElementById('quiz-next-btn'),
+
+            resScorePercentage: document.getElementById('res-score-percentage'),
+            resCorrectCount: document.getElementById('res-correct-count'),
+            resPointsEarned: document.getElementById('res-points-earned'),
+            resSectionBreakdown: document.getElementById('res-section-breakdown'),
+            resRetryBtn: document.getElementById('res-retry-btn'),
+            resChangeTopicsBtn: document.getElementById('res-change-topics-btn'),
+
+            fcSectionLabel: document.getElementById('fc-section-label'),
+            fcCounter: document.getElementById('fc-counter'),
+            flashcardBox: document.getElementById('flashcard-box'),
+            flashcardElement: document.getElementById('flashcard-element'),
+            fcFrontText: document.getElementById('fc-front-text'),
+            fcBackText: document.getElementById('fc-back-text'),
+            fcPrevBtn: document.getElementById('fc-prev-btn'),
+            fcNextBtn: document.getElementById('fc-next-btn')
+        };
+
+        // Math Renderer
+        function triggerMathRender() {
+            if (window.renderMathInElement) {
+                renderMathInElement(document.body, {
+                    delimiters: [
+                        {left: '$$', right: '$$', display: true},
+                        {left: '$', right: '$', display: false}
+                    ],
+                    throwOnError: false
+                });
+            }
+        }
+
+        // Initialize
+        function initApp() {
+            renderCurriculumSidebar();
+            setupEventListeners();
+            updateConfigTopicsOverview();
+            triggerMathRender();
+        }
+
+        // Render Sidebar
+        function renderCurriculumSidebar() {
+            DOM.curriculumTree.innerHTML = '';
+
+            CURRICULUM.forEach((chap) => {
+                const chapContainer = document.createElement('div');
+                chapContainer.className = 'bg-slate-800/40 rounded-xl overflow-hidden border border-slate-800/80 mb-2';
+
+                const header = document.createElement('div');
+                header.className = 'p-3 bg-slate-800/80 cursor-pointer flex justify-between items-center select-none hover:bg-slate-800 transition';
+                header.innerHTML = `
+                    <span class="font-bold text-xs text-slate-200">${chap.title}</span>
+                    <i class="fa-solid fa-chevron-down text-xs text-slate-400 transition-transform transform"></i>
+                `;
+
+                const secList = document.createElement('div');
+                secList.className = 'p-2 space-y-1 bg-slate-900/60 hidden';
+
+                chap.sections.forEach(sec => {
+                    const isChecked = state.selectedSections.has(sec.id);
+                    const item = document.createElement('div');
+                    item.className = 'flex items-center space-x-2 px-2 py-1.5 rounded hover:bg-slate-800/60 cursor-pointer text-xs';
+                    item.innerHTML = `
+                        <input type="checkbox" id="sec-${sec.id}" value="${sec.id}" ${isChecked ? 'checked' : ''} class="checkbox-custom rounded">
+                        <label for="sec-${sec.id}" class="text-slate-300 font-medium cursor-pointer flex-1">${sec.title}</label>
+                    `;
+
+                    const checkbox = item.querySelector('input');
+                    checkbox.addEventListener('change', (e) => {
+                        if (e.target.checked) {
+                            state.selectedSections.add(sec.id);
+                        } else {
+                            state.selectedSections.delete(sec.id);
+                        }
+                        updateSelectedCount();
+                    });
+
+                    secList.appendChild(item);
+                });
+
+                header.addEventListener('click', () => {
+                    secList.classList.toggle('hidden');
+                    header.querySelector('.fa-chevron-down').classList.toggle('rotate-180');
+                });
+
+                chapContainer.appendChild(header);
+                chapContainer.appendChild(secList);
+                DOM.curriculumTree.appendChild(chapContainer);
+            });
+
+            updateSelectedCount();
+        }
+
+        function updateSelectedCount() {
+            const count = state.selectedSections.size;
+            DOM.selectedCount.innerText = count;
+            DOM.configTopicCount.innerText = count;
+            updateConfigTopicsOverview();
+        }
+
+        function updateConfigTopicsOverview() {
+            DOM.configTopicsList.innerHTML = '';
+            if (state.selectedSections.size === 0) {
+                DOM.configTopicsList.innerHTML = `<span class="text-amber-500 font-semibold"><i class="fa-solid fa-triangle-exclamation mr-1"></i> No sections selected</span>`;
+                return;
+            }
+            state.selectedSections.forEach(secId => {
+                const badge = document.createElement('span');
+                badge.className = 'px-2 py-1 bg-blue-100 text-blue-800 font-bold rounded-md text-xs';
+                badge.innerText = `Section ${secId}`;
+                DOM.configTopicsList.appendChild(badge);
+            });
+        }
+
+        // Generate Quiz
+        function generateQuizQuestions() {
+            if (state.selectedSections.size === 0) {
+                alert("Please select at least one section!");
+                return false;
+            }
+
+            const secArray = Array.from(state.selectedSections);
+            state.currentQuizQuestions = [];
+
+            for (let i = 0; i < state.quizLength; i++) {
+                const randSec = secArray[Math.floor(Math.random() * secArray.length)];
+                const qObj = generateDynamicQuestion(randSec);
+                
+                const originalCorrect = qObj.options[qObj.answerIdx];
+                const shuffledOpts = [...qObj.options].sort(() => Math.random() - 0.5);
+                const newCorrectIdx = shuffledOpts.indexOf(originalCorrect);
+
+                qObj.options = shuffledOpts;
+                qObj.answerIdx = newCorrectIdx;
+
+                state.currentQuizQuestions.push(qObj);
+            }
+
+            state.currentQIdx = 0;
+            state.quizScore = 0;
+            state.userAnswers = [];
+            return true;
+        }
+
+        function displayCurrentQuizQuestion() {
+            const q = state.currentQuizQuestions[state.currentQIdx];
+            const total = state.currentQuizQuestions.length;
+
+            DOM.quizSectionBadge.innerText = `Section ${q.sectionId}`;
+            DOM.quizProgressText.innerText = `Question ${state.currentQIdx + 1} of ${total}`;
+            DOM.quizProgressBar.style.width = `${((state.currentQIdx + 1) / total) * 100}%`;
+
+            DOM.quizQuestionText.innerText = q.question;
+            DOM.quizOptionsContainer.innerHTML = '';
+            DOM.quizRationaleBox.className = 'mt-6 p-5 rounded-xl hidden border';
+            DOM.quizRationaleBox.innerHTML = '';
+            DOM.quizNextBtn.classList.add('hidden');
+            DOM.quizHintBox.classList.add('hidden');
+            DOM.quizHintText.innerText = q.hint;
+
+            const prefixes = ['A', 'B', 'C', 'D'];
+            q.options.forEach((optText, idx) => {
+                const optBtn = document.createElement('button');
+                optBtn.className = 'w-full text-left p-4 rounded-xl border-2 border-slate-200 hover:border-blue-400 hover:bg-blue-50 transition-all flex items-center group font-medium text-slate-700';
+                optBtn.innerHTML = `
+                    <div class="w-8 h-8 rounded-lg bg-slate-100 group-hover:bg-blue-100 text-slate-500 group-hover:text-blue-600 font-bold flex items-center justify-center mr-3 flex-shrink-0">
+                        ${prefixes[idx]}
+                    </div>
+                    <div class="flex-1">${optText}</div>
+                `;
+
+                optBtn.addEventListener('click', () => handleQuizAnswerSelection(idx));
+                DOM.quizOptionsContainer.appendChild(optBtn);
+            });
+        }
+
+        function handleQuizAnswerSelection(selectedIdx) {
+            const q = state.currentQuizQuestions[state.currentQIdx];
+            const isCorrect = selectedIdx === q.answerIdx;
+
+            const buttons = DOM.quizOptionsContainer.querySelectorAll('button');
+            buttons.forEach((btn, idx) => {
+                btn.style.pointerEvents = 'none';
+                if (idx === q.answerIdx) {
+                    btn.classList.replace('border-slate-200', 'border-emerald-500');
+                    btn.classList.add('bg-emerald-50');
+                    btn.querySelector('div').classList.replace('bg-slate-100', 'bg-emerald-500');
+                    btn.querySelector('div').classList.replace('text-slate-500', 'text-white');
+                } else if (idx === selectedIdx && !isCorrect) {
+                    btn.classList.replace('border-slate-200', 'border-rose-500');
+                    btn.classList.add('bg-rose-50');
+                    btn.querySelector('div').classList.replace('bg-slate-100', 'bg-rose-500');
+                    btn.querySelector('div').classList.replace('text-slate-500', 'text-white');
+                }
+            });
+
+            if (isCorrect) {
+                state.quizScore++;
+                state.totalPoints += 10;
+            }
+            state.totalAnswered++;
+            DOM.overallScore.innerText = `${state.totalPoints} pts`;
+            DOM.totalQuestionsCount.innerText = state.totalAnswered;
+
+            state.userAnswers.push({ sectionId: q.sectionId, isCorrect });
+
+            DOM.quizRationaleBox.classList.remove('hidden');
+            if (isCorrect) {
+                DOM.quizRationaleBox.classList.add('bg-emerald-50', 'border-emerald-200', 'text-emerald-900');
+                DOM.quizRationaleBox.innerHTML = `
+                    <div class="flex items-center space-x-2 font-bold mb-2 text-emerald-700">
+                        <i class="fa-solid fa-circle-check text-xl"></i>
+                        <span>Correct!</span>
+                    </div>
+                    <p class="text-xs leading-relaxed">${q.rationale}</p>
+                `;
+            } else {
+                DOM.quizRationaleBox.classList.add('bg-rose-50', 'border-rose-200', 'text-rose-900');
+                DOM.quizRationaleBox.innerHTML = `
+                    <div class="flex items-center space-x-2 font-bold mb-2 text-rose-700">
+                        <i class="fa-solid fa-circle-xmark text-xl"></i>
+                        <span>Incorrect</span>
+                    </div>
+                    <p class="text-xs leading-relaxed"><strong>Solution:</strong> ${q.rationale}</p>
+                `;
+            }
+
+            DOM.quizNextBtn.classList.remove('hidden');
+        }
+
+        function showQuizResults() {
+            DOM.quizActiveScreen.classList.add('hidden');
+            DOM.quizResultsScreen.classList.remove('hidden');
+
+            const total = state.currentQuizQuestions.length;
+            const pct = Math.round((state.quizScore / total) * 100);
+
+            DOM.resScorePercentage.innerText = `${pct}%`;
+            DOM.resCorrectCount.innerText = `${state.quizScore} / ${total}`;
+            DOM.resPointsEarned.innerText = `+${state.quizScore * 10}`;
+
+            DOM.resSectionBreakdown.innerHTML = '';
+            const secStats = {};
+            state.userAnswers.forEach(ans => {
+                if (!secStats[ans.sectionId]) secStats[ans.sectionId] = { correct: 0, total: 0 };
+                secStats[ans.sectionId].total++;
+                if (ans.isCorrect) secStats[ans.sectionId].correct++;
+            });
+
+            Object.keys(secStats).sort().forEach(secId => {
+                const stat = secStats[secId];
+                const secPct = Math.round((stat.correct / stat.total) * 100);
+                const row = document.createElement('div');
+                row.className = 'flex justify-between items-center p-3 bg-slate-50 rounded-xl border border-slate-200 text-xs';
+                row.innerHTML = `
+                    <span class="font-bold text-slate-700">Section ${secId}</span>
+                    <div class="flex items-center space-x-3">
+                        <span class="text-slate-500">${stat.correct}/${stat.total}</span>
+                        <span class="font-black px-2 py-0.5 rounded ${secPct >= 70 ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'}">${secPct}%</span>
+                    </div>
+                `;
+                DOM.resSectionBreakdown.appendChild(row);
+            });
+        }
+
+        // Flashcards
+        function startFlashcards() {
+            const secArray = Array.from(state.selectedSections);
+            state.fcSectionList = [];
+
+            secArray.forEach(secId => {
+                if (FLASHCARDS_BANK[secId]) {
+                    FLASHCARDS_BANK[secId].forEach(card => {
+                        state.fcSectionList.push({ sectionId: secId, ...card });
+                    });
+                }
+            });
+
+            if (state.fcSectionList.length === 0) {
+                state.fcSectionList = [
+                    { sectionId: '1.1', front: 'Absolute Value Parent', back: 'f(x) = |x|' },
+                    { sectionId: '2.1', front: 'Vertex Form', back: 'f(x) = a(x - h)² + k' },
+                    { sectionId: '6.3', front: 'Logarithm Definition', back: 'log_b(y) = x iff b^x = y' }
+                ];
+            }
+
+            state.fcIdx = 0;
+            renderCurrentFlashcard();
+        }
+
+        function renderCurrentFlashcard() {
+            DOM.flashcardElement.classList.remove('is-flipped');
+            const card = state.fcSectionList[state.fcIdx];
+
+            setTimeout(() => {
+                DOM.fcSectionLabel.innerText = `Section ${card.sectionId}`;
+                DOM.fcCounter.innerText = `Card ${state.fcIdx + 1} of ${state.fcSectionList.length}`;
+                DOM.fcFrontText.innerText = card.front;
+                DOM.fcBackText.innerText = card.back;
+            }, 150);
+        }
+
+        // Event Listeners
+        function setupEventListeners() {
+            DOM.selectAllBtn.addEventListener('click', () => {
+                CURRICULUM.forEach(chap => chap.sections.forEach(sec => state.selectedSections.add(sec.id)));
+                renderCurriculumSidebar();
+            });
+
+            DOM.clearAllBtn.addEventListener('click', () => {
+                state.selectedSections.clear();
+                renderCurriculumSidebar();
+            });
+
+            document.querySelectorAll('.q-count-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    document.querySelectorAll('.q-count-btn').forEach(b => {
+                        b.className = 'q-count-btn border-2 border-slate-200 hover:border-slate-300 font-bold py-2.5 rounded-xl transition';
+                    });
+                    btn.className = 'q-count-btn border-2 border-blue-500 bg-blue-50 text-blue-700 font-bold py-2.5 rounded-xl transition';
+                    state.quizLength = parseInt(btn.dataset.count);
+                });
+            });
+
+            DOM.startQuizBtn.addEventListener('click', () => {
+                if (generateQuizQuestions()) {
+                    DOM.quizConfigScreen.classList.add('hidden');
+                    DOM.quizActiveScreen.classList.remove('hidden');
+                    displayCurrentQuizQuestion();
+                }
+            });
+
+            DOM.generateQuizBtn.addEventListener('click', () => {
+                DOM.btnModeQuiz.click();
+            });
+
+            DOM.quizNextBtn.addEventListener('click', () => {
+                if (state.currentQIdx < state.currentQuizQuestions.length - 1) {
+                    state.currentQIdx++;
+                    displayCurrentQuizQuestion();
+                } else {
+                    showQuizResults();
+                }
+            });
+
+            DOM.quizHintBtn.addEventListener('click', () => {
+                DOM.quizHintBox.classList.toggle('hidden');
+            });
+
+            DOM.resRetryBtn.addEventListener('click', () => {
+                DOM.quizResultsScreen.classList.add('hidden');
+                DOM.startQuizBtn.click();
+            });
+
+            DOM.resChangeTopicsBtn.addEventListener('click', () => {
+                DOM.quizResultsScreen.classList.add('hidden');
+                DOM.quizConfigScreen.classList.remove('hidden');
+            });
+
+            DOM.btnModeQuiz.addEventListener('click', () => {
+                DOM.btnModeQuiz.className = 'px-4 py-2 rounded-lg text-xs font-semibold transition-all bg-white shadow-sm text-blue-600';
+                DOM.btnModeFlashcards.className = 'px-4 py-2 rounded-lg text-xs font-semibold transition-all text-slate-600 hover:text-slate-900';
+                
+                DOM.flashcardsActiveScreen.classList.add('hidden');
+                DOM.quizActiveScreen.classList.add('hidden');
+                DOM.quizResultsScreen.classList.add('hidden');
+                DOM.quizConfigScreen.classList.remove('hidden');
+            });
+
+            DOM.btnModeFlashcards.addEventListener('click', () => {
+                DOM.btnModeFlashcards.className = 'px-4 py-2 rounded-lg text-xs font-semibold transition-all bg-white shadow-sm text-blue-600';
+                DOM.btnModeQuiz.className = 'px-4 py-2 rounded-lg text-xs font-semibold transition-all text-slate-600 hover:text-slate-900';
+
+                DOM.quizConfigScreen.classList.add('hidden');
+                DOM.quizActiveScreen.classList.add('hidden');
+                DOM.quizResultsScreen.classList.add('hidden');
+                DOM.flashcardsActiveScreen.classList.remove('hidden');
+
+                startFlashcards();
+            });
+
+            DOM.flashcardBox.addEventListener('click', () => {
+                DOM.flashcardElement.classList.toggle('is-flipped');
+            });
+
+            DOM.fcPrevBtn.addEventListener('click', () => {
+                if (state.fcIdx > 0) {
+                    state.fcIdx--;
+                    renderCurrentFlashcard();
+                }
+            });
+
+            DOM.fcNextBtn.addEventListener('click', () => {
+                if (state.fcIdx < state.fcSectionList.length - 1) {
+                    state.fcIdx++;
+                    renderCurrentFlashcard();
+                }
+            });
+
+            const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+            const mobileCloseBtn = document.getElementById('mobile-close-btn');
+            const openSidebarMobileBtn = document.getElementById('open-sidebar-mobile-btn');
+
+            if (mobileMenuBtn) {
+                mobileMenuBtn.addEventListener('click', () => DOM.sidebar.classList.remove('-translate-x-full'));
+            }
+            if (mobileCloseBtn) {
+                mobileCloseBtn.addEventListener('click', () => DOM.sidebar.classList.add('-translate-x-full'));
+            }
+            if (openSidebarMobileBtn) {
+                openSidebarMobileBtn.addEventListener('click', () => DOM.sidebar.classList.remove('-translate-x-full'));
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', initApp);
+    </script>
+</body>
+</html>
