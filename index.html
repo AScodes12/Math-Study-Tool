@@ -3,1177 +3,2379 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Big Ideas Math - Algebra 2 Honors Quiz Generator</title>
+  <title>Algebra 2 Honors Practice Quiz Generator</title>
+  <!-- KaTeX for crisp mathematical notation -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"
+          onload="renderMathInElement(document.body);"></script>
   <style>
     :root {
-      --primary: #2563eb;
-      --primary-hover: #1d4ed8;
-      --primary-light: #eff6ff;
-      --bg: #f8fafc;
+      --primary: #4f46e5;
+      --primary-dark: #4338ca;
+      --primary-light: #e0e7ff;
+      --bg: #f1f5f9;
       --card-bg: #ffffff;
       --text-main: #0f172a;
       --text-muted: #64748b;
       --border: #e2e8f0;
-      --border-focus: #93c5fd;
-      --correct: #16a34a;
-      --correct-bg: #f0fdf4;
-      --incorrect: #dc2626;
-      --incorrect-bg: #fef2f2;
-      --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-      --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+      --success: #10b981;
+      --success-bg: #ecfdf5;
+      --danger: #ef4444;
+      --danger-bg: #fef2f2;
+      --warning: #f59e0b;
+      --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
       --radius: 12px;
     }
 
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; }
 
     body {
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
       background-color: var(--bg);
       color: var(--text-main);
-      margin: 0;
-      padding: 32px 16px;
-      line-height: 1.5;
+      line-height: 1.6;
+      padding: 24px 16px;
     }
 
-    .container {
-      max-width: 980px;
+    .app-container {
+      max-width: 1180px;
       margin: 0 auto;
     }
 
-    header {
-      text-align: center;
-      margin-bottom: 32px;
-    }
-
-    h1 {
-      color: var(--text-main);
-      margin: 0 0 8px 0;
-      font-size: 2rem;
-      font-weight: 800;
-      letter-spacing: -0.025em;
-    }
-
-    header p {
-      color: var(--text-muted);
-      margin: 0;
-      font-size: 1rem;
-    }
-
-    .control-panel {
-      background-color: var(--card-bg);
-      padding: 24px;
+    /* Top App Header */
+    .app-header {
+      background: var(--card-bg);
       border-radius: var(--radius);
-      border: 1px solid var(--border);
-      box-shadow: var(--shadow-md);
-      margin-bottom: 32px;
-    }
-
-    .panel-header {
+      padding: 20px 28px;
+      margin-bottom: 24px;
+      box-shadow: var(--shadow);
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 12px;
+      flex-wrap: wrap;
+      gap: 16px;
+      border-left: 6px solid var(--primary);
     }
 
-    .panel-title {
-      font-weight: 700;
-      font-size: 1.05rem;
+    .app-title h1 {
+      font-size: 1.75rem;
+      font-weight: 800;
       color: var(--text-main);
-    }
-
-    .btn-row {
-      display: flex;
-      gap: 8px;
-    }
-
-    .checkbox-container {
-      max-height: 320px;
-      overflow-y: auto;
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 16px;
-      background-color: #f1f5f9;
-      margin-bottom: 20px;
-    }
-
-    .chapter-group {
-      margin-bottom: 20px;
-    }
-
-    .chapter-group:last-child {
-      margin-bottom: 0;
-    }
-
-    .chapter-title {
-      font-weight: 700;
-      font-size: 0.8rem;
-      color: var(--primary);
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      margin-bottom: 8px;
-    }
-
-    .section-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-      gap: 8px;
-    }
-
-    .checkbox-label {
       display: flex;
       align-items: center;
       gap: 10px;
-      font-size: 0.875rem;
-      font-weight: 500;
-      cursor: pointer;
-      background: var(--card-bg);
-      padding: 8px 12px;
-      border-radius: 6px;
-      border: 1px solid var(--border);
-      transition: all 0.15s ease;
     }
 
-    .checkbox-label:hover {
-      border-color: var(--border-focus);
-      background-color: var(--primary-light);
+    .app-title p {
+      color: var(--text-muted);
+      font-size: 0.95rem;
     }
 
-    .checkbox-label input[type="checkbox"] {
-      accent-color: var(--primary);
-      width: 16px;
-      height: 16px;
-    }
-
-    .controls-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
+    /* Live Score Bar */
+    .live-score-card {
+      background: var(--primary-light);
+      border: 1px solid #c7d2fe;
+      border-radius: 8px;
+      padding: 10px 18px;
+      display: flex;
+      align-items: center;
       gap: 16px;
-      margin-bottom: 24px;
+    }
+
+    .score-stat {
+      text-align: center;
+    }
+
+    .score-stat .lbl {
+      font-size: 0.725rem;
+      text-transform: uppercase;
+      font-weight: 700;
+      color: var(--primary-dark);
+      letter-spacing: 0.5px;
+    }
+
+    .score-stat .val {
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: var(--primary-dark);
+    }
+
+    /* Main Grid Layout */
+    .app-grid {
+      display: grid;
+      grid-template-columns: 340px 1fr;
+      gap: 24px;
+    }
+
+    @media (max-width: 860px) {
+      .app-grid { grid-template-columns: 1fr; }
+    }
+
+    /* Sidebar / Control Panel */
+    .sidebar {
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      padding: 20px;
+      box-shadow: var(--shadow);
+      height: fit-content;
+    }
+
+    .sidebar h2 {
+      font-size: 1.15rem;
+      font-weight: 700;
+      margin-bottom: 16px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid var(--border);
+      color: var(--primary);
     }
 
     .form-group {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
+      margin-bottom: 16px;
     }
 
     .form-group label {
-      font-size: 0.875rem;
+      display: block;
+      font-size: 0.85rem;
       font-weight: 600;
-      color: var(--text-main);
+      margin-bottom: 6px;
+      color: #334155;
     }
 
-    select, input[type="number"], input[type="text"] {
+    .form-control {
       width: 100%;
-      padding: 10px 14px;
-      border-radius: 8px;
+      padding: 10px 12px;
       border: 1px solid var(--border);
-      font-size: 0.95rem;
-      background-color: var(--card-bg);
-      transition: border-color 0.15s ease, box-shadow 0.15s ease;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      background: #f8fafc;
+      transition: all 0.2s;
     }
 
-    select:focus, input:focus {
+    .form-control:focus {
       outline: none;
       border-color: var(--primary);
-      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+      background: #fff;
+      box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15);
     }
 
-    .btn-group {
-      display: flex;
-      gap: 12px;
-      flex-wrap: wrap;
-    }
-
-    button {
-      background-color: var(--primary);
-      color: white;
-      border: none;
-      padding: 10px 18px;
-      border-radius: 8px;
-      font-size: 0.95rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: background-color 0.15s ease, transform 0.1s ease;
-    }
-
-    button:hover {
-      background-color: var(--primary-hover);
-    }
-
-    button:active {
-      transform: scale(0.99);
-    }
-
-    button.primary-btn {
-      flex: 2;
-      min-width: 160px;
-    }
-
-    button.secondary {
-      flex: 1;
-      background-color: #475569;
-      min-width: 130px;
-    }
-
-    button.secondary:hover {
-      background-color: #334155;
-    }
-
-    button.small-btn {
-      padding: 4px 10px;
-      font-size: 0.75rem;
-      background-color: #94a3b8;
-      border-radius: 6px;
-    }
-
-    button.small-btn:hover {
-      background-color: #64748b;
-    }
-
-    button.check-btn {
-      background-color: #0284c7;
-      margin-top: 12px;
-      padding: 8px 14px;
-      font-size: 0.875rem;
-    }
-
-    button.check-btn:hover {
-      background-color: #0369a1;
-    }
-
-    .quiz-output {
-      background-color: var(--card-bg);
-      padding: 36px;
-      border-radius: var(--radius);
-      border: 1px solid var(--border);
-      box-shadow: var(--shadow-md);
-      min-height: 240px;
-    }
-
-    .empty-state {
-      text-align: center;
-      color: var(--text-muted);
-      padding: 48px 0;
-      font-size: 1rem;
-    }
-
-    .quiz-header {
+    /* Topic Accordion / Section Selector */
+    .topics-header {
       display: flex;
       justify-content: space-between;
-      align-items: flex-end;
-      border-bottom: 2px solid var(--text-main);
-      padding-bottom: 16px;
-      margin-bottom: 28px;
+      align-items: center;
+      margin-top: 20px;
+      margin-bottom: 8px;
     }
 
-    .quiz-header h2 {
-      margin: 0 0 6px 0;
-      font-size: 1.5rem;
-    }
-
-    .quiz-header .meta {
-      font-size: 0.875rem;
-      color: var(--text-muted);
-    }
-
-    .score-banner {
-      background-color: #e0f2fe;
-      border: 1px solid #7dd3fc;
-      border-radius: 8px;
-      padding: 14px 18px;
-      font-size: 1.1rem;
+    .topics-header label {
+      font-size: 0.85rem;
       font-weight: 700;
-      color: #0369a1;
-      margin-bottom: 28px;
-      text-align: center;
-    }
-
-    .question-item {
-      margin-bottom: 24px;
-      padding: 20px;
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      background-color: var(--card-bg);
-      box-shadow: var(--shadow-sm);
-      transition: border-color 0.2s, background-color 0.2s;
-    }
-
-    .question-item.correct {
-      border-color: var(--correct);
-      background-color: var(--correct-bg);
-    }
-
-    .question-item.incorrect {
-      border-color: var(--incorrect);
-      background-color: var(--incorrect-bg);
-    }
-
-    .question-title {
-      font-weight: 600;
-      font-size: 1rem;
-      margin-bottom: 14px;
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      gap: 12px;
-    }
-
-    .section-tag {
-      font-size: 0.75rem;
-      font-weight: 700;
-      background-color: #e2e8f0;
       color: #334155;
+    }
+
+    .btn-xs {
       padding: 3px 8px;
-      border-radius: 20px;
-      white-space: nowrap;
+      font-size: 0.75rem;
+      border-radius: 4px;
+      background: #e2e8f0;
+      border: none;
+      cursor: pointer;
+      font-weight: 600;
+    }
+    .btn-xs:hover { background: #cbd5e1; }
+
+    .unit-accordion {
+      max-height: 380px;
+      overflow-y: auto;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 8px;
+      background: #f8fafc;
     }
 
-    .options-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 10px;
-      margin-top: 10px;
+    .unit-group {
+      margin-bottom: 10px;
+      border-bottom: 1px solid #e2e8f0;
+      padding-bottom: 6px;
     }
 
-    .mc-option {
+    .unit-title {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--primary);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 4px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .topic-item {
       display: flex;
       align-items: center;
-      gap: 10px;
-      padding: 10px 14px;
-      border: 1px solid var(--border);
-      border-radius: 8px;
+      font-size: 0.825rem;
+      padding: 3px 0;
       cursor: pointer;
-      background-color: var(--card-bg);
-      font-size: 0.9rem;
-      transition: background-color 0.15s, border-color 0.15s;
+      color: #475569;
     }
 
-    .mc-option:hover {
-      background-color: var(--primary-light);
-      border-color: var(--border-focus);
-    }
-
-    .mc-option input[type="radio"] {
+    .topic-item input {
+      margin-right: 8px;
       accent-color: var(--primary);
     }
 
-    .feedback {
+    /* Buttons */
+    .btn-primary {
+      width: 100%;
+      padding: 12px;
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
       margin-top: 12px;
+      box-shadow: 0 2px 4px rgba(79, 70, 229, 0.25);
+    }
+
+    .btn-primary:hover { background: var(--primary-dark); }
+    .btn-primary:active { transform: translateY(1px); }
+
+    .btn-outline {
+      width: 100%;
+      padding: 10px;
+      background: transparent;
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 0.875rem;
       font-weight: 600;
-      font-size: 0.9rem;
-      padding: 8px 12px;
-      border-radius: 6px;
+      cursor: pointer;
+      margin-top: 8px;
+      transition: all 0.2s;
     }
 
-    .feedback.correct {
-      color: var(--correct);
-      background-color: #dcfce7;
+    .btn-outline:hover { background: #f1f5f9; color: var(--text-main); }
+
+    /* Main Quiz Container */
+    .quiz-area {
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      padding: 28px;
+      box-shadow: var(--shadow);
+      min-height: 500px;
     }
 
-    .feedback.incorrect {
-      color: var(--incorrect);
-      background-color: #fee2e2;
+    .quiz-title-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 16px;
+      border-bottom: 2px solid var(--border);
+      margin-bottom: 24px;
     }
 
-    .hidden {
-      display: none !important;
+    .quiz-title-bar h2 {
+      font-size: 1.35rem;
+      color: var(--text-main);
+    }
+
+    /* Progress Bar */
+    .progress-bar-wrap {
+      width: 100%;
+      height: 8px;
+      background: #e2e8f0;
+      border-radius: 4px;
+      overflow: hidden;
+      margin-bottom: 24px;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      background: var(--primary);
+      width: 0%;
+      transition: width 0.3s ease;
+    }
+
+    /* Question Cards */
+    .q-card {
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+      margin-bottom: 20px;
+      background: #ffffff;
+      transition: all 0.25s ease;
+      position: relative;
+    }
+
+    .q-card.correct {
+      border-color: var(--success);
+      background-color: var(--success-bg);
+    }
+
+    .q-card.incorrect {
+      border-color: var(--danger);
+      background-color: var(--danger-bg);
+    }
+
+    .q-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 14px;
+    }
+
+    .q-number {
+      font-size: 0.85rem;
+      font-weight: 800;
+      color: var(--primary);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .q-tag {
+      background: var(--primary-light);
+      color: var(--primary-dark);
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 12px;
+    }
+
+    .q-prompt {
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: #1e293b;
+      margin-bottom: 16px;
+      line-height: 1.5;
+    }
+
+    /* Options */
+    .mc-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 16px;
     }
 
     @media (max-width: 640px) {
-      .controls-grid { grid-template-columns: 1fr; }
-      .options-grid { grid-template-columns: 1fr; }
-      .btn-group { flex-direction: column; }
-      button { width: 100%; }
+      .mc-grid { grid-template-columns: 1fr; }
     }
 
+    .opt-btn {
+      display: flex;
+      align-items: center;
+      padding: 12px 14px;
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      background: #f8fafc;
+      cursor: pointer;
+      font-size: 0.95rem;
+      transition: all 0.15s;
+    }
+
+    .opt-btn:hover {
+      border-color: var(--primary);
+      background: #eef2ff;
+    }
+
+    .opt-btn input {
+      margin-right: 12px;
+      accent-color: var(--primary);
+    }
+
+    .fr-input-wrap input {
+      width: 100%;
+      padding: 12px;
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      font-size: 1rem;
+      margin-bottom: 16px;
+    }
+
+    .fr-input-wrap input:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.12);
+    }
+
+    /* Action Buttons within Card */
+    .q-actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .btn-check {
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 8px 18px;
+      border-radius: 6px;
+      font-weight: 700;
+      font-size: 0.875rem;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .btn-check:hover { background: var(--primary-dark); }
+
+    /* Rationale / Explanation Box */
+    .explanation-box {
+      margin-top: 16px;
+      padding: 14px;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      line-height: 1.5;
+    }
+
+    .explanation-box.correct {
+      background: #d1fae5;
+      border: 1px solid #a7f3d0;
+      color: #065f46;
+    }
+
+    .explanation-box.incorrect {
+      background: #fee2e2;
+      border: 1px solid #fca5a5;
+      color: #991b1b;
+    }
+
+    .explanation-box h4 {
+      font-size: 0.9rem;
+      font-weight: 800;
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .hidden { display: none !important; }
+
+    /* Final Score Summary Modal */
+    .summary-card {
+      background: linear-gradient(135deg, #4f46e5 0%, #3730a3 100%);
+      color: white;
+      border-radius: var(--radius);
+      padding: 24px;
+      text-align: center;
+      margin-bottom: 24px;
+      box-shadow: 0 10px 15px -3px rgba(79, 70, 229, 0.3);
+    }
+
+    .summary-card h3 { font-size: 1.5rem; margin-bottom: 8px; }
+    .summary-card .score-big { font-size: 3rem; font-weight: 900; margin: 12px 0; }
+
+    /* Print View Overrides */
     @media print {
-      body { background-color: #fff; padding: 0; }
-      .control-panel, header p, .check-btn, .btn-group, .small-btn { display: none !important; }
-      .quiz-output { border: none; padding: 0; box-shadow: none; }
+      body { background: white; padding: 0; color: black; }
+      .sidebar, .live-score-card, .btn-check, .q-actions, .progress-bar-wrap, .btn-outline, .btn-primary { display: none !important; }
+      .app-grid { display: block; }
+      .quiz-area { box-shadow: none; padding: 0; border: none; }
+      .q-card { page-break-inside: avoid; border: 1px solid #cbd5e1; margin-bottom: 24px; }
+      .explanation-box { background: #f8fafc; border: 1px solid #ccc; color: black; }
     }
   </style>
 </head>
 <body>
 
-<div class="container">
-  <header>
-    <h1>Big Ideas Math: Algebra 2 Honors</h1>
-    <p>Custom quiz builder with section filtering & automatic grading.</p>
-  </header>
-
-  <div class="control-panel">
-    <div class="panel-header">
-      <span class="panel-title">1. Select Chapter Sections</span>
-      <div class="btn-row">
-        <button class="small-btn" onclick="toggleAllSections(true)">Select All</button>
-        <button class="small-btn" onclick="toggleAllSections(false)">Clear All</button>
+  <div class="app-container">
+    <!-- Top Header -->
+    <header class="app-header">
+      <div class="app-title">
+        <h1>Algebra 2 Honors Practice System</h1>
+        <p>Comprehensive Problem Generator with Instant Grading & Step-by-Step Rationales</p>
       </div>
-    </div>
 
-    <div class="checkbox-container">
-      <!-- Chapter 1 -->
-      <div class="chapter-group">
-        <div class="chapter-title">Ch 1: Linear Functions & Systems</div>
-        <div class="section-grid">
-          <label class="checkbox-label"><input type="checkbox" class="section-cb" value="1.1" checked> 1.1 Parent Functions & Transformations</label>
-          <label class="checkbox-label"><input type="checkbox" class="section-cb" value="1.2"> 1.2 Transformations of Linear/Abs Value</label>
-          <label class="checkbox-label"><input type="checkbox" class="section-cb" value="1.3"> 1.3 Modeling with Linear Functions</label>
-          <label class="checkbox-label"><input type="checkbox" class="section-cb" value="1.4"> 1.4 Solving Linear Systems in 3 Variables</label>
+      <div class="live-score-card">
+        <div class="score-stat">
+          <div class="lbl">Answered</div>
+          <div class="val" id="statAnswered">0 / 0</div>
+        </div>
+        <div style="width: 1px; height: 30px; background: #c7d2fe;"></div>
+        <div class="score-stat">
+          <div class="lbl">Score</div>
+          <div class="val" id="statScore">0%</div>
         </div>
       </div>
+    </header>
 
-      <!-- Chapter 2 -->
-      <div class="chapter-group">
-        <div class="chapter-title">Ch 2: Quadratic Functions</div>
-        <div class="section-grid">
-          <label class="checkbox-label"><input type="checkbox" class="section-cb" value="2.1" checked> 2.1 Transformations of Quadratic Functions</label>
-          <label class="checkbox-label"><input type="checkbox" class="section-cb" value="2.2"> 2.2 Characteristics of Quadratic Functions</label>
-          <label class="checkbox-label"><input type="checkbox" class="section-cb" value="2.3"> 2.3 Focus and Directrix of a Parabola</label>
-          <label class="checkbox-label"><input type="checkbox" class="section-cb" value="2.4"> 2.4 Modeling with Quadratic Functions</label>
+    <!-- Main Grid -->
+    <div class="app-grid">
+      <!-- Left Controls Panel -->
+      <aside class="sidebar">
+        <h2>Quiz Parameters</h2>
+
+        <div class="form-group">
+          <label for="numQuestions">Number of Questions</label>
+          <input type="number" id="numQuestions" class="form-control" min="1" max="50" value="10">
         </div>
-      </div>
 
-      <!-- Chapter 3 -->
-      <div class="chapter-group">
-        <div class="chapter-title">Ch 3: Quadratic Equations & Complex Numbers</div>
-        <div class="section-grid">
-          <label class="checkbox-label"><input type="checkbox" class="section-cb" value="3.1"> 3.1 Solving Quadratic Equations</label>
-          <label class="checkbox-label"><input type="checkbox" class="section-cb" value="3.2"> 3.2 Complex Numbers</label>
-          <label class="checkbox-label"><input type="checkbox" class="section-cb" value="3.3"> 3.3 Completing the Square</label>
-          <label class="checkbox-label"><input type="checkbox" class="section-cb" value="3.4"> 3.4 Quadratic Formula & Discriminant</label>
-          <label class="checkbox-label"><input type="checkbox" class="section-cb" value="3.5"> 3.5 Solving Nonlinear Systems</label>
-          <label class="checkbox-label"><input type="checkbox" class="section-cb" value="3.6"> 3.6 Quadratic Inequalities</label>
+        <div class="form-group">
+          <label for="formatSelect">Question Style</label>
+          <select id="formatSelect" class="form-control">
+            <option value="mixed" selected>Mixed (Multiple Choice & Free Response)</option>
+            <option value="mc">Multiple Choice Only</option>
+            <option value="fr">Free Response / Step Solver</option>
+          </select>
         </div>
-      </div>
 
-      <!-- Chapter 4 -->
-      <div class="chapter-group">
-        <div class="chapter-title">Ch 4: Polynomial Functions</div>
-        <div class="section-grid">
-          <label class="checkbox-label"><input type="checkbox" class="section-cb" value="4.1"> 4.1 Graphing Polynomial Functions</label>
-          <label class="checkbox-label"><input type="checkbox" class="section-cb" value="4.2"> 4.2 Operations with Polynomials</label>
-          <label class="checkbox-label"><input type="checkbox" class="section-cb" value="4.3"> 4.3 Dividing Polynomials</label>
-          <label class="checkbox-label"><input type="checkbox" class="section-cb" value="4.4"> 4.4 Factoring Polynomials</label>
-          <label class="checkbox-label"><input type="checkbox" class="section-cb" value="4.5"> 4.5 Solving Polynomial Equations</label>
-          <label class="checkbox-label"><input type="checkbox" class="section-cb" value="4.6"> 4.6 Fundamental Theorem of Algebra</label>
-          <label class="checkbox-label"><input type="checkbox" class="section-cb" value="4.7"> 4.7 Transformations of Polynomials</label>
-          <label class="checkbox-label"><input type="checkbox" class="section-cb" value="4.8"> 4.8 Analyzing Graphs of Polynomials</label>
+        <div class="form-group">
+          <label for="gradingMode">Grading Mode</label>
+          <select id="gradingMode" class="form-control">
+            <option value="instant" selected>Instant Feedback (On Answer)</option>
+            <option value="exam">Exam Mode (Grade All at End)</option>
+          </select>
         </div>
-      </div>
 
-      <!-- Chapter 5 -->
-      <div class="chapter-group">
-        <div class="chapter-title">Ch 5: Rational Exponents & Radical Functions</div>
-        <div class="section-grid">
-          <label class="checkbox-label"><input type="checkbox" class="section-cb" value="5.1"> 5.1 nth Roots & Rational Exponents</label>
-          <label class="checkbox-label"><input type="checkbox" class="section-cb" value="5.2"> 5.2 Properties of Rational Exponents</label>
-          <label class="checkbox-label"><input type="checkbox" class="section-cb" value="5.3"> 5.3 Graphing Radical Functions</label>
-          <label class="checkbox-label"><input type="checkbox" class="section-cb" value="5.4"> 5.4 Solving Radical Equations</label>
-          <label class="checkbox-label"><input type="checkbox" class="section-cb" value="5.5"> 5.5 Performing Function Operations</label>
-          <label class="checkbox-label"><input type="checkbox" class="section-cb" value="5.6"> 5.6 Inverse of a Function</label>
+        <!-- Topic Selection -->
+        <div class="topics-header">
+          <label>Curriculum Topics</label>
+          <div>
+            <button class="btn-xs" onclick="selectAllTopics(true)">All</button>
+            <button class="btn-xs" onclick="selectAllTopics(false)">None</button>
+          </div>
         </div>
-      </div>
 
-      <!-- Chapter 6 -->
-      <div class="chapter-group">
-        <div class="chapter-title">Ch 6: Exponential & Logarithmic Functions</div>
-        <div class="section-grid">
-          <label class="checkbox-label"><input type="checkbox" class="section-cb" value="6.1"> 6.1 Exponential Growth & Decay</label>
-          <label class="checkbox-label"><input type="checkbox" class="section-cb" value="6.2"> 6.2 The Natural Base e</label>
-          <label class="checkbox-label"><input type="checkbox" class="section-cb" value="6.3"> 6.3 Logarithms & Logarithmic Functions</label>
-          <label class="checkbox-label"><input type="checkbox" class="section-cb" value="6.4"> 6.4 Transformations of Log Functions</label>
-          <label class="checkbox-label"><input type="checkbox" class="section-cb" value="6.5"> 6.5 Properties of Logarithms</label>
-          <label class="checkbox-label"><input type="checkbox" class="section-cb" value="6.6"> 6.6 Solving Exponential/Log Equations</label>
+        <div class="unit-accordion" id="topicsContainer">
+          <!-- Populated dynamically -->
         </div>
-      </div>
 
-      <!-- Chapter 7 -->
-      <div class="chapter-group">
-        <div class="chapter-title">Ch 7: Rational Functions</div>
-        <div class="section-grid">
-          <label class="checkbox-label"><input type="checkbox" class="section-cb" value="7.1"> 7.1 Inverse Variation</label>
-          <label class="checkbox-label"><input type="checkbox" class="section-cb" value="7.2"> 7.2 Graphing Rational Functions</label>
-          <label class="checkbox-label"><input type="checkbox" class="section-cb" value="7.3"> 7.3 Multiplying/Dividing Rational Expr</label>
-          <label class="checkbox-label"><input type="checkbox" class="section-cb" value="7.4"> 7.4 Adding/Subtracting Rational Expr</label>
-          <label class="checkbox-label"><input type="checkbox" class="section-cb" value="7.5"> 7.5 Solving Rational Equations</label>
+        <button class="btn-primary" onclick="generateQuiz()">Generate New Quiz</button>
+        <button class="btn-outline" onclick="window.print()">Print Worksheet / PDF</button>
+      </aside>
+
+      <!-- Main Display Area -->
+      <main class="quiz-area">
+        <div class="quiz-title-bar">
+          <h2 id="quizTitle">Algebra 2 Honors Practice Set</h2>
+          <span id="quizBadge" class="q-tag">Ready</span>
         </div>
-      </div>
 
-      <!-- Chapter 8 -->
-      <div class="chapter-group">
-        <div class="chapter-title">Ch 8: Sequences & Series</div>
-        <div class="section-grid">
-          <label class="checkbox-label"><input type="checkbox" class="section-cb" value="8.1"> 8.1 Defining Sequences & Series</label>
-          <label class="checkbox-label"><input type="checkbox" class="section-cb" value="8.2"> 8.2 Arithmetic Sequences & Series</label>
-          <label class="checkbox-label"><input type="checkbox" class="section-cb" value="8.3"> 8.3 Geometric Sequences & Series</label>
-          <label class="checkbox-label"><input type="checkbox" class="section-cb" value="8.4"> 8.4 Infinite Geometric Series</label>
+        <div class="progress-bar-wrap">
+          <div class="progress-bar-fill" id="progressBar"></div>
         </div>
-      </div>
 
-      <!-- Chapter 9 -->
-      <div class="chapter-group">
-        <div class="chapter-title">Ch 9: Trigonometric Ratios & Functions</div>
-        <div class="section-grid">
-          <label class="checkbox-label"><input type="checkbox" class="section-cb" value="9.1"> 9.1 Right Triangle Trigonometry</label>
-          <label class="checkbox-label"><input type="checkbox" class="section-cb" value="9.2"> 9.2 Angles and Radian Measure</label>
-          <label class="checkbox-label"><input type="checkbox" class="section-cb" value="9.3"> 9.3 Trigonometric Functions of Any Angle</label>
-          <label class="checkbox-label"><input type="checkbox" class="section-cb" value="9.4"> 9.4 Graphing Sine & Cosine Functions</label>
+        <div id="summaryBanner" class="summary-card hidden">
+          <h3>Practice Session Complete!</h3>
+          <div class="score-big" id="finalScorePct">0%</div>
+          <p id="finalScoreDetails">You answered 0 out of 0 questions correctly.</p>
         </div>
-      </div>
 
-      <!-- Chapter 10 -->
-      <div class="chapter-group">
-        <div class="chapter-title">Ch 10: Probability & Statistics</div>
-        <div class="section-grid">
-          <label class="checkbox-label"><input type="checkbox" class="section-cb" value="10.1"> 10.1 Sample Spaces and Probability</label>
-          <label class="checkbox-label"><input type="checkbox" class="section-cb" value="10.2"> 10.2 Independent & Dependent Events</label>
-          <label class="checkbox-label"><input type="checkbox" class="section-cb" value="10.3"> 10.3 Two-Way Tables & Probability</label>
-          <label class="checkbox-label"><input type="checkbox" class="section-cb" value="10.4"> 10.4 Permutations and Combinations</label>
+        <div id="questionsContainer">
+          <div style="text-align: center; padding: 60px 20px; color: var(--text-muted);">
+            <svg width="48" height="48" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="margin:0 auto 12px; opacity:0.5;">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+            </svg>
+            <p style="font-size: 1.1rem; font-weight: 600;">Configure your preferred topics and click "Generate New Quiz".</p>
+          </div>
         </div>
-      </div>
-    </div>
 
-    <div class="controls-grid">
-      <div class="form-group">
-        <label for="numQuestions">Total Questions</label>
-        <input type="number" id="numQuestions" min="1" max="25" value="6">
-      </div>
-      <div class="form-group">
-        <label for="formatSelect">Format</label>
-        <select id="formatSelect">
-          <option value="mc">Multiple Choice</option>
-          <option value="free">Free Response</option>
-        </select>
-      </div>
-    </div>
-
-    <div class="btn-group">
-      <button class="primary-btn" onclick="generateQuiz()">Generate Quiz</button>
-      <button class="secondary" onclick="checkAllAnswers()">Grade Entire Quiz</button>
-      <button class="secondary" onclick="window.print()">Print / Export PDF</button>
+        <div id="bottomActions" class="hidden" style="margin-top: 24px;">
+          <button class="btn-primary" onclick="checkAllAnswers()">Submit Entire Quiz for Grading</button>
+        </div>
+      </main>
     </div>
   </div>
-
-  <div class="quiz-output" id="quizContainer">
-    <div class="empty-state">
-      Select your target sections above and click <strong>Generate Quiz</strong> to start practicing.
-    </div>
-  </div>
-</div>
 
 <script>
-  function rand(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
-  function randNonZero(min, max) { let v = 0; while (v === 0) v = rand(min, max); return v; }
-  function normalizeStr(str) { return str.toString().toLowerCase().replace(/\s+/g, '').replace(/,/g, ''); }
+  // Helper Math functions
+  function randInt(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
+  function randNonZero(min, max) { let v = 0; while (v === 0) v = randInt(min, max); return v; }
+  function cleanStr(str) { return str.toString().toLowerCase().replace(/\s+/g, '').replace(/,/g, ''); }
 
-  function toggleAllSections(checked) {
-    document.querySelectorAll('.section-cb').forEach(cb => cb.checked = checked);
-  }
-
-  const generators = {
-    "1.1": () => {
-      const h = rand(-5, 5), k = rand(-5, 5);
-      const signH = h >= 0 ? `- ${h}` : `+ ${Math.abs(h)}`;
-      const signK = k >= 0 ? `+ ${k}` : `- ${Math.abs(k)}`;
-      return {
-        prompt: `Describe the transformations from f(x) = |x| to g(x) = |x ${signH}| ${signK}.`,
-        ans: `Shift ${h >= 0 ? 'right' : 'left'} ${Math.abs(h)}, ${k >= 0 ? 'up' : 'down'} ${Math.abs(k)}`,
-        acceptAnswers: [`shift ${h >= 0 ? 'right' : 'left'} ${Math.abs(h)}, ${k >= 0 ? 'up' : 'down'} ${Math.abs(k)}`],
-        distractors: [
-          `Shift ${h >= 0 ? 'left' : 'right'} ${Math.abs(h)}, ${k >= 0 ? 'down' : 'up'} ${Math.abs(k)}`,
-          `Shift ${h >= 0 ? 'right' : 'left'} ${Math.abs(h)}, ${k >= 0 ? 'down' : 'up'} ${Math.abs(k)}`,
-          `Shift ${h >= 0 ? 'left' : 'right'} ${Math.abs(h)}, ${k >= 0 ? 'up' : 'down'} ${Math.abs(k)}`
-        ]
-      };
+  // Curriculum Structure across 10 Algebra 2 Honors Units
+  const unitsData = [
+    {
+      unit: "Unit 1: Functions & Linear Systems",
+      topics: [
+        { id: "1.1", title: "1.1 Transformations of Absolute Value Functions" },
+        { id: "1.2", title: "1.2 Absolute Value Equations & Inequalities" },
+        { id: "1.3", title: "1.3 Systems of Linear Equations in 3 Variables" }
+      ]
     },
-    "1.2": () => {
-      const a = randNonZero(-3, 3);
-      return {
-        prompt: `Describe the transformation of g(x) = ${a}x relative to parent linear function f(x) = x.`,
-        ans: `${a < 0 ? 'Reflect across x-axis, ' : ''}Vertical ${Math.abs(a) > 1 ? 'stretch' : 'shrink'} by factor ${Math.abs(a)}`,
-        acceptAnswers: [`${a < 0 ? 'reflect across x-axis, ' : ''}vertical ${Math.abs(a) > 1 ? 'stretch' : 'shrink'} by factor ${Math.abs(a)}`],
-        distractors: [
-          `Horizontal stretch by factor ${Math.abs(a)}`,
-          `Shift up by ${Math.abs(a)} units`,
-          `Vertical shift down by ${Math.abs(a)} units`
-        ]
-      };
+    {
+      unit: "Unit 2: Quadratic Functions & Parabolas",
+      topics: [
+        { id: "2.1", title: "2.1 Quadratic Vertex Form & Vertex Identification" },
+        { id: "2.2", title: "2.2 Standard Form, Axis of Symmetry & Extremes" },
+        { id: "2.3", title: "2.3 Focus & Directrix of a Parabola" }
+      ]
     },
-    "1.3": () => {
-      const m = rand(2, 6), b = rand(5, 20), x = rand(3, 8);
-      return {
-        prompt: `A taxi charges $${b} initial fee plus $${m}/mile. Write and evaluate linear function f(${x}).`,
-        ans: `${m * x + b}`,
-        acceptAnswers: [`${m * x + b}`, `f(${x})=${m * x + b}`],
-        distractors: [`${b * x + m}`, `${m * x}`, `${(m + b) * x}`]
-      };
+    {
+      unit: "Unit 3: Quadratic Equations & Complex Numbers",
+      topics: [
+        { id: "3.1", title: "3.1 Operations with Complex Numbers" },
+        { id: "3.2", title: "3.2 Completing the Square" },
+        { id: "3.3", title: "3.3 Discriminant & Nature of Roots" },
+        { id: "3.4", title: "3.4 Non-Linear Systems & Inequalities" }
+      ]
     },
-    "1.4": () => {
-      const x = rand(1, 4), y = rand(1, 4), z = rand(1, 4);
-      return {
-        prompt: `Solve system: x+y+z=${x+y+z}, x-y+z=${x-y+z}, x+y-z=${x+y-z}. Find (x, y, z).`,
-        ans: `(${x}, ${y}, ${z})`,
-        acceptAnswers: [`(${x},${y},${z})`, `(${x}, ${y}, ${z})`],
-        distractors: [`(${x+1}, ${y}, ${z})`, `(${x}, ${y-1}, ${z})`, `(${z}, ${y}, ${x})`]
-      };
+    {
+      unit: "Unit 4: Polynomial Functions",
+      topics: [
+        { id: "4.1", title: "4.1 Polynomial End Behavior & Turning Points" },
+        { id: "4.2", title: "4.2 Polynomial Long & Synthetic Division" },
+        { id: "4.3", title: "4.3 Factoring Cubes & Polynomial Equations" },
+        { id: "4.4", title: "4.4 Fundamental Theorem of Algebra & Zeros" }
+      ]
     },
-    "2.1": () => {
-      const a = randNonZero(-3, 3), h = rand(-4, 4), k = rand(-4, 4);
-      return {
-        prompt: `Identify vertex of f(x) = ${a === 1 ? '' : a}(x ${h >= 0 ? '- ' + h : '+ ' + Math.abs(h)})² ${k >= 0 ? '+ ' + k : '- ' + Math.abs(k)}.`,
-        ans: `(${h}, ${k})`,
-        acceptAnswers: [`(${h},${k})`, `(${h}, ${k})`],
-        distractors: [`(${-h}, ${k})`, `(${h}, ${-k})`, `(${-h}, ${-k})`]
-      };
+    {
+      unit: "Unit 5: Rational Exponents & Radical Functions",
+      topics: [
+        { id: "5.1", title: "5.1 Rational Exponents & Radical Properties" },
+        { id: "5.2", title: "5.2 Solving Radical Equations & Extraneous Roots" },
+        { id: "5.3", title: "5.3 Function Operations, Composition & Inverses" }
+      ]
     },
-    "2.2": () => {
-      const h = rand(-4, 4);
-      return {
-        prompt: `Find axis of symmetry for f(x) = 2(x - ${h})² + 5.`,
-        ans: `x = ${h}`,
-        acceptAnswers: [`x=${h}`, `x = ${h}`, `${h}`],
-        distractors: [`y = ${h}`, `x = ${-h}`, `x = 5`]
-      };
+    {
+      unit: "Unit 6: Exponential & Logarithmic Functions",
+      topics: [
+        { id: "6.1", title: "6.1 Exponential Growth, Decay & Continuous Compound" },
+        { id: "6.2", title: "6.2 Logarithmic Properties & Expansion/Condensing" },
+        { id: "6.3", title: "6.3 Solving Exponential & Logarithmic Equations" }
+      ]
     },
-    "2.3": () => {
-      const p = rand(1, 4);
-      return {
-        prompt: `Find focus of parabola y = (1/${4*p})x².`,
-        ans: `(0, ${p})`,
-        acceptAnswers: [`(0,${p})`, `(0, ${p})`],
-        distractors: [`(${p}, 0)`, `(0, ${-p})`, `(${4*p}, 0)`]
-      };
+    {
+      unit: "Unit 7: Rational Functions",
+      topics: [
+        { id: "7.1", title: "7.1 Direct, Inverse & Joint Variation" },
+        { id: "7.2", title: "7.2 Graphing Rational Functions (Asymptotes & Holes)" },
+        { id: "7.3", title: "7.3 Operations on Rational Expressions & Equations" }
+      ]
     },
-    "2.4": () => {
-      const p1 = rand(1, 3), p2 = rand(4, 6);
-      return {
-        prompt: `A parabola has x-intercepts at x = ${p1} and x = ${p2}. Find its axis of symmetry.`,
-        ans: `x = ${(p1 + p2) / 2}`,
-        acceptAnswers: [`x=${(p1 + p2) / 2}`, `x = ${(p1 + p2) / 2}`, `${(p1 + p2) / 2}`],
-        distractors: [`x = ${p1 + p2}`, `x = ${p2 - p1}`, `y = ${(p1 + p2) / 2}`]
-      };
+    {
+      unit: "Unit 8: Sequences & Series",
+      topics: [
+        { id: "8.1", title: "8.1 Arithmetic Sequences & Series" },
+        { id: "8.2", title: "8.2 Geometric Sequences & Series" },
+        { id: "8.3", title: "8.3 Infinite Geometric Series" }
+      ]
     },
-    "3.1": () => {
-      const r = rand(2, 7);
-      return {
-        prompt: `Solve x² - ${r*r} = 0.`,
-        ans: `x = ±${r}`,
-        acceptAnswers: [`x=±${r}`, `±${r}`, `${r}, -${r}`, `${r},-${r}`],
-        distractors: [`x = ${r}`, `x = ${r*r}`, `x = ±${r*2}`]
-      };
+    {
+      unit: "Unit 9: Trigonometry",
+      topics: [
+        { id: "9.1", title: "9.1 Radians, Degrees & Unit Circle Exact Values" },
+        { id: "9.2", title: "9.2 Graphs of Sine, Cosine & Amplitude/Period" },
+        { id: "9.3", title: "9.3 Trigonometric Identities & Equations" }
+      ]
     },
-    "3.2": () => {
-      const a = rand(2, 5), b = rand(2, 5), c = rand(2, 5), d = rand(2, 5);
-      const real = a * c - b * d, imag = a * d + b * c;
-      return {
-        prompt: `Multiply (${a} + ${b}i)(${c} + ${d}i). Write in a + bi form.`,
-        ans: `${real} ${imag >= 0 ? '+' : '-'} ${Math.abs(imag)}i`,
-        acceptAnswers: [`${real}+${imag}i`, `${real} + ${imag}i`],
-        distractors: [`${a*c + b*d} + ${imag}i`, `${real} - ${imag}i`, `${a*c} + ${b*d}i`]
-      };
-    },
-    "3.3": () => {
-      const b = randNonZero(-5, 5) * 2;
-      const c = Math.pow(b / 2, 2);
-      return {
-        prompt: `What term completes the square for x² ${b >= 0 ? '+ ' + b : '- ' + Math.abs(b)}x + ___?`,
-        ans: `${c}`,
-        acceptAnswers: [`${c}`],
-        distractors: [`${Math.abs(b)}`, `${c * 2}`, `${Math.abs(b / 2)}`]
-      };
-    },
-    "3.4": () => {
-      const a = 1, b = rand(2, 6), c = rand(1, 5);
-      const disc = b*b - 4*a*c;
-      return {
-        prompt: `Find the discriminant of x² + ${b}x + ${c} = 0.`,
-        ans: `${disc}`,
-        acceptAnswers: [`${disc}`],
-        distractors: [`${b*b + 4*a*c}`, `${b*b}`, `${disc - 4}`]
-      };
-    },
-    "3.5": () => {
-      const x = rand(1, 3);
-      const y = x * x;
-      return {
-        prompt: `Solve system y = x² and y = ${2*x} - ${2*x - y}. Find positive x solution.`,
-        ans: `x = ${x}`,
-        acceptAnswers: [`${x}`, `x=${x}`, `x = ${x}`],
-        distractors: [`x = ${x + 2}`, `x = ${y + 1}`, `x = 0`]
-      };
-    },
-    "3.6": () => {
-      const r = rand(1, 4);
-      return {
-        prompt: `Solve quadratic inequality x² - ${r*r} < 0.`,
-        ans: `-${r} < x < ${r}`,
-        acceptAnswers: [`-${r}<x<${r}`, `-${r} < x < ${r}`],
-        distractors: [`x < -${r} or x > ${r}`, `x < ${r}`, `-${r} <= x <= ${r}`]
-      };
-    },
-    "4.1": () => {
-      const n = rand(3, 5);
-      return {
-        prompt: `State maximum possible turning points for degree ${n} polynomial.`,
-        ans: `${n - 1}`,
-        acceptAnswers: [`${n - 1}`],
-        distractors: [`${n}`, `${n + 1}`, `${n / 2}`]
-      };
-    },
-    "4.2": () => {
-      const a = rand(2, 5), b = rand(2, 5);
-      return {
-        prompt: `Expand (x + ${a})(x² + ${b}).`,
-        ans: `x³ + ${a}x² + ${b}x + ${a*b}`,
-        acceptAnswers: [`x^3+${a}x^2+${b}x+${a*b}`, `x³+${a}x²+${b}x+${a*b}`],
-        distractors: [`x³ + ${a+b}x² + ${a*b}`, `x³ + ${b}x + ${a}`, `x² + ${a+b}x + ${a*b}`]
-      };
-    },
-    "4.3": () => {
-      const r = randNonZero(-3, 3), c = rand(-5, 5);
-      return {
-        prompt: `Find remainder when P(x) = x² - ${r+2}x + ${2*r + c} is divided by (x - ${r}).`,
-        ans: `${c}`,
-        acceptAnswers: [`${c}`],
-        distractors: [`${c + 2}`, `${-c}`, `${c - r}`]
-      };
-    },
-    "4.4": () => {
-      const a = rand(2, 4);
-      return {
-        prompt: `Factor difference of cubes x³ - ${a*a*a}.`,
-        ans: `(x - ${a})(x² + ${a}x + ${a*a})`,
-        acceptAnswers: [`(x-${a})(x^2+${a}x+${a*a})`, `(x - ${a})(x² + ${a}x + ${a*a})`],
-        distractors: [`(x - ${a})³`, `(x - ${a})(x² - ${a}x + ${a*a})`, `(x + ${a})(x² - ${a}x + ${a*a})`]
-      };
-    },
-    "4.5": () => {
-      const r1 = rand(1, 3), r2 = rand(4, 6);
-      return {
-        prompt: `Solve polynomial equation x(x - ${r1})(x - ${r2}) = 0. List all real roots.`,
-        ans: `0, ${r1}, ${r2}`,
-        acceptAnswers: [`0,${r1},${r2}`, `0, ${r1}, ${r2}`],
-        distractors: [`${r1}, ${r2}`, `0, -${r1}, -${r2}`, `1, ${r1}, ${r2}`]
-      };
-    },
-    "4.6": () => {
-      const deg = rand(3, 6);
-      return {
-        prompt: `By Fundamental Theorem of Algebra, how many complex roots does a degree ${deg} polynomial have?`,
-        ans: `${deg}`,
-        acceptAnswers: [`${deg}`],
-        distractors: [`${deg - 1}`, `${deg + 1}`, `2`]
-      };
-    },
-    "4.7": () => {
-      const k = rand(2, 5);
-      return {
-        prompt: `Describe vertical shift from f(x) = x³ to g(x) = x³ - ${k}.`,
-        ans: `Shift down ${k} units`,
-        acceptAnswers: [`shift down ${k} units`, `down ${k}`],
-        distractors: [`Shift up ${k} units`, `Shift left ${k} units`, `Shift right ${k} units`]
-      };
-    },
-    "4.8": () => {
-      const p1 = rand(1, 3);
-      return {
-        prompt: `If x = ${p1} is a root of multiplicity 2, how does the graph behave at x = ${p1}?`,
-        ans: `Touches x-axis and turns around`,
-        acceptAnswers: [`touches x-axis and turns around`, `touches and turns`],
-        distractors: [`Crosses x-axis cleanly`, `Has vertical asymptote`, `Has hole`]
-      };
-    },
-    "5.1": () => {
-      const base = rand(2, 4), exp = rand(2, 3), val = Math.pow(base, exp);
-      return {
-        prompt: `Evaluate ${val}^(1/${exp}).`,
-        ans: `${base}`,
-        acceptAnswers: [`${base}`],
-        distractors: [`${base * 2}`, `${Math.pow(val, exp)}`, `${base + 1}`]
-      };
-    },
-    "5.2": () => {
-      const a = rand(2, 5), b = rand(2, 5);
-      return {
-        prompt: `Simplify: x^(${a}/3) * x^(${b}/3).`,
-        ans: `x^(${(a+b)}/3)`,
-        acceptAnswers: [`x^(${(a+b)}/3)`, `x^${(a+b)/3}`],
-        distractors: [`x^(${a*b}/9)`, `x^(${a+b}/6)`, `x^${a*b}`]
-      };
-    },
-    "5.3": () => {
-      return {
-        prompt: `What is domain of radical function f(x) = √(x - 3)?`,
-        ans: `x ≥ 3`,
-        acceptAnswers: [`x>=3`, `x ≥ 3`, `[3, infinity)`],
-        distractors: [`x > 3`, `x ≤ 3`, `All real numbers`]
-      };
-    },
-    "5.4": () => {
-      const v = rand(2, 6);
-      return {
-        prompt: `Solve √(x + 4) = ${v}.`,
-        ans: `x = ${v*v - 4}`,
-        acceptAnswers: [`${v*v - 4}`, `x=${v*v - 4}`, `x = ${v*v - 4}`],
-        distractors: [`x = ${v*v}`, `x = ${v - 4}`, `x = ${v*v + 4}`]
-      };
-    },
-    "5.5": () => {
-      const a = rand(2, 5), b = rand(1, 4);
-      return {
-        prompt: `If f(x) = ${a}x and g(x) = x + ${b}, find (f ∘ g)(x).`,
-        ans: `${a}x + ${a*b}`,
-        acceptAnswers: [`${a}x+${a*b}`, `${a}x + ${a*b}`],
-        distractors: [`${a}x + ${b}`, `${a}x² + ${b}`, `x + ${a*b}`]
-      };
-    },
-    "5.6": () => {
-      const m = rand(2, 5), b = rand(1, 5);
-      return {
-        prompt: `Find inverse function f⁻¹(x) for f(x) = ${m}x + ${b}.`,
-        ans: `(x - ${b}) / ${m}`,
-        acceptAnswers: [`(x-${b})/${m}`, `(x - ${b}) / ${m}`],
-        distractors: [`${m}x - ${b}`, `(x + ${b}) / ${m}`, `1/(${m}x + ${b})`]
-      };
-    },
-    "6.1": () => {
-      const a = rand(100, 500), r = rand(2, 8);
-      return {
-        prompt: `Write exponential growth model for initial amount $${a} growing at ${r}% per year.`,
-        ans: `y = ${a}(1.${r < 10 ? '0' + r : r})^t`,
-        acceptAnswers: [`y=${a}(1.${r < 10 ? '0' + r : r})^t`, `y = ${a}(1.${r < 10 ? '0' + r : r})^t`],
-        distractors: [`y = ${a}(0.${r})^t`, `y = ${a}(${r})^t`, `y = ${a} + ${r}t`]
-      };
-    },
-    "6.2": () => {
-      const P = 1000, r = 0.05, t = 2;
-      return {
-        prompt: `Formula for continuous compounding interest: A = ____.`,
-        ans: `P e^(rt)`,
-        acceptAnswers: [`Pe^(rt)`, `P e^(rt)`, `Pe^rt`],
-        distractors: [`P(1+r)^t`, `P(1+r/n)^(nt)`, `P r t`]
-      };
-    },
-    "6.3": () => {
-      const b = rand(2, 5), x = rand(1, 4), val = Math.pow(b, x);
-      return {
-        prompt: `Evaluate log_${b}(${val}).`,
-        ans: `${x}`,
-        acceptAnswers: [`${x}`],
-        distractors: [`${val / b}`, `${x + 1}`, `${Math.pow(b, val)}`]
-      };
-    },
-    "6.4": () => {
-      const k = rand(2, 5);
-      return {
-        prompt: `Identify vertical asymptote of g(x) = log(x - ${k}).`,
-        ans: `x = ${k}`,
-        acceptAnswers: [`x=${k}`, `x = ${k}`, `${k}`],
-        distractors: [`y = ${k}`, `x = -${k}`, `y = 0`]
-      };
-    },
-    "6.5": () => {
-      const a = rand(2, 5), b = rand(2, 5);
-      return {
-        prompt: `Expand log(x^${a} * y^${b}) using log properties.`,
-        ans: `${a} log(x) + ${b} log(y)`,
-        acceptAnswers: [`${a}log(x)+${b}log(y)`, `${a} log(x) + ${b} log(y)`],
-        distractors: [`${a*b} log(xy)`, `log(${a}x) + log(${b}y)`, `${a} log(x) * ${b} log(y)`]
-      };
-    },
-    "6.6": () => {
-      const b = rand(2, 4), exp = rand(2, 4), val = Math.pow(b, exp);
-      return {
-        prompt: `Solve ${b}^x = ${val}.`,
-        ans: `x = ${exp}`,
-        acceptAnswers: [`${exp}`, `x=${exp}`, `x = ${exp}`],
-        distractors: [`x = ${val / b}`, `x = ${exp + 1}`, `x = ${val}`]
-      };
-    },
-    "7.1": () => {
-      const k = rand(10, 30), x = rand(2, 5);
-      return {
-        prompt: `If y varies inversely with x, and y = ${k} when x = 1, find y when x = ${x}.`,
-        ans: `${k / x}`,
-        acceptAnswers: [`${k / x}`],
-        distractors: [`${k * x}`, `${k + x}`, `${x / k}`]
-      };
-    },
-    "7.2": () => {
-      const h = rand(1, 5);
-      return {
-        prompt: `Find vertical asymptote of f(x) = 1 / (x - ${h}).`,
-        ans: `x = ${h}`,
-        acceptAnswers: [`x=${h}`, `x = ${h}`, `${h}`],
-        distractors: [`y = ${h}`, `x = -${h}`, `y = 0`]
-      };
-    },
-    "7.3": () => {
-      const a = rand(2, 5);
-      return {
-        prompt: `Simplify: (x² - ${a*a}) / (x - ${a}).`,
-        ans: `x + ${a}`,
-        acceptAnswers: [`x+${a}`, `x + ${a}`],
-        distractors: [`x - ${a}`, `x² + ${a}`, `${a}`]
-      };
-    },
-    "7.4": () => {
-      const a = rand(1, 4), b = rand(1, 4);
-      return {
-        prompt: `Add: ${a}/x + ${b}/x.`,
-        ans: `${a + b}/x`,
-        acceptAnswers: [`${a + b}/x`, `(${a + b})/x`],
-        distractors: [`${a * b}/x`, `${a + b}/x²`, `${a + b}`]
-      };
-    },
-    "7.5": () => {
-      const a = rand(1, 5), b = rand(2, 6);
-      return {
-        prompt: `Solve for x: ${a} / x = 1 / ${b}.`,
-        ans: `x = ${a * b}`,
-        acceptAnswers: [`${a * b}`, `x=${a * b}`, `x = ${a * b}`],
-        distractors: [`${a + b}`, `${b / a}`, `${a * b + 1}`]
-      };
-    },
-    "8.1": () => {
-      const c = rand(2, 5);
-      return {
-        prompt: `Find first 3 terms of sequence a_n = ${c}n - 1.`,
-        ans: `${c-1}, ${2*c-1}, ${3*c-1}`,
-        acceptAnswers: [`${c-1},${2*c-1},${3*c-1}`, `${c-1}, ${2*c-1}, ${3*c-1}`],
-        distractors: [`${c}, ${2*c}, ${3*c}`, `1, 2, 3`, `${c+1}, ${2*c+1}, ${3*c+1}`]
-      };
-    },
-    "8.2": () => {
-      const a1 = rand(1, 10), d = rand(2, 6), n = rand(5, 10);
-      return {
-        prompt: `Find ${n}th term (a_${n}) of arithmetic sequence with a₁ = ${a1} and d = ${d}.`,
-        ans: `${a1 + (n - 1) * d}`,
-        acceptAnswers: [`${a1 + (n - 1) * d}`],
-        distractors: [`${a1 + n * d}`, `${a1 * Math.pow(d, n-1)}`, `${a1 + (n-1)*d - 2}`]
-      };
-    },
-    "8.3": () => {
-      const a1 = rand(1, 5), r = rand(2, 3), n = 4;
-      return {
-        prompt: `Find ${n}th term (a_${n}) of geometric sequence with a₁ = ${a1} and r = ${r}.`,
-        ans: `${a1 * Math.pow(r, n - 1)}`,
-        acceptAnswers: [`${a1 * Math.pow(r, n - 1)}`],
-        distractors: [`${a1 * Math.pow(r, n)}`, `${a1 + (n-1)*r}`, `${a1 * r * n}`]
-      };
-    },
-    "8.4": () => {
-      const a1 = rand(2, 8);
-      return {
-        prompt: `Find sum of infinite geometric series with a₁ = ${a1} and r = 1/2.`,
-        ans: `${a1 * 2}`,
-        acceptAnswers: [`${a1 * 2}`],
-        distractors: [`${a1}`, `${a1 * 1.5}`, `Diverges`]
-      };
-    },
-    "9.1": () => {
-      return {
-        prompt: `In a right triangle, sin(θ) = 3/5. Find cos(θ).`,
-        ans: `4/5`,
-        acceptAnswers: [`4/5`, `0.8`],
-        distractors: [`3/4`, `5/4`, `5/3`]
-      };
-    },
-    "9.2": () => {
-      const deg = 180;
-      return {
-        prompt: `Convert ${deg}° to radians.`,
-        ans: `π radians`,
-        acceptAnswers: [`pi`, `π`, `pi radians`],
-        distractors: [`2π radians`, `π/2 radians`, `3π/2 radians`]
-      };
-    },
-    "9.3": () => {
-      return {
-        prompt: `Evaluate tan(45°) or tan(π/4).`,
-        ans: `1`,
-        acceptAnswers: [`1`],
-        distractors: [`0`, `√2 / 2`, `√3`]
-      };
-    },
-    "9.4": () => {
-      const a = rand(2, 6);
-      return {
-        prompt: `Find amplitude of y = ${a} sin(x).`,
-        ans: `${a}`,
-        acceptAnswers: [`${a}`],
-        distractors: [`${a * 2}`, `2π`, `1`]
-      };
-    },
-    "10.1": () => {
-      return {
-        prompt: `What is probability of rolling a sum of 7 with two standard 6-sided dice?`,
-        ans: `1/6`,
-        acceptAnswers: [`1/6`],
-        distractors: [`1/12`, `7/36`, `1/7`]
-      };
-    },
-    "10.2": () => {
-      return {
-        prompt: `If P(A) = 0.4 and P(B) = 0.5 for independent events A and B, find P(A and B).`,
-        ans: `0.2`,
-        acceptAnswers: [`0.2`, `0.20`, `1/5`],
-        distractors: [`0.9`, `0.1`, `0.8`]
-      };
-    },
-    "10.3": () => {
-      return {
-        prompt: `In a survey of 100 people, 60 like coffee, 40 like tea, and 20 like both. P(Coffee | Tea) = ?`,
-        ans: `1/2`,
-        acceptAnswers: [`1/2`, `0.5`, `50%`],
-        distractors: [`2/5`, `3/5`, `1/3`]
-      };
-    },
-    "10.4": () => {
-      const n = 5, r = 2;
-      return {
-        prompt: `Evaluate ₅C₂ (5 choose 2).`,
-        ans: `10`,
-        acceptAnswers: [`10`],
-        distractors: [`20`, `60`, `5`]
-      };
+    {
+      unit: "Unit 10: Probability & Statistics",
+      topics: [
+        { id: "10.1", title: "10.1 Permutations, Combinations & Counting Principle" },
+        { id: "10.2", title: "10.2 Independent, Dependent & Conditional Probability" }
+      ]
     }
+  ];
+
+  // Comprehensive Generator Engine (4-5 unique variants per topic section)
+  const generators = {
+    // UNIT 1: Functions & Linear Systems
+    "1.1": [
+      () => {
+        const h = randNonZero(-6, 6), k = randNonZero(-6, 6), a = randNonZero(-3, 3);
+        const hStr = h > 0 ? `- ${h}` : `+ ${Math.abs(h)}`;
+        const kStr = k > 0 ? `+ ${k}` : `- ${Math.abs(k)}`;
+        const aStr = a === 1 ? "" : (a === -1 ? "-" : `${a}`);
+        return {
+          prompt: `Identify the vertex for $f(x) = ${aStr}|x ${hStr}| ${kStr}$ relative to $y = |x|$.`,
+          ans: `(${h}, ${k})`,
+          acceptAnswers: [`(${h},${k})`, `(${h}, ${k})`],
+          distractors: [`(${-h}, ${k})`, `(${h}, ${-k})`, `(${-h}, ${-k})`],
+          rationale: `The vertex form of an absolute value function is $f(x) = a|x - h| + k$. Here $h = ${h}$ and $k = ${k}$, giving the vertex $(${h}, ${k})$.`
+        };
+      },
+      () => {
+        const k = randInt(-5, 5), a = randNonZero(-3, 3);
+        const isPos = a > 0;
+        return {
+          prompt: `Determine the range of $f(x) = ${a}|x - 2| ${k >= 0 ? '+ ' + k : '- ' + Math.abs(k)}$.`,
+          ans: isPos ? `[${k}, \\infty)` : `(-\\infty, ${k}]`,
+          acceptAnswers: [isPos ? `[${k},inf)` : `(-inf,${k}]`, isPos ? `y>=${k}` : `y<=${k}`],
+          distractors: [isPos ? `(${k}, \\infty)` : `(-\\infty, ${k})`, `[-2, \\infty)`, `(-\\infty, \\infty)`],
+          rationale: `Since $a = ${a}$ is ${isPos ? 'positive (opens up)' : 'negative (opens down)'}, the minimum/maximum output is $k = ${k}$. Thus the range is ${isPos ? `$y \\ge ${k}$ or $[${k}, \\infty)$` : `$y \\le ${k}$ or $(-\\infty, ${k}]$`}.`
+        };
+      },
+      () => {
+        const h = randInt(2, 7), k = randInt(2, 7);
+        return {
+          prompt: `Describing transformations from $y = |x|$ to $g(x) = |x + ${h}| - ${k}$, what are the horizontal and vertical shifts?`,
+          ans: `Left ${h} units, Down ${k} units`,
+          acceptAnswers: [`left ${h}, down ${k}`, `left ${h} down ${k}`],
+          distractors: [`Right ${h} units, Up ${k} units`, `Left ${h} units, Up ${k} units`, `Right ${h} units, Down ${k} units`],
+          rationale: `$|x + ${h}| = |x - (-${h})|$ shifts left by ${h} units. The $- ${k}$ outside shifts down by ${k} units.`
+        };
+      },
+      () => {
+        const h = randInt(-4, 4), k = randInt(-4, 4), a = randInt(2, 4);
+        const yInt = a * Math.abs(-h) + k;
+        return {
+          prompt: `Find the $y$-intercept of the function $f(x) = ${a}|x ${h >= 0 ? '- ' + h : '+ ' + Math.abs(h)}| ${k >= 0 ? '+ ' + k : '- ' + Math.abs(k)}$.`,
+          ans: `(0, ${yInt})`,
+          acceptAnswers: [`(0,${yInt})`, `${yInt}`, `y=${yInt}`],
+          distractors: [`(0, ${a * h + k})`, `(0, ${k})`, `(${yInt}, 0)`],
+          rationale: `Set $x = 0$: $f(0) = ${a}|0 ${h >= 0 ? '- ' + h : '+ ' + Math.abs(h)}| ${k >= 0 ? '+ ' + k : '- ' + Math.abs(k)} = ${a}(${Math.abs(h)}) ${k >= 0 ? '+' : '-'} ${Math.abs(k)} = ${yInt}$.`
+        };
+      },
+      () => {
+        const xVal = randInt(-5, 5);
+        const res = 3 * Math.abs(xVal - 2) - 4;
+        return {
+          prompt: `Evaluate $f(${xVal})$ for $f(x) = 3|x - 2| - 4$.`,
+          ans: `${res}`,
+          acceptAnswers: [`${res}`],
+          distractors: [`${res + 4}`, `${-res}`, `${3 * (xVal - 2) - 4}`],
+          rationale: `$f(${xVal}) = 3|${xVal} - 2| - 4 = 3|${xVal - 2}| - 4 = 3(${Math.abs(xVal - 2)}) - 4 = ${res}$.`
+        };
+      }
+    ],
+
+    "1.2": [
+      () => {
+        const val = randInt(2, 8), k = randInt(1, 5), rhs = val + k;
+        return {
+          prompt: `Solve the absolute value equation: $|2x - 4| + ${k} = ${rhs}$.`,
+          ans: `x = ${(val + 4)/2} \\text{ or } x = ${(-val + 4)/2}`,
+          acceptAnswers: [`${(val+4)/2},${(-val+4)/2}`, `${(-val+4)/2},${(val+4)/2}`],
+          distractors: [`x = ${(val + 4)/2}`, `x = ${val + 2} \\text{ or } x = -${val}`, `x = 0`],
+          rationale: `Isolate absolute value: $|2x - 4| = ${val}$. Split into $2x - 4 = ${val} \\implies x = ${(val+4)/2}$ and $2x - 4 = -${val} \\implies x = ${(-val+4)/2}$.`
+        };
+      },
+      () => {
+        const c = randInt(3, 7), h = randInt(1, 4);
+        return {
+          prompt: `Solve the inequality: $|x - ${h}| < ${c}$. Express solution in interval notation.`,
+          ans: `(${h - c}, ${h + c})`,
+          acceptAnswers: [`(${h - c},${h + c})`, `(${h - c}, ${h + c})`],
+          distractors: [`(-\\infty, ${h - c}) \\cup (${h + c}, \\infty)`, `[${h - c}, ${h + c}]`, `(${h}, ${h + c})`],
+          rationale: `$|x - ${h}| < ${c}$ translates to $-${c} < x - ${h} < ${c}$. Add ${h} to all parts: ${h - c} < x < ${h + c}$, which is $(${h - c}, ${h + c})$.`
+        };
+      },
+      () => {
+        const c = randInt(2, 6), h = randInt(1, 4);
+        return {
+          prompt: `Solve the inequality: $|x + ${h}| \\ge ${c}$. Express in interval notation.`,
+          ans: `(-\\infty, ${-h - c}] \\cup [${-h + c}, \\infty)`,
+          acceptAnswers: [`(-inf,${-h - c}]U[${-h + c},inf)`],
+          distractors: [`[${-h - c}, ${-h + c}]`, `(-\\infty, ${-h + c}]`, `[${-h - c}, \\infty)`],
+          rationale: `$|x + ${h}| \\ge ${c}$ splits into $x + ${h} \\le -${c}$ or $x + ${h} \\ge ${c} \\implies x \\le ${-h-c}$ or $x \\ge ${-h+c}$.`
+        };
+      },
+      () => {
+        const k = randInt(5, 10), rhs = randInt(1, 4);
+        return {
+          prompt: `Solve for $x$: $|3x + 5| + ${k} = ${rhs}$.`,
+          ans: `No Solution`,
+          acceptAnswers: [`no solution`, `none`, `empty set`, `\\emptyset`],
+          distractors: [`x = -${k}`, `x = ${(rhs - k - 5)/3}`, `x = 0`],
+          rationale: `Isolating the absolute value yields $|3x + 5| = ${rhs - k}$. Since an absolute value cannot equal a negative quantity (${rhs - k}), there is No Solution.`
+        };
+      },
+      () => {
+        return {
+          prompt: `Solve $|x - 3| = 2x + 9$ and check for extraneous solutions.`,
+          ans: `x = -2`,
+          acceptAnswers: [`x=-2`, `-2`],
+          distractors: [`x = -2 \\text{ or } x = -12`, `x = -12`, `x = 6`],
+          rationale: `Case 1: $x - 3 = 2x + 9 \\implies x = -12$. Case 2: $x - 3 = -(2x + 9) \\implies 3x = -6 \\implies x = -2$. Check: $|-12 - 3| = 15$ but $2(-12)+9 = -15$ (Extraneous!). Solution is $x = -2$.`
+        };
+      }
+    ],
+
+    "1.3": [
+      () => {
+        const x = randInt(1, 4), y = randInt(1, 4), z = randInt(1, 4);
+        return {
+          prompt: `Find the ordered triple $(x, y, z)$ solution to:\n$$x + y + z = ${x + y + z}$$\n$$2x - y + z = ${2*x - y + z}$$\n$$x + 2y - z = ${x + 2*y - z}$$`,
+          ans: `(${x}, ${y}, ${z})`,
+          acceptAnswers: [`(${x},${y},${z})`, `(${x}, ${y}, ${z})`],
+          distractors: [`(${x+1}, ${y}, ${z})`, `(${x}, ${y-1}, ${z+1})`, `(${z}, ${y}, ${x})`],
+          rationale: `Using Gaussian elimination or matrix reduction, systematically eliminate variables to obtain $(x, y, z) = (${x}, ${y}, ${z})$.`
+        };
+      },
+      () => {
+        const zVal = randInt(2, 6);
+        return {
+          prompt: `In the system below, determine the value of $z$:\n$$x + y = 6$$\n$$y + z = ${4 + zVal}$$\n$$x + z = ${2 + zVal}$$`,
+          ans: `z = ${zVal}`,
+          acceptAnswers: [`${zVal}`, `z=${zVal}`],
+          distractors: [`z = ${zVal + 2}`, `z = 4`, `z = 1`],
+          rationale: `Add all three equations: $2x + 2y + 2z = ${12 + 2*zVal} \\implies x + y + z = ${6 + zVal}$. Since $x + y = 6$, subtract to get $z = ${zVal}$.`
+        };
+      },
+      () => {
+        return {
+          prompt: `Determine the number of solutions to the linear system:\n$$x + y + z = 5$$\n$$x + y + z = 8$$\n$$2x + y - z = 3$$`,
+          ans: `No Solution (Inconsistent)`,
+          acceptAnswers: [`no solution`, `0`, `inconsistent`],
+          distractors: [`Infinitely Many Solutions`, `Unique Solution (5, 8, 3)`, `(0, 0, 0)`],
+          rationale: `Subtracting the first two equations yields $0 = 3$, a contradiction. Thus the system is inconsistent and has No Solution.`
+        };
+      },
+      () => {
+        return {
+          prompt: `Classify a 3x3 system of linear equations that reduces to $0 = 0$ during elimination with one free variable.`,
+          ans: `Infinitely Many Solutions (Dependent)`,
+          acceptAnswers: [`infinitely many`, `dependent`, `infinite`],
+          distractors: [`No Solution`, `Exactly One Solution`, `Exactly Three Solutions`],
+          rationale: `An identity $0 = 0$ with fewer independent equations than variables indicates a dependent system with Infinitely Many Solutions.`
+        };
+      }
+    ],
+
+    // UNIT 2: Quadratic Functions & Parabolas
+    "2.1": [
+      () => {
+        const h = randInt(-4, 4), k = randInt(-5, 5), a = randNonZero(-2, 2);
+        return {
+          prompt: `Identify the vertex of $f(x) = ${a === 1 ? '' : a}(x ${h >= 0 ? '- ' + h : '+ ' + Math.abs(h)})^2 ${k >= 0 ? '+ ' + k : '- ' + Math.abs(k)}$.`,
+          ans: `(${h}, ${k})`,
+          acceptAnswers: [`(${h},${k})`, `(${h}, ${k})`],
+          distractors: [`(${-h}, ${k})`, `(${h}, ${-k})`, `(${-h}, ${-k})`],
+          rationale: `Vertex form is $f(x) = a(x - h)^2 + k$. The vertex is explicitly $(h, k) = (${h}, ${k})$.`
+        };
+      },
+      () => {
+        const h = randInt(-6, 6);
+        return {
+          prompt: `What is the equation of the axis of symmetry for $g(x) = -3(x - ${h})^2 + 11$?`,
+          ans: `x = ${h}`,
+          acceptAnswers: [`x=${h}`, `${h}`],
+          distractors: [`y = ${h}`, `x = -${h}`, `y = 11`],
+          rationale: `The axis of symmetry for a vertical parabola in vertex form is the vertical line $x = h$. Here $h = ${h}$, so $x = ${h}$.`
+        };
+      },
+      () => {
+        const k = randInt(-8, 8), a = randNonZero(-3, 3);
+        const isMax = a < 0;
+        return {
+          prompt: `Does $f(x) = ${a}(x + 3)^2 ${k >= 0 ? '+ ' + k : '- ' + Math.abs(k)}$ have a maximum or minimum value, and what is it?`,
+          ans: `${isMax ? 'Maximum' : 'Minimum'} of ${k}`,
+          acceptAnswers: [`${isMax ? 'max' : 'min'} of ${k}`, `${k}`],
+          distractors: [`${isMax ? 'Minimum' : 'Maximum'} of ${k}`, `Minimum of -3`, `Maximum of 3`],
+          rationale: `Since $a = ${a} ${isMax ? '< 0' : '> 0'}$, the parabola opens ${isMax ? 'downward' : 'upward'}, giving a ${isMax ? 'Maximum' : 'Minimum'} value equal to $k = ${k}$.`
+        };
+      },
+      () => {
+        return {
+          prompt: `Convert $f(x) = 2(x - 3)^2 - 2$ into standard form $ax^2 + bx + c$.`,
+          ans: `2x^2 - 12x + 16`,
+          acceptAnswers: [`2x^2-12x+16`],
+          distractors: [`2x^2 - 6x + 16`, `2x^2 - 12x + 18`, `4x^2 - 12x + 16`],
+          rationale: `Expand: $2(x^2 - 6x + 9) - 2 = 2x^2 - 12x + 18 - 2 = 2x^2 - 12x + 16$.`
+        };
+      },
+      () => {
+        return {
+          prompt: `Find the value of $a$ for a parabola with vertex $(1, 4)$ passing through the point $(3, 12)$.`,
+          ans: `a = 2`,
+          acceptAnswers: [`2`, `a=2`],
+          distractors: [`a = 4`, `a = 1`, `a = 8`],
+          rationale: `Substitute into $y = a(x - h)^2 + k$: $12 = a(3 - 1)^2 + 4 \\implies 8 = a(2)^2 = 4a \\implies a = 2$.`
+        };
+      }
+    ],
+
+    "2.2": [
+      () => {
+        const b = randNonZero(-6, 6) * 2, a = 1, h = -b / (2 * a);
+        return {
+          prompt: `Find the axis of symmetry for $f(x) = x^2 ${b >= 0 ? '+ ' + b : '- ' + Math.abs(b)}x + 7$.`,
+          ans: `x = ${h}`,
+          acceptAnswers: [`x=${h}`, `${h}`],
+          distractors: [`x = ${-h}`, `y = ${h}`, `x = ${b}`],
+          rationale: `Formula: $x = -\\frac{b}{2a}$. With $a = 1$ and $b = ${b}$, $x = -\\frac{${b}}{2(1)} = ${h}$.`
+        };
+      },
+      () => {
+        return {
+          prompt: `Find the vertex of $f(x) = x^2 - 6x + 5$.`,
+          ans: `(3, -4)`,
+          acceptAnswers: [`(3,-4)`, `(3, -4)`],
+          distractors: [`(-3, -4)`, `(3, 4)`, `(6, 5)`],
+          rationale: `$h = -\\frac{-6}{2(1)} = 3$. Evaluate $f(3) = 3^2 - 6(3) + 5 = 9 - 18 + 5 = -4$. Vertex is $(3, -4)$.`
+        };
+      },
+      () => {
+        const c = randInt(-12, 12);
+        return {
+          prompt: `Find the $y$-intercept of $f(x) = -3x^2 + 8x ${c >= 0 ? '+ ' + c : '- ' + Math.abs(c)}$.`,
+          ans: `(0, ${c})`,
+          acceptAnswers: [`(0,${c})`, `${c}`],
+          distractors: [`(${c}, 0)`, `(0, 8)`, `(0, -3)`],
+          rationale: `The $y$-intercept occurs where $x = 0$: $f(0) = -3(0)^2 + 8(0) + c = ${c}$, giving $(0, ${c})$.`
+        };
+      },
+      () => {
+        const tMax = randInt(2, 5), hMax = randInt(20, 80);
+        return {
+          prompt: `A projectile's height is given by $h(t) = -16(t - ${tMax})^2 + ${hMax}$. What is the maximum height reached?`,
+          ans: `${hMax} feet`,
+          acceptAnswers: [`${hMax}`, `${hMax} feet`],
+          distractors: [`${tMax} feet`, `${hMax - 16} feet`, `${hMax + 16} feet`],
+          rationale: `The vertex $(t, h) = (${tMax}, ${hMax})$ represents maximum height at time $t$. Max height is ${hMax} feet.`
+        };
+      },
+      () => {
+        return {
+          prompt: `How many real $x$-intercepts does $f(x) = x^2 - 4x + 9$ have?`,
+          ans: `0`,
+          acceptAnswers: [`0`, `none`],
+          distractors: [`1`, `2`, `3`],
+          rationale: `Check discriminant: $b^2 - 4ac = (-4)^2 - 4(1)(9) = 16 - 36 = -20 < 0$. Negative discriminant means 0 real $x$-intercepts.`
+        };
+      }
+    ],
+
+    "2.3": [
+      () => {
+        const p = randInt(1, 5), coeff = 4 * p;
+        return {
+          prompt: `Find the focus of the parabola $y = \\frac{1}{${coeff}}x^2$.`,
+          ans: `(0, ${p})`,
+          acceptAnswers: [`(0,${p})`, `(0, ${p})`],
+          distractors: [`(${p}, 0)`, `(0, -${p})`, `(0, ${coeff})`],
+          rationale: `Standard form $y = \\frac{1}{4p}x^2$. $\\frac{1}{4p} = \\frac{1}{${coeff}} \\implies p = ${p}$. Focus is $(0, p) = (0, ${p})$.`
+        };
+      },
+      () => {
+        const p = randInt(1, 5), coeff = 4 * p;
+        return {
+          prompt: `Find the directrix equation for $y = \\frac{1}{${coeff}}x^2$.`,
+          ans: `y = -${p}`,
+          acceptAnswers: [`y=-${p}`, `y = -${p}`],
+          distractors: [`x = -${p}`, `y = ${p}`, `x = ${p}`],
+          rationale: `For $y = \\frac{1}{4p}x^2$, $p = ${p}$. The directrix for a vertical parabola opening upward is $y = -p = -${p}$.`
+        };
+      },
+      () => {
+        const p = randInt(2, 4);
+        return {
+          prompt: `Find the focus of the horizontal parabola $x = \\frac{1}{${4*p}}y^2$.`,
+          ans: `(${p}, 0)`,
+          acceptAnswers: [`(${p},0)`, `(${p}, 0)`],
+          distractors: [`(0, ${p})`, `(-${p}, 0)`, `(0, -${p})`],
+          rationale: `Horizontal parabola standard form $x = \\frac{1}{4p}y^2$. Since $4p = ${4*p} \\implies p = ${p}$, focus lies along x-axis at $(${p}, 0)$.`
+        };
+      },
+      () => {
+        const p = randInt(2, 4);
+        return {
+          prompt: `Find equation of parabola with vertex at $(0,0)$, focus at $(0, ${p})$, and directrix $y = -${p}$.`,
+          ans: `y = \\frac{1}{${4*p}}x^2`,
+          acceptAnswers: [`y=1/${4*p}x^2`, `y = 1/${4*p} x^2`],
+          distractors: [`y = \\frac{1}{${p}}x^2`, `x = \\frac{1}{${4*p}}y^2`, `y = ${4*p}x^2`],
+          rationale: `Vertical parabola formula: $y = \\frac{1}{4p}x^2$. With $p = ${p}$, $4p = ${4*p} \\implies y = \\frac{1}{${4*p}}x^2$.`
+        };
+      }
+    ],
+
+    // UNIT 3: Complex Numbers & Quadratic Equations
+    "3.1": [
+      () => {
+        const a = randInt(2, 5), b = randInt(2, 5), c = randInt(2, 5), d = randInt(2, 5);
+        const real = a * c - b * d, imag = a * d + b * c;
+        return {
+          prompt: `Simplify: $(${a} + ${b}i)(${c} + ${d}i)$.`,
+          ans: `${real} ${imag >= 0 ? '+' : '-'} ${Math.abs(imag)}i`,
+          acceptAnswers: [`${real}+${imag}i`, `${real} + ${imag}i`],
+          distractors: [`${a*c + b*d} + ${imag}i`, `${real} - ${imag}i`, `${a*c} + ${b*d}i`],
+          rationale: `FOIL: $(${a})(${c}) + (${a})(${d}i) + (${b}i)(${c}) + (${b}i)(${d}i) = ${a*c} + ${a*d}i + ${b*c}i + ${b*d}i^2$. Since $i^2 = -1$, $(${a*c} - ${b*d}) + (${a*d+b*c})i = ${real} ${imag >= 0 ? '+' : '-'} ${Math.abs(imag)}i$.`
+        };
+      },
+      () => {
+        const exp = randInt(20, 99);
+        const rem = exp % 4;
+        const ansArr = ["1", "i", "-1", "-i"];
+        return {
+          prompt: `Simplify the complex power: $i^{${exp}}$.`,
+          ans: `${ansArr[rem]}`,
+          acceptAnswers: [`${ansArr[rem]}`],
+          distractors: [`${ansArr[(rem+1)%4]}`, `${ansArr[(rem+2)%4]}`, `0`],
+          rationale: `Divide exponent by 4: ${exp} = 4(${Math.floor(exp/4)}) + ${rem}. $i^{${exp}} = i^{${rem}} = ${ansArr[rem]}$.`
+        };
+      },
+      () => {
+        return {
+          prompt: `Simplify $\\frac{5}{2 + i}$ into $a + bi$ form.`,
+          ans: `2 - i`,
+          acceptAnswers: [`2-i`, `2 - i`],
+          distractors: [`2 + i`, `\\frac{5}{2} - 5i`, `1 - 2i`],
+          rationale: `Multiply by conjugate $\\frac{2 - i}{2 - i}$: $\\frac{5(2 - i)}{2^2 - i^2} = \\frac{10 - 5i}{4 - (-1)} = \\frac{10 - 5i}{5} = 2 - i$.`
+        };
+      },
+      () => {
+        const a = randInt(3, 8), b = randInt(2, 6), c = randInt(1, 5), d = randInt(2, 7);
+        return {
+          prompt: `Simplify: $(${a} - ${b}i) - (${c} + ${d}i)$.`,
+          ans: `${a - c} - ${b + d}i`,
+          acceptAnswers: [`${a-c}-${b+d}i`],
+          distractors: [`${a + c} - ${b - d}i`, `${a - c} + ${b - d}i`, `${a - c} - ${b - d}i`],
+          rationale: `Combine real parts $(${a} - ${c} = ${a-c})$ and imaginary parts $(-${b}i - ${d}i = -${b+d}i) \\implies ${a-c} - ${b+d}i$.`
+        };
+      },
+      () => {
+        return {
+          prompt: `Find the absolute value (modulus) of $|3 - 4i|$.`,
+          ans: `5`,
+          acceptAnswers: [`5`],
+          distractors: [`7`, `1`, `\\sqrt{7}`],
+          rationale: `Modulus formula $|a + bi| = \\sqrt{a^2 + b^2} = \\sqrt{3^2 + (-4)^2} = \\sqrt{9 + 16} = \\sqrt{25} = 5$.`
+        };
+      }
+    ],
+
+    "3.2": [
+      () => {
+        const b = randInt(2, 7) * 2;
+        const added = Math.pow(b / 2, 2);
+        return {
+          prompt: `What constant must be added to $x^2 + ${b}x$ to make it a perfect square trinomial?`,
+          ans: `${added}`,
+          acceptAnswers: [`${added}`],
+          distractors: [`${b}`, `${added * 2}`, `${b / 2}`],
+          rationale: `Formula: $\\left(\\frac{b}{2}\\right)^2$. Here $\\left(\\frac{${b}}{2}\\right)^2 = ${b/2}^2 = ${added}$.`
+        };
+      },
+      () => {
+        return {
+          prompt: `Solve $x^2 - 6x - 7 = 0$ by completing the square.`,
+          ans: `x = 7 \\text{ or } x = -1`,
+          acceptAnswers: [`7,-1`, `-1,7`],
+          distractors: [`x = 6 \\text{ or } x = -1`, `x = 7 \\text{ or } x = 1`, `x = 3 \\pm \\sqrt{7}`],
+          rationale: `$x^2 - 6x = 7 \\implies x^2 - 6x + 9 = 16 \\implies (x - 3)^2 = 16 \\implies x - 3 = \\pm 4 \\implies x = 7$ or $x = -1$.`
+        };
+      },
+      () => {
+        return {
+          prompt: `Rewrite $f(x) = x^2 + 8x + 10$ in vertex form by completing the square.`,
+          ans: `(x + 4)^2 - 6`,
+          acceptAnswers: [`(x+4)^2-6`, `(x + 4)^2 - 6`],
+          distractors: [`(x + 4)^2 + 10`, `(x + 8)^2 - 6`, `(x + 4)^2 + 6`],
+          rationale: `$f(x) = (x^2 + 8x + 16) + 10 - 16 = (x + 4)^2 - 6$.`
+        };
+      },
+      () => {
+        return {
+          prompt: `Solve $2x^2 + 8x - 10 = 0$ by completing the square.`,
+          ans: `x = 1 \\text{ or } x = -5`,
+          acceptAnswers: [`1,-5`, `-5,1`],
+          distractors: [`x = 2 \\text{ or } x = -5`, `x = 1 \\text{ or } x = 5`, `x = -1 \\text{ or } x = 5`],
+          rationale: `Divide by 2: $x^2 + 4x - 5 = 0 \\implies x^2 + 4x + 4 = 9 \\implies (x + 2)^2 = 9 \\implies x + 2 = \\pm 3 \\implies x = 1$ or $x = -5$.`
+        };
+      }
+    ],
+
+    "3.3": [
+      () => {
+        const a = 1, b = randInt(2, 6), c = randInt(1, 6);
+        const disc = b * b - 4 * a * c;
+        return {
+          prompt: `Calculate the discriminant of $x^2 + ${b}x + ${c} = 0$.`,
+          ans: `${disc}`,
+          acceptAnswers: [`${disc}`],
+          distractors: [`${b*b + 4*a*c}`, `${disc - 10}`, `${b*b}`],
+          rationale: `Discriminant $D = b^2 - 4ac = (${b})^2 - 4(1)(${c}) = ${disc}$.`
+        };
+      },
+      () => {
+        return {
+          prompt: `If the discriminant of a quadratic equation is $-16$, describe the nature and number of roots.`,
+          ans: `2 Complex (Imaginary) Conjugate Roots`,
+          acceptAnswers: [`2 complex roots`, `2 imaginary roots`, `2 complex`],
+          distractors: [`2 Real Rational Roots`, `1 Real Double Root`, `2 Real Irrational Roots`],
+          rationale: `When discriminant $D < 0$, the quadratic equation has two complex (imaginary) conjugate solutions.`
+        };
+      },
+      () => {
+        const k = 6;
+        return {
+          prompt: `Find value of $c$ such that $x^2 + ${k}x + c = 0$ has exactly one real solution.`,
+          ans: `c = 9`,
+          acceptAnswers: [`9`, `c=9`],
+          distractors: [`c = 36`, `c = 6`, `c = 3`],
+          rationale: `For exactly 1 real solution, $D = b^2 - 4ac = 0 \\implies (${k})^2 - 4(1)c = 0 \\implies 36 = 4c \\implies c = 9$.`
+        };
+      },
+      () => {
+        return {
+          prompt: `Classify roots for $x^2 - 4x + 4 = 0$.`,
+          ans: `1 Real Repeated Solution (Double Root)`,
+          acceptAnswers: [`1 real root`, `1 real solution`, `double root`],
+          distractors: [`2 Distinct Real Rational Roots`, `2 Complex Conjugate Roots`, `No Real Solution`],
+          rationale: `$D = (-4)^2 - 4(1)(4) = 16 - 16 = 0$. Discriminant of zero means exactly 1 real double root.`
+        };
+      }
+    ],
+
+    "3.4": [
+      () => {
+        return {
+          prompt: `Find intersection points of system: $y = x^2$ and $y = x + 2$.`,
+          ans: `(2, 4) \\text{ and } (-1, 1)`,
+          acceptAnswers: [`(2,4),(-1,1)`, `(-1,1),(2,4)`],
+          distractors: [`(2, 4) \\text{ only}`, `(1, 1) \\text{ and } (-2, 4)`, `(0, 0) \\text{ and } (2, 4)`],
+          rationale: `Set equal: $x^2 = x + 2 \\implies x^2 - x - 2 = 0 \\implies (x - 2)(x + 1) = 0 \\implies x = 2, -1$. Corresponding $y$: $(2, 4)$ and $(-1, 1)$.`
+        };
+      },
+      () => {
+        const r = randInt(2, 5);
+        return {
+          prompt: `Solve quadratic inequality $x^2 - ${r*r} < 0$. Write in interval notation.`,
+          ans: `(-${r}, ${r})`,
+          acceptAnswers: [`(-${r},${r})`, `(-${r}, ${r})`],
+          distractors: [`(-\\infty, -${r}) \\cup (${r}, \\infty)`, `[-${r}, ${r}]`, `(0, ${r})`],
+          rationale: `Factor $(x - ${r})(x + ${r}) < 0$. Roots are $-${r}$ and ${r}. Testing intervals shows the inequality holds strictly inside: $(-${r}, ${r})$.`
+        };
+      },
+      () => {
+        const r = randInt(2, 5);
+        return {
+          prompt: `Solve $x^2 - ${r*r} > 0$ in interval notation.`,
+          ans: `(-\\infty, -${r}) \\cup (${r}, \\infty)`,
+          acceptAnswers: [`(-inf,-${r})U(${r},inf)`],
+          distractors: [`(-${r}, ${r})`, `[-${r}, ${r}]`, `(-\\infty, ${r})`],
+          rationale: `Factor $(x - ${r})(x + ${r}) > 0$. Testing outer intervals shows inequality holds on $(-\\infty, -${r}) \\cup (${r}, \\infty)$.`
+        };
+      },
+      () => {
+        return {
+          prompt: `Is the origin $(0,0)$ a solution to $y > x^2 - 4$?`,
+          ans: `Yes`,
+          acceptAnswers: [`yes`, `true`],
+          distractors: [`No`, `Cannot be determined`],
+          rationale: `Substitute $(0,0)$: $0 > 0^2 - 4 \\implies 0 > -4$, which is a TRUE statement. Yes, it is a solution.`
+        };
+      }
+    ],
+
+    // UNIT 4: Polynomial Functions
+    "4.1": [
+      () => {
+        const deg = randInt(4, 7);
+        return {
+          prompt: `What is the maximum number of turning points for a degree $n = ${deg}$ polynomial?`,
+          ans: `${deg - 1}`,
+          acceptAnswers: [`${deg - 1}`],
+          distractors: [`${deg}`, `${deg + 1}`, `${Math.floor(deg / 2)}`],
+          rationale: `A polynomial of degree $n$ has at most $n - 1$ turning points. For $n = ${deg}$, max turning points $= ${deg - 1}$.`
+        };
+      },
+      () => {
+        return {
+          prompt: `Describe end behavior of $f(x) = 2x^5 - 3x^2 + 1$.`,
+          ans: `As x \\to -\\infty, y \\to -\\infty; As x \\to \\infty, y \\to \\infty`,
+          acceptAnswers: [`down left, up right`, `as x->-inf, y->-inf; as x->inf, y->inf`],
+          distractors: [
+            `As x \\to -\\infty, y \\to \\infty; As x \\to \\infty, y \\to \\infty`,
+            `As x \\to -\\infty, y \\to \\infty; As x \\to \\infty, y \\to -\\infty`,
+            `As x \\to -\\infty, y \\to -\\infty; As x \\to \\infty, y \\to -\\infty`
+          ],
+          rationale: `Degree 5 (odd) and leading coefficient $+2$ (positive): graph falls to the left ($y \\to -\\infty$) and rises to the right ($y \\to \\infty$).`
+        };
+      },
+      () => {
+        return {
+          prompt: `Describe end behavior of $f(x) = -4x^4 + 2x^3 - 7$.`,
+          ans: `As x \\to \\pm\\infty, y \\to -\\infty`,
+          acceptAnswers: [`down left, down right`, `both down`],
+          distractors: [`As x \\to \\pm\\infty, y \\to \\infty`, `Falls left, rises right`, `Rises left, falls right`],
+          rationale: `Degree 4 (even) with negative leading coefficient $-4$: graph falls on both ends ($y \\to -\\infty$ as $x \\to \\pm\\infty$).`
+        };
+      },
+      () => {
+        const deg = randInt(3, 8);
+        return {
+          prompt: `What is maximum number of real zeros for $P(x) = -x^{${deg}} + 4x^2 - 2$?`,
+          ans: `${deg}`,
+          acceptAnswers: [`${deg}`],
+          distractors: [`${deg - 1}`, `2`, `1`],
+          rationale: `A polynomial of degree $n = ${deg}$ can have at most $n = ${deg}$ real zeros.`
+        };
+      },
+      () => {
+        return {
+          prompt: `If a continuous polynomial graph has 3 turning points, what is its minimum possible degree?`,
+          ans: `4`,
+          acceptAnswers: [`4`],
+          distractors: [`3`, `5`, `2`],
+          rationale: `Minimum degree $= \\text{turning points} + 1 = 3 + 1 = 4$.`
+        };
+      }
+    ],
+
+    "4.2": [
+      () => {
+        const r = randNonZero(-3, 3);
+        const ans = Math.pow(r, 3) - 2 * Math.pow(r, 2) + 3 * r - 5;
+        return {
+          prompt: `Use the Remainder Theorem to find $P(${r})$ for $P(x) = x^3 - 2x^2 + 3x - 5$.`,
+          ans: `${ans}`,
+          acceptAnswers: [`${ans}`],
+          distractors: [`${ans + 4}`, `${ans - 6}`, `0`],
+          rationale: `By Remainder Theorem, dividing $P(x)$ by $(x - ${r})$ leaves remainder equal to $P(${r}) = (${r})^3 - 2(${r})^2 + 3(${r}) - 5 = ${ans}$.`
+        };
+      },
+      () => {
+        return {
+          prompt: `Is $(x - 2)$ a factor of $P(x) = x^3 - 4x^2 + 5x - 2$?`,
+          ans: `Yes, because P(2) = 0`,
+          acceptAnswers: [`yes`, `true`],
+          distractors: [`No, because P(2) = 4`, `No, because P(2) = -2`, `Cannot be determined`],
+          rationale: `Evaluate $P(2) = 2^3 - 4(2)^2 + 5(2) - 2 = 8 - 16 + 10 - 2 = 0$. Since remainder is 0, $(x - 2)$ IS a factor.`
+        };
+      },
+      () => {
+        return {
+          prompt: `What is the remainder when $x^3 + 2x^2 - 5x - 6$ is divided by $(x - 3)$?`,
+          ans: `24`,
+          acceptAnswers: [`24`],
+          distractors: [`0`, `12`, `-6`],
+          rationale: `Evaluate $P(3) = 3^3 + 2(3)^2 - 5(3) - 6 = 27 + 18 - 15 - 6 = 24$.`
+        };
+      },
+      () => {
+        return {
+          prompt: `Find quotient when $(x^2 - 9)$ is divided by $(x - 3)$.`,
+          ans: `x + 3`,
+          acceptAnswers: [`x+3`, `x + 3`],
+          distractors: [`x - 3`, `x^2 + 3`, `3`],
+          rationale: `Factor difference of squares: $\\frac{(x - 3)(x + 3)}{x - 3} = x + 3$.`
+        };
+      }
+    ],
+
+    "4.3": [
+      () => {
+        const a = randInt(2, 5);
+        return {
+          prompt: `Factor the sum of cubes: $x^3 + ${a*a*a}$.`,
+          ans: `(x + ${a})(x^2 - ${a}x + ${a*a})`,
+          acceptAnswers: [`(x+${a})(x^2-${a}x+${a*a})`],
+          distractors: [`(x + ${a})^3`, `(x + ${a})(x^2 + ${a}x + ${a*a})`, `(x - ${a})(x^2 - ${a}x + ${a*a})`],
+          rationale: `Sum of cubes formula $A^3 + B^3 = (A + B)(A^2 - AB + B^2)$ with $A = x, B = ${a} \\implies (x + ${a})(x^2 - ${a}x + ${a*a})$.`
+        };
+      },
+      () => {
+        const a = randInt(2, 5);
+        return {
+          prompt: `Factor the difference of cubes: $x^3 - ${a*a*a}$.`,
+          ans: `(x - ${a})(x^2 + ${a}x + ${a*a})`,
+          acceptAnswers: [`(x-${a})(x^2+${a}x+${a*a})`],
+          distractors: [`(x - ${a})^3`, `(x - ${a})(x^2 - ${a}x + ${a*a})`, `(x + ${a})(x^2 + ${a}x + ${a*a})`],
+          rationale: `Difference of cubes formula $A^3 - B^3 = (A - B)(A^2 + AB + B^2)$ with $A = x, B = ${a} \\implies (x - ${a})(x^2 + ${a}x + ${a*a})$.`
+        };
+      },
+      () => {
+        return {
+          prompt: `Factor completely by grouping: $x^3 + 3x^2 - 4x - 12$.`,
+          ans: `(x + 3)(x - 2)(x + 2)`,
+          acceptAnswers: [`(x+3)(x-2)(x+2)`],
+          distractors: [`(x + 3)(x^2 - 4)`, `(x - 3)(x - 2)(x + 2)`, `(x + 3)^3`],
+          rationale: `Group terms: $x^2(x + 3) - 4(x + 3) = (x^2 - 4)(x + 3) = (x - 2)(x + 2)(x + 3)$.`
+        };
+      },
+      () => {
+        return {
+          prompt: `Solve for all real roots of $x^3 - 9x = 0$.`,
+          ans: `x = 0, 3, -3`,
+          acceptAnswers: [`0,3,-3`, `0, 3, -3`],
+          distractors: [`x = 3, -3`, `x = 0, 9`, `x = 9, -9`],
+          rationale: `Factor: $x(x^2 - 9) = 0 \\implies x(x - 3)(x + 3) = 0 \\implies x = 0, 3, -3$.`
+        };
+      }
+    ],
+
+    "4.4": [
+      () => {
+        const deg = randInt(4, 7);
+        return {
+          prompt: `According to Fundamental Theorem of Algebra, how many complex roots (including multiplicity) does $f(x) = 5x^{${deg}} - 2x^3 + 7$ have?`,
+          ans: `${deg}`,
+          acceptAnswers: [`${deg}`],
+          distractors: [`${deg - 1}`, `3`, `5`],
+          rationale: `The Fundamental Theorem of Algebra states a degree $n$ polynomial has exactly $n$ complex zeros (counting multiplicities). Degree is ${deg}, so ${deg} roots.`
+        };
+      },
+      () => {
+        return {
+          prompt: `If a polynomial with real coefficients has a root $x = 3 + 2i$, what other root MUST it have?`,
+          ans: `x = 3 - 2i`,
+          acceptAnswers: [`3-2i`, `x=3-2i`],
+          distractors: [`x = -3 - 2i`, `x = -3 + 2i`, `x = 2 + 3i`],
+          rationale: `By Complex Conjugate Root Theorem, non-real complex roots of real-coefficient polynomials always occur in conjugate pairs: $3 + 2i \\implies 3 - 2i$.`
+        };
+      },
+      () => {
+        return {
+          prompt: `List all possible rational roots of $P(x) = 2x^3 + x^2 - 5x + 3$ using Rational Root Theorem.`,
+          ans: `\\pm 1, \\pm 3, \\pm \\frac{1}{2}, \\pm \\frac{3}{2}`,
+          acceptAnswers: [`+-1,+-3,+-1/2,+-3/2`],
+          distractors: [`\\pm 1, \\pm 2`, `\\pm 1, \\pm 3`, `\\pm 1, \\pm 2, \\pm 3`],
+          rationale: `Factors of constant $p = \\pm 1, \\pm 3$. Factors of leading coeff $q = \\pm 1, \\pm 2$. Possible ratios $p/q = \\pm 1, \\pm 3, \\pm 1/2, \\pm 3/2$.`
+        };
+      },
+      () => {
+        return {
+          prompt: `Write a monic quadratic polynomial with roots $x = 2$ and $x = -5$.`,
+          ans: `x^2 + 3x - 10`,
+          acceptAnswers: [`x^2+3x-10`],
+          distractors: [`x^2 - 3x - 10`, `x^2 - 7x + 10`, `x^2 + 10x - 3`],
+          rationale: `Form $(x - 2)(x - (-5)) = (x - 2)(x + 5) = x^2 + 3x - 10$.`
+        };
+      }
+    ],
+
+    // UNIT 5: Rational Exponents & Radical Functions
+    "5.1": [
+      () => {
+        const b = randInt(2, 4), p = 3, val = Math.pow(b, p);
+        return {
+          prompt: `Evaluate $(${val})^{2/3}$.`,
+          ans: `${Math.pow(b, 2)}`,
+          acceptAnswers: [`${Math.pow(b, 2)}`],
+          distractors: [`${b}`, `${val / 3}`, `${Math.pow(b, 3)}`],
+          rationale: `$(${val})^{2/3} = (\\sqrt[3]{${val}})^2 = (${b})^2 = ${Math.pow(b, 2)}$.`
+        };
+      },
+      () => {
+        return {
+          prompt: `Simplify $\\sqrt[3]{x^7}$ in exponent form.`,
+          ans: `x^{7/3}`,
+          acceptAnswers: [`x^(7/3)`, `x^{7/3}`],
+          distractors: [`x^{3/7}`, `x^4`, `x^{21}`],
+          rationale: `General radical-to-exponent rule: $\\sqrt[n]{x^m} = x^{m/n}$. Thus $\\sqrt[3]{x^7} = x^{7/3}$.`
+        };
+      },
+      () => {
+        return {
+          prompt: `Evaluate $16^{-3/4}$.`,
+          ans: `\\frac{1}{8}`,
+          acceptAnswers: [`1/8`, `0.125`],
+          distractors: [`-8`, `8`, `\\frac{1}{64}`],
+          rationale: `$16^{-3/4} = \\frac{1}{16^{3/4}} = \\frac{1}{(\\sqrt[4]{16})^3} = \\frac{1}{2^3} = \\frac{1}{8}$.`
+        };
+      },
+      () => {
+        return {
+          prompt: `Simplify $x^{1/2} \\cdot x^{1/3}$.`,
+          ans: `x^{5/6}`,
+          acceptAnswers: [`x^(5/6)`, `x^{5/6}`],
+          distractors: [`x^{1/6}`, `x^{2/5}`, `x^{1/5}`],
+          rationale: `Product rule for exponents: add powers $1/2 + 1/3 = 3/6 + 2/6 = 5/6 \\implies x^{5/6}$.`
+        };
+      },
+      () => {
+        return {
+          prompt: `Simplify completely: $\\sqrt{72x^5}$ (assuming $x \\ge 0$).`,
+          ans: `6x^2\\sqrt{2x}`,
+          acceptAnswers: [`6x^2sqrt(2x)`, `6x^2 \\sqrt{2x}`],
+          distractors: [`36x^2\\sqrt{2x}`, `6x\\sqrt{2x^3}`, `12x^2\\sqrt{2x}`],
+          rationale: `Break down terms: $\\sqrt{36 \\cdot 2 \\cdot x^4 \\cdot x} = 6x^2\\sqrt{2x}$.`
+        };
+      }
+    ],
+
+    "5.2": [
+      () => {
+        const v = randInt(3, 7), ansVal = v * v - 4;
+        return {
+          prompt: `Solve for $x$: $\\sqrt{x + 4} = ${v}$.`,
+          ans: `x = ${ansVal}`,
+          acceptAnswers: [`${ansVal}`, `x=${ansVal}`],
+          distractors: [`x = ${v*v}`, `x = ${ansVal + 4}`, `No Solution`],
+          rationale: `Square both sides: $x + 4 = ${v}^2 = ${v*v} \\implies x = ${v*v - 4} = ${ansVal}$.`
+        };
+      },
+      () => {
+        return {
+          prompt: `Solve $\\sqrt{x + 6} = x$. Identify true vs extraneous roots.`,
+          ans: `x = 3 (x = -2 is Extraneous)`,
+          acceptAnswers: [`x=3`, `3`],
+          distractors: [`x = 3 \\text{ and } x = -2`, `x = -2 \\text{ only}`, `No Solution`],
+          rationale: `Square: $x + 6 = x^2 \\implies x^2 - x - 6 = 0 \\implies (x - 3)(x + 2) = 0 \\implies x = 3, -2$. Check: $\\sqrt{-2+6} = 2 \\ne -2$ (Extraneous). Valid solution: $x = 3$.`
+        };
+      },
+      () => {
+        return {
+          prompt: `Solve $\\sqrt[3]{2x - 1} = 3$.`,
+          ans: `x = 14`,
+          acceptAnswers: [`14`, `x=14`],
+          distractors: [`x = 5`, `x = 13`, `x = 4`],
+          rationale: `Cube both sides: $2x - 1 = 3^3 = 27 \\implies 2x = 28 \\implies x = 14$.`
+        };
+      },
+      () => {
+        return {
+          prompt: `Solve $\\sqrt{3x + 1} = \\sqrt{x + 9}$.`,
+          ans: `x = 4`,
+          acceptAnswers: [`4`, `x=4`],
+          distractors: [`x = 5`, `x = 8`, `x = 2`],
+          rationale: `Square both sides: $3x + 1 = x + 9 \\implies 2x = 8 \\implies x = 4$. Check: $\\sqrt{13} = \\sqrt{13}$, valid!`
+        };
+      }
+    ],
+
+    "5.3": [
+      () => {
+        const a = randInt(2, 4);
+        return {
+          prompt: `If $f(x) = x^2 + 1$ and $g(x) = ${a}x$, find $(f \\circ g)(x)$.`,
+          ans: `${a*a}x^2 + 1`,
+          acceptAnswers: [`${a*a}x^2+1`],
+          distractors: [`${a}x^2 + 1`, `${a}x^2 + ${a}`, `${a*a}x^2 + ${a}`],
+          rationale: `$(f \\circ g)(x) = f(g(x)) = f(${a}x) = (${a}x)^2 + 1 = ${a*a}x^2 + 1$.`
+        };
+      },
+      () => {
+        const a = randInt(2, 5), b = randInt(1, 6);
+        return {
+          prompt: `Find the inverse function $f^{-1}(x)$ for $f(x) = ${a}x + ${b}$.`,
+          ans: `f^{-1}(x) = \\frac{x - ${b}}{${a}}`,
+          acceptAnswers: [`(x-${b})/${a}`, `(x - ${b}) / ${a}`],
+          distractors: [`f^{-1}(x) = ${a}x - ${b}`, `f^{-1}(x) = \\frac{x + ${b}}{${a}}`, `f^{-1}(x) = \\frac{1}{${a}x + ${b}}`],
+          rationale: `Set $y = ${a}x + ${b}$. Swap variables: $x = ${a}y + ${b} \\implies x - ${b} = ${a}y \\implies y = \\frac{x - ${b}}{${a}}$.`
+        };
+      },
+      () => {
+        return {
+          prompt: `Find inverse $f^{-1}(x)$ of $f(x) = x^3 - 4$.`,
+          ans: `f^{-1}(x) = \\sqrt[3]{x + 4}`,
+          acceptAnswers: [`root(3)(x+4)`, `(x+4)^(1/3)`],
+          distractors: [`f^{-1}(x) = \\sqrt[3]{x - 4}`, `f^{-1}(x) = (x + 4)^3`, `f^{-1}(x) = \\sqrt{x + 4}`],
+          rationale: `Swap variables: $x = y^3 - 4 \\implies y^3 = x + 4 \\implies y = \\sqrt[3]{x + 4}$.`
+        };
+      },
+      () => {
+        return {
+          prompt: `If $f(x) = 3x - 2$ and $g(x) = x^2 + 4$, find $(f + g)(x)$.`,
+          ans: `x^2 + 3x + 2`,
+          acceptAnswers: [`x^2+3x+2`],
+          distractors: [`x^2 + 3x + 6`, `3x^3 + 2`, `x^2 - 3x + 2`],
+          rationale: `$(f + g)(x) = (3x - 2) + (x^2 + 4) = x^2 + 3x + 2$.`
+        };
+      },
+      () => {
+        return {
+          prompt: `If $f(x) = 2x + 3$ and $g(x) = x^2$, evaluate $g(f(2))$.`,
+          ans: `49`,
+          acceptAnswers: [`49`],
+          distractors: [`11`, `14`, `25`],
+          rationale: `First $f(2) = 2(2) + 3 = 7$. Then $g(7) = 7^2 = 49$.`
+        };
+      }
+    ],
+
+    // UNIT 6: Exponential & Logarithmic Functions
+    "6.1": [
+      () => {
+        const P = randInt(10, 50) * 100, r = randInt(2, 6);
+        return {
+          prompt: `An initial investment of $\\$${P}$ earns interest continuously at $${r}\\%$ annually. Write the equation for balance $A(t)$.`,
+          ans: `A(t) = ${P}e^{${r/100}t}`,
+          acceptAnswers: [`${P}e^(${r/100}t)`],
+          distractors: [`A(t) = ${P}(1 + ${r/100})^t`, `A(t) = ${P}e^{${r}t}`, `A(t) = ${P}(${r/100})^t`],
+          rationale: `Continuous interest formula: $A(t) = Pe^{rt}$. Substituting $P = ${P}$ and $r = ${r/100}$ gives $A(t) = ${P}e^{${r/100}t}$.`
+        };
+      },
+      () => {
+        return {
+          prompt: `A radioactive substance has half-life 10 years. If initial mass is $80\\text{ g}$, how much remains after 30 years?`,
+          ans: `10 g`,
+          acceptAnswers: [`10`, `10g`, `10 g`],
+          distractors: [`20 g`, `40 g`, `5 g`],
+          rationale: `Number of half-lives $n = 30 / 10 = 3$. Remaining mass $N(t) = 80 \\cdot (1/2)^3 = 80 \\cdot (1/8) = 10\\text{ g}$.`
+        };
+      },
+      () => {
+        return {
+          prompt: `Compound interest formula $A = P(1 + r/n)^{nt}$ applies. If $P = 1000, r = 0.05, n = 1, t = 2$, evaluate $A$.`,
+          ans: `1102.50`,
+          acceptAnswers: [`1102.50`, `1102.5`],
+          distractors: [`1100.00`, `1050.00`, `1200.00`],
+          rationale: `$A = 1000(1 + 0.05)^2 = 1000(1.05)^2 = 1000(1.1025) = 1102.50$.`
+        };
+      },
+      () => {
+        return {
+          prompt: `Is $f(x) = 500(0.85)^x$ an exponential growth or decay model, and what is the percent rate of change?`,
+          ans: `Exponential Decay, 15% rate`,
+          acceptAnswers: [`decay 15%`, `exponential decay, 15%`],
+          distractors: [`Exponential Growth, 85% rate`, `Exponential Decay, 85% rate`, `Exponential Growth, 15% rate`],
+          rationale: `Base $b = 0.85 < 1$, indicating decay. Rate $r = 1 - 0.85 = 0.15 = 15\\%$.`
+        };
+      }
+    ],
+
+    "6.2": [
+      () => {
+        const a = randInt(2, 5), b = randInt(2, 5);
+        return {
+          prompt: `Expand $\\log_2\\left(\\frac{x^${a}}{y^${b}}\\right)$ using logarithmic properties.`,
+          ans: `${a}\\log_2(x) - ${b}\\log_2(y)`,
+          acceptAnswers: [`${a}log2(x)-${b}log2(y)`],
+          distractors: [`${a}\\log_2(x) + ${b}\\log_2(y)`, `\\frac{${a}\\log_2(x)}{${b}\\log_2(y)}`, `${a*b}\\log_2(x/y)`],
+          rationale: `Quotient Rule: $\\log_2(x^${a}) - \\log_2(y^${b})$. Power Rule: $${a}\\log_2(x) - ${b}\\log_2(y)$.`
+        };
+      },
+      () => {
+        return {
+          prompt: `Condense $3\\ln(x) + 2\\ln(y)$ into a single logarithm.`,
+          ans: `\\ln(x^3 y^2)`,
+          acceptAnswers: [`ln(x^3 y^2)`, `ln(x^3y^2)`],
+          distractors: [`\\ln(6xy)`, `\\ln(x^3 + y^2)`, `\\ln\\left(\\frac{x^3}{y^2}\\right)`],
+          rationale: `Power Rule: $\\ln(x^3) + \\ln(y^2)$. Product Rule: $\\ln(x^3 y^2)$.`
+        };
+      },
+      () => {
+        return {
+          prompt: `Express $\\log_3(17)$ using Change of Base formula with natural logarithms.`,
+          ans: `\\frac{\\ln(17)}{\\ln(3)}`,
+          acceptAnswers: [`ln(17)/ln(3)`],
+          distractors: [`\\frac{\\ln(3)}{\\ln(17)}`, `\\ln(17) - \\ln(3)`, `\\ln(17 \\cdot 3)`],
+          rationale: `Change of Base formula: $\\log_b(a) = \\frac{\\ln(a)}{\\ln(b)} \\implies \\frac{\\ln(17)}{\\ln(3)}$.`
+        };
+      },
+      () => {
+        const val = randInt(5, 15);
+        return {
+          prompt: `Evaluate $10^{\\log(${val})}$.`,
+          ans: `${val}`,
+          acceptAnswers: [`${val}`],
+          distractors: [`10`, `${val*10}`, `1`],
+          rationale: `Inverse identity property: $b^{\\log_b(x)} = x$. Here base is 10, so $10^{\\log_{10}(${val})} = ${val}$.`
+        };
+      },
+      () => {
+        const h = randInt(2, 6);
+        return {
+          prompt: `Find the domain of $f(x) = \\log_5(x - ${h})$.`,
+          ans: `(${h}, \\infty)`,
+          acceptAnswers: [`(${h},inf)`, `x>${h}`],
+          distractors: [`[${h}, \\infty)`, `(-\\infty, ${h})`, `(-\\infty, \\infty)`],
+          rationale: `Argument of logarithm must be strictly positive: $x - ${h} > 0 \\implies x > ${h}$ or $(${h}, \\infty)$.`
+        };
+      }
+    ],
+
+    "6.3": [
+      () => {
+        const base = randInt(2, 4), exp = randInt(2, 4), val = Math.pow(base, exp);
+        return {
+          prompt: `Solve for $x$: $\\log_{${base}}(${val}) = x$.`,
+          ans: `x = ${exp}`,
+          acceptAnswers: [`${exp}`, `x=${exp}`],
+          distractors: [`x = ${val / base}`, `x = ${exp + 1}`, `x = ${val}`],
+          rationale: `Convert to exponential form: ${base}^x = ${val}$. Since ${base}^${exp} = ${val}$, $x = ${exp}$.`
+        };
+      },
+      () => {
+        return {
+          prompt: `Solve $e^{2x} = 7$ for $x$.`,
+          ans: `x = \\frac{\\ln(7)}{2}`,
+          acceptAnswers: [`ln(7)/2`],
+          distractors: [`x = \\frac{7}{2e}`, `x = 2\\ln(7)`, `x = \\ln(3.5)`],
+          rationale: `Take natural log of both sides: $2x = \\ln(7) \\implies x = \\frac{\\ln(7)}{2}$.`
+        };
+      },
+      () => {
+        return {
+          prompt: `Solve $\\log_2(x) + \\log_2(x - 2) = 3$. Check for extraneous solutions.`,
+          ans: `x = 4`,
+          acceptAnswers: [`4`, `x=4`],
+          distractors: [`x = 4 \\text{ and } x = -2`, `x = -2`, `x = 8`],
+          rationale: `Combine: $\\log_2(x(x - 2)) = 3 \\implies x^2 - 2x = 2^3 = 8 \\implies x^2 - 2x - 8 = 0 \\implies (x - 4)(x + 2) = 0$. $x = -2$ is extraneous since $\\log_2(-2)$ is undefined. Valid root is $x = 4$.`
+        };
+      },
+      () => {
+        return {
+          prompt: `Solve $4^{x + 1} = 16^{x - 1}$.`,
+          ans: `x = 3`,
+          acceptAnswers: [`3`, `x=3`],
+          distractors: [`x = 2`, `x = 4`, `x = 1`],
+          rationale: `Rewrite base 16 as $4^2$: $4^{x+1} = (4^2)^{x-1} = 4^{2x-2} \\implies x + 1 = 2x - 2 \\implies x = 3$.`
+        };
+      },
+      () => {
+        return {
+          prompt: `Why is $x = -3$ an extraneous solution to $\\log(x + 2) + \\log(x - 1) = 1$?`,
+          ans: `It makes the arguments of the logarithms negative`,
+          acceptAnswers: [`negative argument`, `makes argument negative`],
+          distractors: [`It makes the base equal to zero`, `Logarithms cannot equal negative numbers`, `It is an irrational number`],
+          rationale: `Logarithms are only defined for strictly positive real arguments ($x > 0$). Substituting $x = -3$ yields $\\log(-1)$, which is undefined.`
+        };
+      }
+    ],
+
+    // UNIT 7: Rational Functions
+    "7.1": [
+      () => {
+        const k = randInt(12, 36), x1 = 3, y1 = k / x1, x2 = 6;
+        return {
+          prompt: `If $y$ varies inversely with $x$, and $y = ${y1}$ when $x = ${x1}$, find $y$ when $x = ${x2}$.`,
+          ans: `${k / x2}`,
+          acceptAnswers: [`${k / x2}`],
+          distractors: [`${k * x2}`, `${y1 * 2}`, `${x2 / y1}`],
+          rationale: `Inverse variation formula $y = \\frac{k}{x} \\implies k = x \\cdot y = ${x1} \\cdot ${y1} = ${k}$. When $x = ${x2}$, $y = \\frac{${k}}{${x2}} = ${k / x2}$.`
+        };
+      },
+      () => {
+        const k = randInt(3, 7), x1 = 4, y1 = k * x1, x2 = 10;
+        return {
+          prompt: `If $y$ varies directly with $x$, and $y = ${y1}$ when $x = ${x1}$, find $y$ when $x = ${x2}$.`,
+          ans: `${k * x2}`,
+          acceptAnswers: [`${k * x2}`],
+          distractors: [`${k / x2}`, `${y1 + x2}`, `${x1 * x2}`],
+          rationale: `Direct variation formula $y = kx \\implies k = \\frac{y_1}{x_1} = \\frac{${y1}}{${x1}} = ${k}$. For $x = ${x2}$, $y = ${k}(${x2}) = ${k * x2}$.`
+        };
+      },
+      () => {
+        return {
+          prompt: `If $z$ varies jointly as $x$ and $y$, write the general equation of variation.`,
+          ans: `z = kxy`,
+          acceptAnswers: [`z=kxy`],
+          distractors: [`z = \\frac{kx}{y}`, `z = k(x + y)`, `z = \\frac{k}{xy}`],
+          rationale: `Joint variation means direct variation with respect to multiple variables simultaneously: $z = kxy$.`
+        };
+      },
+      () => {
+        return {
+          prompt: `Suppose $z$ varies directly as $x$ and inversely as $y$. If $z = 4$ when $x = 2$ and $y = 3$, find constant $k$.`,
+          ans: `k = 6`,
+          acceptAnswers: [`6`, `k=6`],
+          distractors: [`k = 12`, `k = 3`, `k = 24`],
+          rationale: `Formula $z = \\frac{kx}{y} \\implies 4 = \\frac{k(2)}{3} \\implies 12 = 2k \\implies k = 6$.`
+        };
+      }
+    ],
+
+    "7.2": [
+      () => {
+        const h = randInt(1, 5);
+        return {
+          prompt: `Find vertical asymptote and domain restriction for $f(x) = \\frac{2x + 1}{x - ${h}}$.`,
+          ans: `Vertical Asymptote: x = ${h}, Domain: x \\ne ${h}`,
+          acceptAnswers: [`x=${h}`, `x = ${h}`],
+          distractors: [`Vertical Asymptote: y = 2`, `Vertical Asymptote: x = -${h}`, `Horizontal Asymptote: x = ${h}`],
+          rationale: `Set denominator to zero: $x - ${h} = 0 \\implies x = ${h}$. This is the vertical asymptote and domain restriction $x \\ne ${h}$.`
+        };
+      },
+      () => {
+        const a = randInt(2, 5), b = randInt(1, 4);
+        return {
+          prompt: `Find horizontal asymptote of $f(x) = \\frac{${a}x^2 + 3}{${b}x^2 - 5}$.`,
+          ans: `y = \\frac{${a}}{${b}}`,
+          acceptAnswers: [`y=${a}/${b}`],
+          distractors: [`y = 0`, `No Horizontal Asymptote`, `x = \\frac{${a}}{${b}}`],
+          rationale: `Degrees of numerator and denominator are equal (degree 2). Horizontal asymptote is ratio of leading coefficients: $y = \\frac{${a}}{${b}}$.`
+        };
+      },
+      () => {
+        return {
+          prompt: `Find horizontal asymptote for $f(x) = \\frac{3x + 4}{x^2 - 9}$.`,
+          ans: `y = 0`,
+          acceptAnswers: [`y=0`],
+          distractors: [`y = 3`, `y = 1`, `No Horizontal Asymptote`],
+          rationale: `Denominator degree (2) > numerator degree (1). When bottom heavy, horizontal asymptote is always $y = 0$.`
+        };
+      },
+      () => {
+        return {
+          prompt: `Find x-coordinate of hole (removable discontinuity) in $f(x) = \\frac{(x - 3)(x + 2)}{x - 3}$.`,
+          ans: `x = 3`,
+          acceptAnswers: [`3`, `x=3`],
+          distractors: [`x = -2`, `x = 0`, `No Hole`],
+          rationale: `Common factor $(x - 3)$ cancels out from numerator and denominator, producing a hole at $x = 3$.`
+        };
+      },
+      () => {
+        return {
+          prompt: `Under what degree condition does a rational function have a slant (oblique) asymptote?`,
+          ans: `Numerator degree is exactly 1 higher than denominator degree`,
+          acceptAnswers: [`numerator degree 1 higher`, `num 1 higher than den`],
+          distractors: [
+            `Denominator degree is higher than numerator degree`,
+            `Degrees of numerator and denominator are equal`,
+            `Numerator degree is 2 or more lower than denominator`
+          ],
+          rationale: `A slant asymptote exists when degree of numerator is exactly one greater than degree of denominator ($n = m + 1$).`
+        };
+      }
+    ],
+
+    "7.3": [
+      () => {
+        const a = randInt(2, 5);
+        return {
+          prompt: `Simplify: $\\frac{x^2 - ${a*a}}{x^2 + ${a}x}$.`,
+          ans: `\\frac{x - ${a}}{x}`,
+          acceptAnswers: [`(x-${a})/x`, `\\frac{x-${a}}{x}`],
+          distractors: [`\\frac{x + ${a}}{x}`, `\\frac{-${a*a}}{${a}x}`, `x - ${a}`],
+          rationale: `Factor: $\\frac{(x - ${a})(x + ${a})}{x(x + ${a})}$. Cancel $(x + ${a})$ to leave $\\frac{x - ${a}}{x}$.`
+        };
+      },
+      () => {
+        return {
+          prompt: `Simplify: $\\frac{3x}{x + 2} + \\frac{6}{x + 2}$.`,
+          ans: `3`,
+          acceptAnswers: [`3`],
+          distractors: [`\\frac{3x + 6}{2x + 4}`, `\\frac{3x + 6}{(x+2)^2}`, `x + 2`],
+          rationale: `Combine numerators over common denominator: $\\frac{3x + 6}{x + 2} = \\frac{3(x + 2)}{x + 2} = 3$.`
+        };
+      },
+      () => {
+        return {
+          prompt: `Solve for $x$: $\\frac{4}{x} = \\frac{2}{x - 3}$.`,
+          ans: `x = 6`,
+          acceptAnswers: [`6`, `x=6`],
+          distractors: [`x = 3`, `x = 12`, `x = -6`],
+          rationale: `Cross-multiply: $4(x - 3) = 2x \\implies 4x - 12 = 2x \\implies 2x = 12 \\implies x = 6$. Check: $4/6 = 2/3$, valid!`
+        };
+      },
+      () => {
+        return {
+          prompt: `Simplify $\\frac{x^2}{y} \\cdot \\frac{y^3}{x^5}$.`,
+          ans: `\\frac{y^2}{x^3}`,
+          acceptAnswers: [`y^2/x^3`],
+          distractors: [`\\frac{y^3}{x^3}`, `\\frac{x^3}{y^2}`, `x^3 y^2`],
+          rationale: `Cancel common powers: $\\frac{x^2 \\cdot y^3}{y \\cdot x^5} = \\frac{y^{3-1}}{x^{5-2}} = \\frac{y^2}{x^3}$.`
+        };
+      }
+    ],
+
+    // UNIT 8: Sequences & Series
+    "8.1": [
+      () => {
+        const a1 = randInt(2, 8), d = randInt(3, 7), n = 10;
+        const an = a1 + (n - 1) * d;
+        return {
+          prompt: `Find the $10^{\\text{th}}$ term of an arithmetic sequence with $a_1 = ${a1}$ and $d = ${d}$.`,
+          ans: `a_{10} = ${an}`,
+          acceptAnswers: [`${an}`, `a10=${an}`],
+          distractors: [`a_{10} = ${a1 + n*d}`, `a_{10} = ${an - d}`, `a_{10} = ${a1 * d}`],
+          rationale: `Formula $a_n = a_1 + (n - 1)d$. $a_{10} = ${a1} + (10 - 1)(${d}) = ${a1} + 9(${d}) = ${an}$.`
+        };
+      },
+      () => {
+        return {
+          prompt: `If $a_1 = 4$ and $a_5 = 20$ in an arithmetic sequence, find common difference $d$.`,
+          ans: `d = 4`,
+          acceptAnswers: [`4`, `d=4`],
+          distractors: [`d = 5`, `d = 3.2`, `d = 16`],
+          rationale: `$a_5 = a_1 + 4d \\implies 20 = 4 + 4d \\implies 16 = 4d \\implies d = 4$.`
+        };
+      },
+      () => {
+        const n = 20;
+        return {
+          prompt: `Find the sum of the first 20 odd natural numbers ($1 + 3 + 5 + \\dots + 39$).`,
+          ans: `400`,
+          acceptAnswers: [`400`],
+          distractors: [`380`, `420`, `200`],
+          rationale: `Arithmetic sum formula $S_n = \\frac{n}{2}(a_1 + a_n) = \\frac{20}{2}(1 + 39) = 10(40) = 400$.`
+        };
+      },
+      () => {
+        return {
+          prompt: `Evaluate $\\sum_{k=1}^{5} (2k + 1)$.`,
+          ans: `35`,
+          acceptAnswers: [`35`],
+          distractors: [`30`, `40`, `25`],
+          rationale: `Terms: $(3) + (5) + (7) + (9) + (11) = 35$.`
+        };
+      },
+      () => {
+        return {
+          prompt: `Write recursive rule for arithmetic sequence $5, 9, 13, 17, \\dots$`,
+          ans: `a_1 = 5, a_n = a_{n-1} + 4`,
+          acceptAnswers: [`a_1=5, a_n=a_{n-1}+4`],
+          distractors: [`a_n = 4n + 1`, `a_1 = 5, a_n = 4a_{n-1}`, `a_n = a_{n-1} + 5`],
+          rationale: `Recursive form specifies first term $a_1 = 5$ and term-to-term rule $a_n = a_{n-1} + d = a_{n-1} + 4$.`
+        };
+      }
+    ],
+
+    "8.2": [
+      () => {
+        const a1 = randInt(1, 4), r = randInt(2, 3), n = 5;
+        const an = a1 * Math.pow(r, n - 1);
+        return {
+          prompt: `Find the $5^{\\text{th}}$ term of a geometric sequence where $a_1 = ${a1}$ and common ratio $r = ${r}$.`,
+          ans: `a_5 = ${an}`,
+          acceptAnswers: [`${an}`, `a5=${an}`],
+          distractors: [`a_5 = ${a1 * Math.pow(r, n)}`, `a_5 = ${a1 + (n-1)*r}`, `a_5 = ${an / r}`],
+          rationale: `Formula $a_n = a_1 r^{n-1}$. $a_5 = ${a1} \\cdot (${r})^{5-1} = ${a1} \\cdot ${Math.pow(r, 4)} = ${an}$.`
+        };
+      },
+      () => {
+        return {
+          prompt: `Find common ratio $r$ of geometric sequence $3, 6, 12, 24, \\dots$`,
+          ans: `r = 2`,
+          acceptAnswers: [`2`, `r=2`],
+          distractors: [`r = 3`, `r = 0.5`, `r = 4`],
+          rationale: `Common ratio $r = a_2 / a_1 = 6 / 3 = 2$.`
+        };
+      },
+      () => {
+        return {
+          prompt: `Find sum of first 4 terms of geometric series with $a_1 = 2$ and $r = 3$.`,
+          ans: `80`,
+          acceptAnswers: [`80`],
+          distractors: [`78`, `162`, `242`],
+          rationale: `Finite sum formula $S_n = a_1 \\frac{1 - r^n}{1 - r} = 2 \\frac{1 - 3^4}{1 - 3} = 2 \\frac{1 - 81}{-2} = 80$.`
+        };
+      },
+      () => {
+        return {
+          prompt: `Is sequence $16, 8, 4, 2, \\dots$ arithmetic, geometric, or neither?`,
+          ans: `Geometric with r = 1/2`,
+          acceptAnswers: [`geometric`, `geometric r=1/2`],
+          distractors: [`Arithmetic with d = -8`, `Geometric with r = 2`, `Neither`],
+          rationale: `Successive ratios are constant: $8/16 = 4/8 = 2/4 = 1/2$. Thus it is Geometric with $r = 1/2$.`
+        };
+      },
+      () => {
+        return {
+          prompt: `Find geometric mean between 4 and 16.`,
+          ans: `8`,
+          acceptAnswers: [`8`],
+          distractors: [`10`, `64`, `12`],
+          rationale: `Geometric mean formula $\\sqrt{a \\cdot b} = \\sqrt{4 \\cdot 16} = \\sqrt{64} = 8$.`
+        };
+      }
+    ],
+
+    "8.3": [
+      () => {
+        const a1 = randInt(3, 9) * 2;
+        return {
+          prompt: `Find sum of infinite geometric series: $${a1} + ${a1/2} + ${a1/4} + ${a1/8} + \\dots$`,
+          ans: `S = ${a1 * 2}`,
+          acceptAnswers: [`${a1 * 2}`, `S=${a1 * 2}`],
+          distractors: [`S = ${a1}`, `S = ${a1 * 1.5}`, `Series Diverges`],
+          rationale: `$a_1 = ${a1}$ and $r = 1/2$. Infinite series formula $S = \\frac{a_1}{1 - r} = \\frac{${a1}}{1 - 0.5} = ${a1 * 2}$.`
+        };
+      },
+      () => {
+        return {
+          prompt: `Does infinite geometric series $5 + 10 + 20 + 40 + \\dots$ converge or diverge?`,
+          ans: `Diverges (No Sum)`,
+          acceptAnswers: [`diverges`, `diverge`],
+          distractors: [`Converges to 100`, `Converges to -5`, `Converges to 0`],
+          rationale: `Common ratio $r = 10/5 = 2$. Since $|r| = 2 \\ge 1$, the series Diverges and has no finite sum.`
+        };
+      },
+      () => {
+        return {
+          prompt: `Convert repeating decimal $0.\\overline{3}$ into fraction using infinite geometric series.`,
+          ans: `\\frac{1}{3}`,
+          acceptAnswers: [`1/3`],
+          distractors: [`\\frac{3}{10}`, `\\frac{1}{9}`, `\\frac{3}{99}`],
+          rationale: `$0.333... = 0.3 + 0.03 + 0.003 + \\dots$ with $a_1 = 0.3$ and $r = 0.1$. $S = \\frac{0.3}{1 - 0.1} = \\frac{0.3}{0.9} = \\frac{1}{3}$.`
+        };
+      },
+      () => {
+        return {
+          prompt: `An infinite geometric series has sum $S = 12$ and ratio $r = 1/3$. Find first term $a_1$.`,
+          ans: `a_1 = 8`,
+          acceptAnswers: [`8`, `a1=8`],
+          distractors: [`a_1 = 4`, `a_1 = 16`, `a_1 = 36`],
+          rationale: `$S = \\frac{a_1}{1 - r} \\implies 12 = \\frac{a_1}{1 - 1/3} = \\frac{a_1}{2/3} \\implies a_1 = 12 \\cdot \\frac{2}{3} = 8$.`
+        };
+      }
+    ],
+
+    // UNIT 9: Trigonometry
+    "9.1": [
+      () => {
+        return {
+          prompt: `Evaluate exact value of $\\sin\\left(\\frac{5\\pi}{6}\\right)$ without a calculator.`,
+          ans: `\\frac{1}{2}`,
+          acceptAnswers: [`1/2`, `0.5`],
+          distractors: [`-\\frac{1}{2}`, `\\frac{\\sqrt{3}}{2}`, `-\\frac{\\sqrt{3}}{2}`],
+          rationale: `$\\frac{5\\pi}{6}$ is in QII with reference angle $\\frac{\\pi}{6}$ ($30^\\circ$). Sine is positive in QII: $\\sin(5\\pi/6) = \\sin(\\pi/6) = 1/2$.`
+        };
+      },
+      () => {
+        return {
+          prompt: `Evaluate exact value of $\\cos\\left(\\frac{4\\pi}{3}\\right)$.`,
+          ans: `-\\frac{1}{2}`,
+          acceptAnswers: [`-1/2`, `-0.5`],
+          distractors: [`\\frac{1}{2}`, `-\\frac{\\sqrt{3}}{2}`, `\\frac{\\sqrt{3}}{2}`],
+          rationale: `$\\frac{4\\pi}{3}$ is in QIII with reference angle $\\frac{\\pi}{3}$ ($60^\\circ$). Cosine is negative in QIII: $\\cos(4\\pi/3) = -\\cos(\\pi/3) = -1/2$.`
+        };
+      },
+      () => {
+        return {
+          prompt: `Convert $225^\\circ$ to radians in terms of $\\pi$.`,
+          ans: `\\frac{5\\pi}{4}`,
+          acceptAnswers: [`5pi/4`, `5\\pi/4`],
+          distractors: [`\\frac{4\\pi}{3}`, `\\frac{7\\pi}{4}`, `\\frac{3\\pi}{2}`],
+          rationale: `Multiply by $\\frac{\\pi}{180^\\circ}$: $225^\\circ \\cdot \\frac{\\pi}{180^\\circ} = \\frac{225\\pi}{180} = \\frac{5\\pi}{4}$.`
+        };
+      },
+      () => {
+        return {
+          prompt: `Convert $\\frac{2\\pi}{3}$ radians to degrees.`,
+          ans: `120^\\circ`,
+          acceptAnswers: [`120`, `120 deg`, `120 degrees`],
+          distractors: [`135^\\circ`, `60^\\circ`, `150^\\circ`],
+          rationale: `Multiply by $\\frac{180^\\circ}{\\pi}$: $\\frac{2\\pi}{3} \\cdot \\frac{180^\\circ}{\\pi} = 2 \\cdot 60^\\circ = 120^\\circ$.`
+        };
+      },
+      () => {
+        return {
+          prompt: `Evaluate exact value of $\\tan\\left(\\frac{\\pi}{4}\\right)$.`,
+          ans: `1`,
+          acceptAnswers: [`1`],
+          distractors: [`0`, `\\frac{\\sqrt{2}}{2}`, `\\sqrt{3}`],
+          rationale: `$\\tan(\\pi/4) = \\frac{\\sin(\\pi/4)}{\\cos(\\pi/4)} = \\frac{\\sqrt{2}/2}{\\sqrt{2}/2} = 1$.`
+        };
+      }
+    ],
+
+    "9.2": [
+      () => {
+        const amp = randInt(2, 6), b = randInt(2, 4);
+        return {
+          prompt: `Find amplitude and period of $y = ${amp} \\cos(${b}x)$.`,
+          ans: `Amplitude = ${amp}, Period = \\frac{2\\pi}{${b}}`,
+          acceptAnswers: [`amp=${amp},period=2pi/${b}`, `${amp},2pi/${b}`],
+          distractors: [`Amplitude = ${amp}, Period = ${b}\\pi`, `Amplitude = ${b}, Period = ${amp}\\pi`, `Amplitude = ${amp}, Period = 2\\pi`],
+          rationale: `For $y = A \\cos(Bx)$, Amplitude $= |A| = ${amp}$. Period $= \\frac{2\\pi}{|B|} = \\frac{2\\pi}{${b}}$.`
+        };
+      },
+      () => {
+        const d = randInt(1, 5);
+        return {
+          prompt: `Identify the midline equation for $y = 3\\sin(x) + ${d}$.`,
+          ans: `y = ${d}`,
+          acceptAnswers: [`y=${d}`, `${d}`],
+          distractors: [`y = 3`, `x = ${d}`, `y = 0`],
+          rationale: `Vertical shift $D = ${d}$ moves central axis of wave to line $y = ${d}$.`
+        };
+      },
+      () => {
+        return {
+          prompt: `Find phase shift of $y = \\sin\\left(x - \\frac{\\pi}{3}\\right)$.`,
+          ans: `Right \\frac{\\pi}{3}`,
+          acceptAnswers: [`right pi/3`, `pi/3 right`],
+          distractors: [`Left \\frac{\\pi}{3}`, `Up \\frac{\\pi}{3}`, `Down \\frac{\\pi}{3}`],
+          rationale: `Form $\\sin(x - C)$. Subtracting $\\frac{\\pi}{3}$ shifts graph Right by $\\frac{\\pi}{3}$ units.`
+        };
+      },
+      () => {
+        return {
+          prompt: `What is standard period of basic tangent function $y = \\tan(x)$?`,
+          ans: `\\pi`,
+          acceptAnswers: [`pi`, `\\pi`],
+          distractors: [`2\\pi`, `\\frac{\\pi}{2}`, `4\\pi`],
+          rationale: `Unlike sine and cosine (period $2\\pi$), the tangent function repeats every $\\pi$ radians.`
+        };
+      }
+    ],
+
+    "9.3": [
+      () => {
+        return {
+          prompt: `If $\\sin(\\theta) = \\frac{3}{5}$ in Quadrant I, find $\\cos(\\theta)$.`,
+          ans: `\\frac{4}{5}`,
+          acceptAnswers: [`4/5`, `0.8`],
+          distractors: [`-\\frac{4}{5}`, `\\frac{2}{5}`, `\\frac{5}{4}`],
+          rationale: `Pythagorean identity $\\sin^2\\theta + \\cos^2\\theta = 1 \\implies (3/5)^2 + \\cos^2\\theta = 1 \\implies \\cos^2\\theta = 16/25$. QI cosine is positive: $4/5$.`
+        };
+      },
+      () => {
+        return {
+          prompt: `Solve $\\sin(x) = \\frac{1}{2}$ for $x \\in [0, 2\\pi)$.`,
+          ans: `x = \\frac{\\pi}{6} \\text{ and } x = \\frac{5\\pi}{6}`,
+          acceptAnswers: [`pi/6,5pi/6`],
+          distractors: [`x = \\frac{\\pi}{3} \\text{ and } x = \\frac{2\\pi}{3}`, `x = \\frac{\\pi}{6} \\text{ only}`, `x = \\frac{7\\pi}{6}`],
+          rationale: `Sine is positive in QI and QII. Reference angle $\\pi/6$. Solutions are $x = \\pi/6$ and $x = \\pi - \\pi/6 = 5\\pi/6$.`
+        };
+      },
+      () => {
+        return {
+          prompt: `Simplify expression: $\\tan(\\theta) \\cdot \\cos(\\theta)$.`,
+          ans: `\\sin(\\theta)`,
+          acceptAnswers: [`sin(theta)`, `sin(\\theta)`],
+          distractors: [`\\cos(\\theta)`, `1`, `\\sec(\\theta)`],
+          rationale: `Rewrite $\\tan\\theta = \\frac{\\sin\\theta}{\\cos\\theta}$. Product $\\left(\\frac{\\sin\\theta}{\\cos\\theta}\\right) \\cos\\theta = \\sin\\theta$.`
+        };
+      },
+      () => {
+        return {
+          prompt: `Evaluate exact value of $\\sec\\left(\\frac{\\pi}{3}\\right)$.`,
+          ans: `2`,
+          acceptAnswers: [`2`],
+          distractors: [`\\frac{1}{2}`, `\\sqrt{3}`, `\\frac{2\\sqrt{3}}{3}`],
+          rationale: `Secant is reciprocal of cosine: $\\sec(\\pi/3) = \\frac{1}{\\cos(\\pi/3)} = \\frac{1}{1/2} = 2$.`
+        };
+      }
+    ],
+
+    // UNIT 10: Probability & Statistics
+    "10.1": [
+      () => {
+        const n = 6;
+        return {
+          prompt: `Choose President, VP, and Secretary from ${n} candidates. How many distinct ways can this be done?`,
+          ans: `120`,
+          acceptAnswers: [`120`],
+          distractors: [`20`, `18`, `720`],
+          rationale: `Order matters (distinct offices) $\\implies _6P_3 = \\frac{6!}{(6-3)!} = 6 \\times 5 \\times 4 = 120$.`
+        };
+      },
+      () => {
+        return {
+          prompt: `A committee of 3 students is selected from 7 candidates. How many different committees can be formed?`,
+          ans: `35`,
+          acceptAnswers: [`35`],
+          distractors: [`210`, `21`, `5040`],
+          rationale: `Order does not matter $\\implies _7C_3 = \\frac{7!}{3!4!} = \\frac{7 \\times 6 \\times 5}{3 \\times 2 \\times 1} = 35$.`
+        };
+      },
+      () => {
+        return {
+          prompt: `A menu offers 4 appetizers, 5 main courses, and 3 desserts. How many distinct 3-course meals can be ordered?`,
+          ans: `60`,
+          acceptAnswers: [`60`],
+          distractors: [`12`, `15`, `120`],
+          rationale: `Fundamental Counting Principle: multiply choices $4 \\times 5 \\times 3 = 60$.`
+        };
+      },
+      () => {
+        return {
+          prompt: `How many distinguishable arrangements can be formed from letters in word "MATH"?`,
+          ans: `24`,
+          acceptAnswers: [`24`],
+          distractors: [`12`, `4`, `16`],
+          rationale: `All 4 letters are distinct: $4! = 4 \\times 3 \\times 2 \\times 1 = 24$.`
+        };
+      },
+      () => {
+        return {
+          prompt: `How many ways can 5 people be seated around a round dinner table?`,
+          ans: `24`,
+          acceptAnswers: [`24`],
+          distractors: [`120`, `25`, `60`],
+          rationale: `Circular permutations formula $(n - 1)! = (5 - 1)! = 4! = 24$.`
+        };
+      }
+    ],
+
+    "10.2": [
+      () => {
+        return {
+          prompt: `If $P(A) = 0.5$ and $P(B) = 0.4$ for independent events $A$ and $B$, find $P(A \\text{ and } B)$ and $P(A \\text{ or } B)$.`,
+          ans: `P(A \\text{ and } B) = 0.20, P(A \\text{ or } B) = 0.70`,
+          acceptAnswers: [`0.20,0.70`, `0.2,0.7`],
+          distractors: [
+            `P(A \\text{ and } B) = 0.90, P(A \\text{ or } B) = 0.20`,
+            `P(A \\text{ and } B) = 0.10, P(A \\text{ or } B) = 0.80`,
+            `P(A \\text{ and } B) = 0.20, P(A \\text{ or } B) = 0.90`
+          ],
+          rationale: `Independent rule: $P(A \\cap B) = P(A) \\times P(B) = 0.5 \\times 0.4 = 0.20$. Addition rule: $P(A \\cup B) = 0.5 + 0.4 - 0.20 = 0.70$.`
+        };
+      },
+      () => {
+        return {
+          prompt: `If $P(A \\text{ and } B) = 0.15$ and $P(B) = 0.50$, find conditional probability $P(A | B)$.`,
+          ans: `0.30`,
+          acceptAnswers: [`0.30`, `0.3`],
+          distractors: [`0.65`, `0.075`, `0.35`],
+          rationale: `Formula $P(A | B) = \\frac{P(A \\text{ and } B)}{P(B)} = \\frac{0.15}{0.50} = 0.30$.`
+        };
+      },
+      () => {
+        return {
+          prompt: `If probability of rain tomorrow is $0.25$, what is probability it will NOT rain?`,
+          ans: `0.75`,
+          acceptAnswers: [`0.75`, `75%`],
+          distractors: [`0.25`, `0.50`, `1.25`],
+          rationale: `Complement Rule $P(A') = 1 - P(A) = 1 - 0.25 = 0.75$.`
+        };
+      },
+      () => {
+        return {
+          prompt: `A bag contains 3 red balls and 2 blue balls. Draw 2 balls without replacement. Find $P(\\text{both Red})$.`,
+          ans: `\\frac{3}{10}`,
+          acceptAnswers: [`3/10`, `0.3`],
+          distractors: [`\\frac{9}{25}`, `\\frac{3}{25}`, `\\frac{1}{2}`],
+          rationale: `First draw $P(R_1) = 3/5$. Second draw $P(R_2 | R_1) = 2/4$. Combined $P = \\frac{3}{5} \\times \\frac{2}{4} = \\frac{6}{20} = \\frac{3}{10}$.`
+        };
+      },
+      () => {
+        return {
+          prompt: `If events $A$ and $B$ are mutually exclusive with $P(A) = 0.3$ and $P(B) = 0.4$, find $P(A \\text{ and } B)$.`,
+          ans: `0`,
+          acceptAnswers: [`0`],
+          distractors: [`0.12`, `0.70`, `0.10`],
+          rationale: `Mutually exclusive events cannot occur simultaneously, so $P(A \\text{ and } B) = 0$.`
+        };
+      }
+    ]
   };
 
-  let quizQuestions = [];
+  // State Management
+  let activeQuestions = [];
+  let userAnswers = {};
+  let gradedQuestions = {};
 
+  // Build UI Accordion on startup
+  function initTopicsUI() {
+    const container = document.getElementById("topicsContainer");
+    let html = "";
+
+    unitsData.forEach((u) => {
+      html += `
+        <div class="unit-group">
+          <div class="unit-title">
+            <span>${u.unit}</span>
+          </div>
+      `;
+      u.topics.forEach(t => {
+        html += `
+          <label class="topic-item">
+            <input type="checkbox" class="topic-cb" value="${t.id}" checked>
+            <span>${t.title}</span>
+          </label>
+        `;
+      });
+      html += `</div>`;
+    });
+
+    container.innerHTML = html;
+  }
+
+  function selectAllTopics(status) {
+    document.querySelectorAll(".topic-cb").forEach(cb => cb.checked = status);
+  }
+
+  // Generate Quiz
   function generateQuiz() {
-    const selectedBoxes = Array.from(document.querySelectorAll('.section-cb:checked'));
-    if (selectedBoxes.length === 0) {
-      alert("Please select at least one section before generating the quiz.");
+    const selectedCbs = Array.from(document.querySelectorAll(".topic-cb:checked"));
+    if (selectedCbs.length === 0) {
+      alert("Please select at least one curriculum topic to generate a quiz.");
       return;
     }
 
-    const selectedSections = selectedBoxes.map(cb => cb.value);
-    const count = parseInt(document.getElementById("numQuestions").value);
-    const format = document.getElementById("formatSelect").value;
-    const container = document.getElementById("quizContainer");
+    const topicIDs = selectedCbs.map(cb => cb.value);
+    const num = parseInt(document.getElementById("numQuestions").value) || 10;
+    const globalFormat = document.getElementById("formatSelect").value;
+    const gradingMode = document.getElementById("gradingMode").value;
 
-    quizQuestions = [];
+    activeQuestions = [];
+    userAnswers = {};
+    gradedQuestions = {};
 
-    let html = `
-      <div class="quiz-header">
-        <div>
-          <h2>Algebra 2 Honors Practice Quiz</h2>
-          <div class="meta">Sections: <strong>${selectedSections.join(', ')}</strong></div>
-        </div>
-        <div class="meta">Name: ______________________</div>
-      </div>
-      <div id="scoreBanner" class="score-banner hidden"></div>
-    `;
+    // Hide summary banner
+    document.getElementById("summaryBanner").classList.add("hidden");
 
-    for (let i = 0; i < count; i++) {
-      const sec = selectedSections[Math.floor(Math.random() * selectedSections.length)];
-      const gen = generators[sec] || generators["1.1"];
-      const q = gen();
+    for (let i = 0; i < num; i++) {
+      const tid = topicIDs[Math.floor(Math.random() * topicIDs.length)];
+      const topicEntry = generators[tid] || generators["1.1"];
+      const genFn = Array.isArray(topicEntry) ? topicEntry[randInt(0, topicEntry.length - 1)] : topicEntry;
+      const qData = genFn();
 
-      quizQuestions.push({ ...q, section: sec, format, checked: false });
+      let qFormat = globalFormat;
+      if (globalFormat === "mixed") {
+        qFormat = Math.random() > 0.4 ? "mc" : "fr";
+      }
 
+      activeQuestions.push({
+        id: i,
+        topicID: tid,
+        format: qFormat,
+        ...qData
+      });
+    }
+
+    renderQuizUI(gradingMode);
+    updateStatsBar();
+  }
+
+  function renderQuizUI(gradingMode) {
+    const container = document.getElementById("questionsContainer");
+    const bottomActions = document.getElementById("bottomActions");
+    const quizBadge = document.getElementById("quizBadge");
+
+    quizBadge.textContent = `${activeQuestions.length} Questions (${gradingMode === 'instant' ? 'Instant Mode' : 'Exam Mode'})`;
+
+    if (gradingMode === "exam") {
+      bottomActions.classList.remove("hidden");
+    } else {
+      bottomActions.classList.add("hidden");
+    }
+
+    let html = "";
+
+    activeQuestions.forEach((q, idx) => {
       html += `
-        <div class="question-item" id="qItem_${i}">
-          <div class="question-title">
-            <span>${i + 1}. ${q.prompt}</span>
-            <span class="section-tag">Sec ${sec}</span>
+        <div class="q-card" id="qCard_${idx}">
+          <div class="q-header">
+            <span class="q-number">Question ${idx + 1}</span>
+            <span class="q-tag">Sec ${q.topicID}</span>
           </div>
+          <div class="q-prompt">${q.prompt}</div>
       `;
 
-      if (format === "mc") {
+      if (q.format === "mc") {
         const options = [q.ans, ...q.distractors].sort(() => Math.random() - 0.5);
-        html += `<div class="options-grid">`;
+        html += `<div class="mc-grid">`;
         options.forEach((opt) => {
           html += `
-            <label class="mc-option">
-              <input type="radio" name="q_${i}" value="${opt}">
-              <span>${opt}</span>
+            <label class="opt-btn">
+              <input type="radio" name="q_${idx}" value="${opt.replace(/"/g, '&quot;')}" onchange="registerAnswer(${idx}, this.value)">
+              <span>$${opt}$</span>
             </label>
           `;
         });
         html += `</div>`;
       } else {
         html += `
-          <div>
-            <input type="text" id="input_${i}" placeholder="Type your answer..." autocomplete="off">
+          <div class="fr-input-wrap">
+            <input type="text" id="input_${idx}" placeholder="Type solution here..." oninput="registerAnswer(${idx}, this.value)" autocomplete="off">
           </div>
         `;
       }
 
       html += `
-          <button class="check-btn" onclick="checkAnswer(${i})">Check Answer</button>
-          <div class="feedback hidden" id="feedback_${i}"></div>
+        <div class="q-actions">
+          ${gradingMode === "instant" ? `<button class="btn-check" onclick="checkSingleAnswer(${idx})">Check Answer</button>` : `<span></span>`}
         </div>
+        <div class="explanation-box hidden" id="exp_${idx}"></div>
+      </div>
       `;
-    }
+    });
 
     container.innerHTML = html;
+
+    // Trigger KaTeX math auto-rendering
+    if (window.renderMathInElement) {
+      renderMathInElement(container, {
+        delimiters: [
+          {left: '$$', right: '$$', display: true},
+          {left: '$', right: '$', display: false}
+        ],
+        throwOnError: false
+      });
+    }
   }
 
-  function checkAnswer(idx) {
-    const q = quizQuestions[idx];
-    const itemEl = document.getElementById(`qItem_${idx}`);
-    const fbEl = document.getElementById(`feedback_${idx}`);
-    let userAns = "";
+  function registerAnswer(qIndex, val) {
+    userAnswers[qIndex] = val;
+    updateStatsBar();
 
-    if (q.format === "mc") {
-      const selected = document.querySelector(`input[name="q_${idx}"]:checked`);
-      if (selected) userAns = selected.value;
-    } else {
-      const input = document.getElementById(`input_${idx}`);
-      if (input) userAns = input.value.trim();
+    const gradingMode = document.getElementById("gradingMode").value;
+    if (gradingMode === "instant") {
+      // Clear status if modified again
+      const card = document.getElementById(`qCard_${qIndex}`);
+      const exp = document.getElementById(`exp_${qIndex}`);
+      if (card && exp && !exp.classList.contains("hidden")) {
+        card.className = "q-card";
+        exp.classList.add("hidden");
+        delete gradedQuestions[qIndex];
+        updateStatsBar();
+      }
     }
+  }
 
-    if (!userAns) {
-      fbEl.className = "feedback incorrect";
-      fbEl.innerText = "Please select or enter an answer.";
-      fbEl.classList.remove("hidden");
-      return false;
+  function checkSingleAnswer(qIndex) {
+    const q = activeQuestions[qIndex];
+    const userVal = userAnswers[qIndex] || "";
+    const card = document.getElementById(`qCard_${qIndex}`);
+    const exp = document.getElementById(`exp_${qIndex}`);
+
+    if (!userVal || userVal.trim() === "") {
+      alert("Please enter or select an answer first.");
+      return;
     }
 
     let isCorrect = false;
+
     if (q.format === "mc") {
-      isCorrect = (userAns === q.ans);
+      isCorrect = (cleanStr(userVal) === cleanStr(q.ans));
     } else {
-      const normUser = normalizeStr(userAns);
-      isCorrect = q.acceptAnswers.some(ans => normalizeStr(ans) === normUser);
+      const cleanUser = cleanStr(userVal);
+      isCorrect = q.acceptAnswers.some(ans => cleanStr(ans) === cleanUser);
     }
 
-    fbEl.classList.remove("hidden");
+    gradedQuestions[qIndex] = isCorrect;
+
+    exp.classList.remove("hidden");
     if (isCorrect) {
-      itemEl.className = "question-item correct";
-      fbEl.className = "feedback correct";
-      fbEl.innerText = "✓ Correct!";
+      card.className = "q-card correct";
+      exp.className = "explanation-box correct";
+      exp.innerHTML = `<h4>✓ Correct!</h4><div>${q.rationale}</div>`;
     } else {
-      itemEl.className = "question-item incorrect";
-      fbEl.className = "feedback incorrect";
-      fbEl.innerText = `✗ Incorrect. Correct answer: ${q.ans}`;
+      card.className = "q-card incorrect";
+      exp.className = "explanation-box incorrect";
+      exp.innerHTML = `<h4>✗ Incorrect</h4><div><strong>Correct Answer:</strong> $${q.ans}$<br>${q.rationale}</div>`;
     }
 
-    q.checked = true;
-    return isCorrect;
+    if (window.renderMathInElement) {
+      renderMathInElement(exp, {
+        delimiters: [
+          {left: '$$', right: '$$', display: true},
+          {left: '$', right: '$', display: false}
+        ],
+        throwOnError: false
+      });
+    }
+
+    updateStatsBar();
   }
 
   function checkAllAnswers() {
-    if (quizQuestions.length === 0) return;
+    if (activeQuestions.length === 0) return;
 
-    let score = 0;
-    quizQuestions.forEach((_, idx) => {
-      const correct = checkAnswer(idx);
-      if (correct) score++;
+    let correctCount = 0;
+    activeQuestions.forEach((q, idx) => {
+      checkSingleAnswer(idx);
+      if (gradedQuestions[idx] === true) {
+        correctCount++;
+      }
     });
 
-    const banner = document.getElementById("scoreBanner");
-    const pct = Math.round((score / quizQuestions.length) * 100);
-    banner.classList.remove("hidden");
-    banner.innerText = `Quiz Score: ${score} / ${quizQuestions.length} (${pct}%)`;
-  }
-</script>
+    const total = activeQuestions.length;
+    const pct = Math.round((correctCount / total) * 100);
 
+    const banner = document.getElementById("summaryBanner");
+    document.getElementById("finalScorePct").innerText = `${pct}%`;
+    document.getElementById("finalScoreDetails").innerText = `You scored ${correctCount} out of ${total} correctly!`;
+    banner.classList.remove("hidden");
+
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function updateStatsBar() {
+    const total = activeQuestions.length;
+    const answered = Object.keys(userAnswers).filter(k => userAnswers[k] && userAnswers[k].trim() !== "").length;
+    
+    document.getElementById("statAnswered").innerText = `${answered} / ${total}`;
+
+    const gradedKeys = Object.keys(gradedQuestions);
+    if (gradedKeys.length > 0) {
+      const correct = gradedKeys.filter(k => gradedQuestions[k] === true).length;
+      const pct = Math.round((correct / gradedKeys.length) * 100);
+      document.getElementById("statScore").innerText = `${pct}%`;
+    } else {
+      document.getElementById("statScore").innerText = `0%`;
+    }
+
+    const pctAnswered = total > 0 ? (answered / total) * 100 : 0;
+    document.getElementById("progressBar").style.width = `${pctAnswered}%`;
+  }
+
+  // Initialize Topics UI on load
+  window.onload = function() {
+    initTopicsUI();
+  };
+</script>
 </body>
 </html>
